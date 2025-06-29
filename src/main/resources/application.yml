@@ -1,0 +1,55 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: mulaerp-backend
+  
+  data:
+    redis:
+      enabled: ${REDIS_ENABLED:true}
+      host: ${REDIS_HOST:valkey}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:mulaerp-redis-password}
+      timeout: 5000ms
+      connect-timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+        shutdown-timeout: 100ms
+    
+  security:
+    user:
+      name: admin
+      password: admin
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+jwt:
+  secret: ${JWT_SECRET:your-super-secret-jwt-key-change-in-production-min-32-chars}
+
+encryption:
+  key: ${ENCRYPTION_KEY:your-32-char-encryption-key-here}
+
+cas:
+  base:
+    url: ${CAS_BASE_URL:https://app.penril.net/pineapple-backend}
+
+logging:
+  level:
+    com.mulaerp: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.data.redis: DEBUG
+    org.springframework.boot.autoconfigure.data.redis: DEBUG
+  file:
+    name: /app/logs/mulaerp.log

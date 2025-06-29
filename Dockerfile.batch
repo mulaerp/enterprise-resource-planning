@@ -1,0 +1,46 @@
+# Multi-stage build for batch job runner
+FROM eclipse-temurin:24-alpine AS builder
+
+WORKDIR /app
+
+# Install Maven
+RUN apk add --no-cache maven
+
+# Create a simple Spring Boot project structure
+RUN mkdir -p src/main/java/com/mulaerp src/main/resources
+
+# Copy pom.xml
+COPY pom.xml ./
+
+# Download dependencies
+RUN mvn dependency:go-offline -B
+
+# Copy source code
+COPY src ./src
+
+# Build the application
+RUN mvn clean package -DskipTests
+
+# Production stage for batch runner
+FROM eclipse-temurin:24-alpine
+
+WORKDIR /app
+
+# Install cron and curl
+RUN apk add --no-cache dcron curl
+
+# Copy the batch JAR from builder stage
+COPY --from=builder /app/target/*.jar app.jar
+
+# Create logs directory
+RUN mkdir -p /app/logs
+
+# Add cron job for batch processing
+RUN echo "0 2 * * * java -jar /app/app.jar --spring.profiles.active=batch >> /app/logs/batch.log 2>&1" > /etc/crontabs/root
+
+# Add non-root user
+RUN addgroup -S mulaerp && adduser -S mulaerp -G mulaerp
+RUN chown -R mulaerp:mulaerp /app
+
+# Start cron as root, but app runs as mulaerp user
+CMD ["crond", "-f", "-d", "8"]

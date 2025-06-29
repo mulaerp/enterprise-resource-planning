@@ -1,0 +1,49 @@
+# Multi-stage build for Java backend
+FROM eclipse-temurin:24-alpine AS builder
+
+WORKDIR /app
+
+# Install Maven
+RUN apk add --no-cache maven
+
+# Create a simple Spring Boot project structure
+RUN mkdir -p src/main/java/com/mulaerp src/main/resources
+
+# Create pom.xml
+COPY pom.xml ./
+
+# Download dependencies
+RUN mvn dependency:go-offline -B
+
+# Copy source code
+COPY src ./src
+
+# Build the application
+RUN mvn clean package -DskipTests
+
+# Production stage
+FROM eclipse-temurin:24-alpine
+
+WORKDIR /app
+
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+# Copy the built JAR
+COPY --from=builder /app/target/*.jar app.jar
+
+# Create logs directory
+RUN mkdir -p /app/logs
+
+# Add non-root user for security
+RUN addgroup -S mulaerp && adduser -S mulaerp -G mulaerp
+RUN chown -R mulaerp:mulaerp /app
+USER mulaerp
+
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+CMD ["java", "-jar", "-Xmx512m", "-Xms256m", "app.jar"]

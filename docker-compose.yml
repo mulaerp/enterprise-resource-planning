@@ -1,0 +1,135 @@
+services:
+  # Frontend - React Application
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_BASE_URL=http://backend:8080
+      - VITE_CAS_BASE_URL=https://app.penril.net/pineapple-backend
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - mulaerp-network
+    restart: unless-stopped
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
+  # Backend - Java Spring Boot Application
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+      - DATABASE_URL=http://dynamodb-local:8000
+      - REDIS_URL=redis://valkey:6379
+      - REDIS_HOST=valkey
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
+      - CAS_BASE_URL=https://app.penril.net/pineapple-backend
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-your-32-char-encryption-key-here}
+      - DATABASE_REGION=us-east-1
+      - DATABASE_ACCESS_KEY=dummy
+      - DATABASE_SECRET_KEY=dummy
+    depends_on:
+      dynamodb-local:
+        condition: service_started
+      valkey:
+        condition: service_started
+    networks:
+      - mulaerp-network
+    restart: unless-stopped
+    volumes:
+      - backend-logs:/app/logs
+      - ./config:/app/config:ro
+
+  # DynamoDB Local (AWS DynamoDB Compatible)
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    ports:
+      - "8000:8000"
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "./data"]
+    networks:
+      - mulaerp-network
+    restart: unless-stopped
+    volumes:
+      - dynamodb-data:/home/dynamodblocal/data
+
+  # Valkey (Redis Fork) for Caching
+  valkey:
+    image: valkey/valkey:7.2-alpine
+    ports:
+      - "6379:6379"
+    command: valkey-server --appendonly yes --requirepass ${REDIS_PASSWORD:-mulaerp-redis-password}
+    networks:
+      - mulaerp-network
+    restart: unless-stopped
+    volumes:
+      - valkey-data:/data
+    environment:
+      - VALKEY_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
+    healthcheck:
+      test: ["CMD", "valkey-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx-logs:/var/log/nginx
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - mulaerp-network
+    restart: unless-stopped
+
+  # Batch Job Runner
+  batch-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.batch
+    environment:
+      - SPRING_PROFILES_ACTIVE=batch
+      - DATABASE_URL=http://dynamodb-local:8000
+      - REDIS_URL=redis://valkey:6379
+      - BATCH_SCHEDULE=${BATCH_SCHEDULE:-0 2 * * *}
+    depends_on:
+      - dynamodb-local
+      - valkey
+      - backend
+    networks:
+      - mulaerp-network
+    restart: unless-stopped
+    volumes:
+      - batch-logs:/app/logs
+
+networks:
+  mulaerp-network:
+    driver: bridge
+
+volumes:
+  dynamodb-data:
+    driver: local
+  valkey-data:
+    driver: local
+  backend-logs:
+    driver: local
+  batch-logs:
+    driver: local
+  nginx-logs:
+    driver: local
