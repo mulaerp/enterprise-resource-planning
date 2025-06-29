@@ -10,7 +10,12 @@ import {
   Monitor,
   Settings,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Factory,
+  ShoppingBag,
+  Calculator,
+  UserCheck,
+  Target
 } from 'lucide-react';
 import { useConfig } from '../../hooks/useConfig';
 
@@ -27,6 +32,11 @@ const menuItems = [
   { icon: FileText, label: 'Invoicing', path: '/invoicing' },
   { icon: BarChart, label: 'Reports', path: '/reports' },
   { icon: Monitor, label: 'POS', path: '/pos' },
+  { icon: Factory, label: 'Manufacturing', path: '/manufacturing' },
+  { icon: ShoppingBag, label: 'Purchasing', path: '/purchasing' },
+  { icon: Calculator, label: 'Accounting', path: '/accounting' },
+  { icon: UserCheck, label: 'Human Resources', path: '/hr' },
+  { icon: Target, label: 'CRM', path: '/crm' },
   { icon: Settings, label: 'Configuration', path: '/configuration' }
 ];
 
