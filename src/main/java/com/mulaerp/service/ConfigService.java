@@ -180,6 +180,21 @@ public class ConfigService {
         defaults.put("currency", "MYR");
         defaults.put("timezone", "Asia/Kuala_Lumpur");
         
+        // Module Configuration (Default enabled modules)
+        defaults.put("modulesDashboard", true);
+        defaults.put("modulesAccounting", true);
+        defaults.put("modulesSales", true);
+        defaults.put("modulesInventory", true);
+        defaults.put("modulesInvoicing", true);
+        defaults.put("modulesReports", true);
+        defaults.put("modulesPOS", true);
+        defaults.put("modulesHR", true);
+        defaults.put("modulesConfiguration", true);
+        // Default disabled modules
+        defaults.put("modulesManufacturing", false);
+        defaults.put("modulesPurchasing", false);
+        defaults.put("modulesCRM", false);
+        
         // LHDN MyInvois default configuration (disabled by default)
         defaults.put("lhdnMyInvoisEnabled", false);
         defaults.put("lhdnGatewayUrl", "http://localhost:3000");
