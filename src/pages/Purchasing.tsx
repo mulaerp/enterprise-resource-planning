@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Search, Filter, Edit, Trash2, Eye, Download, Send, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+import AddPurchaseOrderModal from '../components/modals/AddPurchaseOrderModal';
 
 interface PurchaseOrder {
   id: string;
@@ -51,6 +52,7 @@ export default function Purchasing() {
   const [activeTab, setActiveTab] = useState<'orders' | 'suppliers' | 'rfq'>('orders');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  const [isAddPOModalOpen, setIsAddPOModalOpen] = useState(false);
 
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>([
     {
@@ -141,16 +143,72 @@ export default function Purchasing() {
     ));
   };
 
+  const handleAddPurchaseOrder = (newPO: PurchaseOrder) => {
+    setPurchaseOrders(prev => [...prev, newPO]);
+  };
+
+  const handleDeletePO = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this purchase order?')) {
+      setPurchaseOrders(prev => prev.filter(po => po.id !== id));
+    }
+  };
+
+  const handleSendPO = (id: string) => {
+    setPurchaseOrders(prev => prev.map(po => 
+      po.id === id ? { ...po, status: 'sent' } : po
+    ));
+    alert('Purchase order sent successfully!');
+  };
+
+  const handleConfirmPO = (id: string) => {
+    setPurchaseOrders(prev => prev.map(po => 
+      po.id === id ? { ...po, status: 'confirmed' } : po
+    ));
+  };
+
+  const handleReceivePO = (id: string) => {
+    setPurchaseOrders(prev => prev.map(po => 
+      po.id === id ? { 
+        ...po, 
+        status: 'received',
+        actualDelivery: new Date().toISOString().split('T')[0]
+      } : po
+    ));
+  };
+
+  const exportPurchaseOrders = () => {
+    const csvContent = [
+      ['PO Number', 'Supplier', 'Items', 'Amount', 'Status', 'Order Date', 'Expected Delivery'],
+      ...purchaseOrders.map(po => [
+        po.id, po.supplier, po.items.length, po.totalAmount, po.status, po.orderDate, po.expectedDelivery
+      ])
+    ].map(row => row.join(',')).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `purchase-orders-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Purchasing</h1>
         <div className="flex space-x-3">
-          <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2">
+          <button 
+            onClick={exportPurchaseOrders}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2"
+          >
             <Download size={20} />
             <span>Export</span>
           </button>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center space-x-2">
+          <button 
+            onClick={() => setIsAddPOModalOpen(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
+          >
             <Plus size={20} />
             <span>New Purchase Order</span>
           </button>
@@ -273,7 +331,10 @@ export default function Purchasing() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {purchaseOrders.map((order) => (
+                  {purchaseOrders.filter(order => 
+                    order.supplier.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    order.id.toLowerCase().includes(searchTerm.toLowerCase())
+                  ).filter(order => !filterStatus || order.status === filterStatus).map((order) => (
                     <tr key={order.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.id}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.supplier}</td>
@@ -291,13 +352,41 @@ export default function Purchasing() {
                           <button className="text-blue-600 hover:text-blue-800" title="View">
                             <Eye size={16} />
                           </button>
-                          <button className="text-green-600 hover:text-green-800" title="Send">
-                            <Send size={16} />
-                          </button>
+                          {order.status === 'draft' && (
+                            <button 
+                              onClick={() => handleSendPO(order.id)}
+                              className="text-green-600 hover:text-green-800" 
+                              title="Send"
+                            >
+                              <Send size={16} />
+                            </button>
+                          )}
+                          {order.status === 'sent' && (
+                            <button 
+                              onClick={() => handleConfirmPO(order.id)}
+                              className="text-blue-600 hover:text-blue-800" 
+                              title="Confirm"
+                            >
+                              <CheckCircle size={16} />
+                            </button>
+                          )}
+                          {order.status === 'confirmed' && (
+                            <button 
+                              onClick={() => handleReceivePO(order.id)}
+                              className="text-green-600 hover:text-green-800" 
+                              title="Mark as Received"
+                            >
+                              <CheckCircle size={16} />
+                            </button>
+                          )}
                           <button className="text-blue-600 hover:text-blue-800" title="Edit">
                             <Edit size={16} />
                           </button>
-                          <button className="text-red-600 hover:text-red-800" title="Delete">
+                          <button 
+                            onClick={() => handleDeletePO(order.id)}
+                            className="text-red-600 hover:text-red-800" 
+                            title="Delete"
+                          >
                             <Trash2 size={16} />
                           </button>
                         </div>
@@ -444,6 +533,14 @@ export default function Purchasing() {
           </div>
         </div>
       )}
+
+      {/* Add Purchase Order Modal */}
+      <AddPurchaseOrderModal
+        isOpen={isAddPOModalOpen}
+        onClose={() => setIsAddPOModalOpen(false)}
+        onSave={handleAddPurchaseOrder}
+        suppliers={suppliers}
+      />
     </div>
   );
 }
