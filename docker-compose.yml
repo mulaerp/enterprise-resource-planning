@@ -27,22 +27,22 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=production
-      - DATABASE_URL=http://dynamodb-local:8000
-      - REDIS_URL=redis://valkey:6379
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/mulaerp
+      - DATABASE_USERNAME=mulaerp
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-mulaerp123}
+      - DATABASE_DRIVER=org.postgresql.Driver
       - REDIS_HOST=valkey
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
       - CAS_BASE_URL=https://app.penril.net/pineapple-backend
+      - CAS_ADMIN_TOKEN=${CAS_ADMIN_TOKEN:-your-cas-admin-token}
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY:-your-32-char-encryption-key-here}
-      - DATABASE_REGION=us-east-1
-      - DATABASE_ACCESS_KEY=dummy
-      - DATABASE_SECRET_KEY=dummy
     depends_on:
-      dynamodb-local:
-        condition: service_started
+      postgres:
+        condition: service_healthy
       valkey:
-        condition: service_started
+        condition: service_healthy
     networks:
       - mulaerp-network
     restart: unless-stopped
@@ -50,24 +50,43 @@ services:
       - backend-logs:/app/logs
       - ./config:/app/config:ro
 
-  # DynamoDB Local (AWS DynamoDB Compatible)
-  dynamodb-local:
-    image: amazon/dynamodb-local:latest
+  # PostgreSQL Database (RDS Compatible)
+  postgres:
+    image: postgres:16-alpine
     ports:
-      - "8000:8000"
-    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "./data"]
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=mulaerp
+      - POSTGRES_USER=mulaerp
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:-mulaerp123}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     networks:
       - mulaerp-network
     restart: unless-stopped
     volumes:
-      - dynamodb-data:/home/dynamodblocal/data
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mulaerp -d mulaerp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
-  # Valkey (Redis Fork) for Caching
+  # Valkey (Redis Fork) for Caching and Performance
   valkey:
     image: valkey/valkey:7.2-alpine
     ports:
       - "6379:6379"
-    command: valkey-server --appendonly yes --requirepass ${REDIS_PASSWORD:-mulaerp-redis-password}
+    command: >
+      valkey-server 
+      --appendonly yes 
+      --requirepass ${REDIS_PASSWORD:-mulaerp-redis-password}
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+      --save 900 1
+      --save 300 10
+      --save 60 10000
     networks:
       - mulaerp-network
     restart: unless-stopped
@@ -77,9 +96,10 @@ services:
       - VALKEY_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
     healthcheck:
       test: ["CMD", "valkey-cli", "--raw", "incr", "ping"]
-      interval: 30s
+      interval: 10s
       timeout: 3s
       retries: 5
+      start_period: 10s
 
   # Nginx Reverse Proxy
   nginx:
@@ -98,6 +118,32 @@ services:
       - mulaerp-network
     restart: unless-stopped
 
+  # Database Backup Service
+  db-backup:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=mulaerp
+      - POSTGRES_USER=mulaerp
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:-mulaerp123}
+      - PGPASSWORD=${DATABASE_PASSWORD:-mulaerp123}
+    volumes:
+      - postgres-backups:/backups
+      - ./backup-scripts:/scripts
+    networks:
+      - mulaerp-network
+    restart: unless-stopped
+    command: >
+      sh -c "
+        while true; do
+          echo 'Creating database backup...'
+          pg_dump -h postgres -U mulaerp -d mulaerp > /backups/mulaerp_backup_$$(date +%Y%m%d_%H%M%S).sql
+          echo 'Backup completed'
+          # Keep only last 7 days of backups
+          find /backups -name '*.sql' -mtime +7 -delete
+          sleep 86400  # Wait 24 hours
+        done
+      "
+
   # Batch Job Runner
   batch-runner:
     build:
@@ -105,11 +151,15 @@ services:
       dockerfile: Dockerfile.batch
     environment:
       - SPRING_PROFILES_ACTIVE=batch
-      - DATABASE_URL=http://dynamodb-local:8000
-      - REDIS_URL=redis://valkey:6379
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/mulaerp
+      - DATABASE_USERNAME=mulaerp
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-mulaerp123}
+      - REDIS_HOST=valkey
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
       - BATCH_SCHEDULE=${BATCH_SCHEDULE:-0 2 * * *}
     depends_on:
-      - dynamodb-local
+      - postgres
       - valkey
       - backend
     networks:
@@ -121,9 +171,14 @@ services:
 networks:
   mulaerp-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
 
 volumes:
-  dynamodb-data:
+  postgres-data:
+    driver: local
+  postgres-backups:
     driver: local
   valkey-data:
     driver: local
