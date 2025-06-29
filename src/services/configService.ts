@@ -32,6 +32,20 @@ export interface ConfigData {
   casBaseUrl: string;
   casServiceUrl: string;
   
+  // Module Configuration
+  modulesDashboard: boolean;
+  modulesAccounting: boolean;
+  modulesSales: boolean;
+  modulesInventory: boolean;
+  modulesInvoicing: boolean;
+  modulesReports: boolean;
+  modulesPOS: boolean;
+  modulesHR: boolean;
+  modulesManufacturing: boolean;
+  modulesPurchasing: boolean;
+  modulesCRM: boolean;
+  modulesConfiguration: boolean;
+  
   // LHDN MyInvois Configuration
   lhdnMyInvoisEnabled: boolean;
   lhdnGatewayUrl: string;
@@ -274,6 +288,21 @@ class ConfigService {
       casEnabled: true,
       casBaseUrl: 'https://app.penril.net/pineapple-backend',
       casServiceUrl: '',
+      
+      // Module Configuration (Default enabled modules)
+      modulesDashboard: true,
+      modulesAccounting: true,
+      modulesSales: true,
+      modulesInventory: true,
+      modulesInvoicing: true,
+      modulesReports: true,
+      modulesPOS: true,
+      modulesHR: true,
+      modulesConfiguration: true,
+      // Default disabled modules
+      modulesManufacturing: false,
+      modulesPurchasing: false,
+      modulesCRM: false,
       
       // LHDN MyInvois Configuration (Default: Disabled)
       lhdnMyInvoisEnabled: false,

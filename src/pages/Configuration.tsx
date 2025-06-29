@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Database, Settings, Shield, Globe, Server, Clock, CheckCircle, AlertCircle, RefreshCw, FileText, TestTube, Zap } from 'lucide-react';
+import { Save, Database, Settings, Shield, Globe, Server, Clock, CheckCircle, AlertCircle, RefreshCw, FileText, TestTube, Zap, Puzzle, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import ConfigService, { ConfigData } from '../services/configService';
 import LhdnService from '../services/lhdnService';
@@ -157,6 +157,21 @@ export default function Configuration() {
     );
   }
 
+  const moduleConfigurations = [
+    { key: 'modulesDashboard', label: 'Dashboard', description: 'Main dashboard with analytics and overview' },
+    { key: 'modulesAccounting', label: 'Accounting', description: 'Financial management and bookkeeping' },
+    { key: 'modulesSales', label: 'Sales', description: 'Sales management and customer orders' },
+    { key: 'modulesInventory', label: 'Inventory', description: 'Stock management and tracking' },
+    { key: 'modulesInvoicing', label: 'Invoicing', description: 'Invoice generation and management' },
+    { key: 'modulesReports', label: 'Reports', description: 'Analytics and reporting tools' },
+    { key: 'modulesPOS', label: 'Point of Sale', description: 'POS system for retail operations' },
+    { key: 'modulesHR', label: 'Human Resources', description: 'Employee management and HR functions' },
+    { key: 'modulesManufacturing', label: 'Manufacturing', description: 'Production planning and BOM management' },
+    { key: 'modulesPurchasing', label: 'Purchasing', description: 'Purchase orders and supplier management' },
+    { key: 'modulesCRM', label: 'Customer Relationship Management', description: 'Lead and opportunity management' },
+    { key: 'modulesConfiguration', label: 'Configuration', description: 'System settings and configuration' }
+  ];
+
   const configSections = [
     {
       title: 'Database Configuration',
@@ -270,6 +285,64 @@ export default function Configuration() {
           </div>
         </div>
       )}
+
+      {/* Module Configuration */}
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="flex items-center space-x-3 mb-6">
+          <Puzzle className="text-purple-600" size={24} />
+          <h2 className="text-xl font-semibold text-gray-900">Module Configuration</h2>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {moduleConfigurations.map((module) => (
+            <div key={module.key} className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-medium text-gray-900">{module.label}</h3>
+                <button
+                  onClick={() => handleChange(module.key as keyof ConfigData, !config[module.key as keyof ConfigData])}
+                  className={`transition-colors ${
+                    config[module.key as keyof ConfigData] 
+                      ? 'text-green-600 hover:text-green-700' 
+                      : 'text-gray-400 hover:text-gray-500'
+                  }`}
+                >
+                  {config[module.key as keyof ConfigData] ? (
+                    <ToggleRight size={24} />
+                  ) : (
+                    <ToggleLeft size={24} />
+                  )}
+                </button>
+              </div>
+              <p className="text-sm text-gray-600">{module.description}</p>
+              <div className="mt-2">
+                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                  config[module.key as keyof ConfigData] 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {config[module.key as keyof ConfigData] ? 'Enabled' : 'Disabled'}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-start space-x-2">
+            <Puzzle className="text-blue-600 mt-0.5" size={16} />
+            <div className="text-sm text-blue-800">
+              <p className="font-medium mb-1">Module Management</p>
+              <p>Enable or disable modules to customize your ERP interface. Disabled modules will be hidden from the navigation menu.</p>
+              <ul className="mt-2 space-y-1 text-xs">
+                <li>• Changes take effect immediately after saving</li>
+                <li>• Core modules (Dashboard, Configuration) cannot be disabled</li>
+                <li>• Some modules may depend on others for full functionality</li>
+                <li>• Users will need to refresh their browser to see navigation changes</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {configSections.map((section, index) => (
@@ -630,6 +703,7 @@ export default function Configuration() {
         <div className="text-sm text-blue-800 space-y-1">
           <p>• Configuration changes are automatically encrypted and stored securely</p>
           <p>• Changes are cached locally and synced with the server</p>
+          <p>• Module changes require a browser refresh to update navigation</p>
           <p>• Some changes may require a system restart to take effect</p>
           <p>• LHDN MyInvois integration requires the gateway service to be running</p>
           <p>• User: {user?.name} ({user?.role})</p>
