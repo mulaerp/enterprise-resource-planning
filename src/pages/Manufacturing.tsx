@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Search, Filter, Edit, Trash2, Play, Pause, CheckCircle, Clock, Package, Users, AlertTriangle } from 'lucide-react';
+import AddBOMModal from '../components/modals/AddBOMModal';
+import AddWorkOrderModal from '../components/modals/AddWorkOrderModal';
 
 interface BillOfMaterials {
   id: string;
@@ -31,11 +33,14 @@ interface WorkOrder {
   assignedTo: string;
   priority: 'low' | 'medium' | 'high';
   progress: number;
+  notes?: string;
 }
 
 export default function Manufacturing() {
   const [activeTab, setActiveTab] = useState<'bom' | 'workorders' | 'production'>('bom');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isAddBOMModalOpen, setIsAddBOMModalOpen] = useState(false);
+  const [isAddWorkOrderModalOpen, setIsAddWorkOrderModalOpen] = useState(false);
   
   const [billsOfMaterials, setBillsOfMaterials] = useState<BillOfMaterials[]>([
     {
@@ -102,12 +107,58 @@ export default function Manufacturing() {
     }
   };
 
+  const handleAddBOM = (newBOM: BillOfMaterials) => {
+    setBillsOfMaterials(prev => [...prev, newBOM]);
+  };
+
+  const handleAddWorkOrder = (newWorkOrder: WorkOrder) => {
+    setWorkOrders(prev => [...prev, newWorkOrder]);
+  };
+
+  const handleDeleteBOM = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this BOM?')) {
+      setBillsOfMaterials(prev => prev.filter(bom => bom.id !== id));
+    }
+  };
+
+  const handleDeleteWorkOrder = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this work order?')) {
+      setWorkOrders(prev => prev.filter(wo => wo.id !== id));
+    }
+  };
+
+  const handleStartWorkOrder = (id: string) => {
+    setWorkOrders(prev => prev.map(wo => 
+      wo.id === id ? { ...wo, status: 'in-progress', progress: 10 } : wo
+    ));
+  };
+
+  const handlePauseWorkOrder = (id: string) => {
+    setWorkOrders(prev => prev.map(wo => 
+      wo.id === id ? { ...wo, status: 'draft' } : wo
+    ));
+  };
+
+  const handleCompleteWorkOrder = (id: string) => {
+    setWorkOrders(prev => prev.map(wo => 
+      wo.id === id ? { 
+        ...wo, 
+        status: 'completed', 
+        progress: 100,
+        actualEndDate: new Date().toISOString().split('T')[0]
+      } : wo
+    ));
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Manufacturing</h1>
         <div className="flex space-x-3">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center space-x-2">
+          <button 
+            onClick={() => setIsAddWorkOrderModalOpen(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
+          >
             <Plus size={20} />
             <span>New Work Order</span>
           </button>
@@ -145,7 +196,10 @@ export default function Manufacturing() {
             <div className="p-6 border-b">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-gray-900">Bill of Materials</h2>
-                <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2">
+                <button 
+                  onClick={() => setIsAddBOMModalOpen(true)}
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2"
+                >
                   <Plus size={20} />
                   <span>Create BOM</span>
                 </button>
@@ -179,7 +233,10 @@ export default function Manufacturing() {
                           <button className="text-blue-600 hover:text-blue-800">
                             <Edit size={16} />
                           </button>
-                          <button className="text-red-600 hover:text-red-800">
+                          <button 
+                            onClick={() => handleDeleteBOM(bom.id)}
+                            className="text-red-600 hover:text-red-800"
+                          >
                             <Trash2 size={16} />
                           </button>
                         </div>
@@ -275,7 +332,10 @@ export default function Manufacturing() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {workOrders.map((order) => (
+                  {workOrders.filter(order => 
+                    order.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    order.id.toLowerCase().includes(searchTerm.toLowerCase())
+                  ).map((order) => (
                     <tr key={order.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.id}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.productName}</td>
@@ -306,19 +366,39 @@ export default function Manufacturing() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div className="flex space-x-2">
                           {order.status === 'draft' && (
-                            <button className="text-green-600 hover:text-green-800" title="Start">
+                            <button 
+                              onClick={() => handleStartWorkOrder(order.id)}
+                              className="text-green-600 hover:text-green-800" 
+                              title="Start"
+                            >
                               <Play size={16} />
                             </button>
                           )}
                           {order.status === 'in-progress' && (
-                            <button className="text-yellow-600 hover:text-yellow-800" title="Pause">
-                              <Pause size={16} />
-                            </button>
+                            <>
+                              <button 
+                                onClick={() => handlePauseWorkOrder(order.id)}
+                                className="text-yellow-600 hover:text-yellow-800" 
+                                title="Pause"
+                              >
+                                <Pause size={16} />
+                              </button>
+                              <button 
+                                onClick={() => handleCompleteWorkOrder(order.id)}
+                                className="text-green-600 hover:text-green-800" 
+                                title="Complete"
+                              >
+                                <CheckCircle size={16} />
+                              </button>
+                            </>
                           )}
                           <button className="text-blue-600 hover:text-blue-800">
                             <Edit size={16} />
                           </button>
-                          <button className="text-red-600 hover:text-red-800">
+                          <button 
+                            onClick={() => handleDeleteWorkOrder(order.id)}
+                            className="text-red-600 hover:text-red-800"
+                          >
                             <Trash2 size={16} />
                           </button>
                         </div>
@@ -392,6 +472,20 @@ export default function Manufacturing() {
           </div>
         </div>
       )}
+
+      {/* Modals */}
+      <AddBOMModal
+        isOpen={isAddBOMModalOpen}
+        onClose={() => setIsAddBOMModalOpen(false)}
+        onSave={handleAddBOM}
+      />
+
+      <AddWorkOrderModal
+        isOpen={isAddWorkOrderModalOpen}
+        onClose={() => setIsAddWorkOrderModalOpen(false)}
+        onSave={handleAddWorkOrder}
+        billsOfMaterials={billsOfMaterials}
+      />
     </div>
   );
 }
