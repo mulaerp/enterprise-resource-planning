@@ -16,8 +16,10 @@ import Purchasing from './pages/Purchasing';
 import Accounting from './pages/Accounting';
 import HumanResources from './pages/HumanResources';
 import CRM from './pages/CRM';
+import Notifications from './pages/Notifications';
 import Login from './pages/Login';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 
 function AppContent() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -52,6 +54,7 @@ function AppContent() {
             <Route path="/accounting" element={<Accounting />} />
             <Route path="/hr" element={<HumanResources />} />
             <Route path="/crm" element={<CRM />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="/configuration" element={<Configuration />} />
           </Routes>
         </main>
@@ -63,9 +66,11 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <NotificationProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </NotificationProvider>
     </AuthProvider>
   );
 }
