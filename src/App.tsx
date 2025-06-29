@@ -11,6 +11,11 @@ import Reports from './pages/Reports';
 import POS from './pages/POS';
 import CustomerDisplay from './pages/CustomerDisplay';
 import Configuration from './pages/Configuration';
+import Manufacturing from './pages/Manufacturing';
+import Purchasing from './pages/Purchasing';
+import Accounting from './pages/Accounting';
+import HumanResources from './pages/HumanResources';
+import CRM from './pages/CRM';
 import Login from './pages/Login';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
@@ -42,6 +47,11 @@ function AppContent() {
             <Route path="/invoicing" element={<Invoicing />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/pos" element={<POS />} />
+            <Route path="/manufacturing" element={<Manufacturing />} />
+            <Route path="/purchasing" element={<Purchasing />} />
+            <Route path="/accounting" element={<Accounting />} />
+            <Route path="/hr" element={<HumanResources />} />
+            <Route path="/crm" element={<CRM />} />
             <Route path="/configuration" element={<Configuration />} />
           </Routes>
         </main>
