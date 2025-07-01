@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile.frontend.dev
       args:
         VITE_BASE_URL: /
+    ports:
+      - "5172:5173"
     volumes:
       - ./mula-erp-frontend/dist:/app/dist
     environment:
