@@ -3,20 +3,20 @@ services:
   frontend:
     build:
       context: ./mula-erp-frontend
-      dockerfile: Dockerfile.frontend
-    ports:
-      - "3000:80"
+      dockerfile: Dockerfile.frontend.dev
+      args:
+        VITE_BASE_URL: /
+    volumes:
+      - ./mula-erp-frontend/dist:/app/dist
     environment:
       - VITE_API_BASE_URL=http://backend:8080
       - VITE_CAS_BASE_URL=https://app.penril.net/pineapple-backend
       - NODE_ENV=production
-    depends_on:
-      - backend
+      - VITE_BASE_URL=/
     networks:
       - mulaerp-network
     restart: unless-stopped
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
 
   # Backend - Java Spring Boot Application
   backend:
@@ -47,7 +47,7 @@ services:
       - mulaerp-network
     restart: unless-stopped
     volumes:
-      - backend-logs:/app/logs
+      - ./logs/backend:/app/logs
       - ./config:/app/config:ro
 
   # PostgreSQL Database (RDS Compatible)
@@ -64,7 +64,7 @@ services:
       - mulaerp-network
     restart: unless-stopped
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U mulaerp -d mulaerp"]
@@ -91,7 +91,7 @@ services:
       - mulaerp-network
     restart: unless-stopped
     volumes:
-      - valkey-data:/data
+      - ./valkey_data:/data
     environment:
       - VALKEY_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
     healthcheck:
@@ -110,9 +110,9 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
-      - nginx-logs:/var/log/nginx
+      - ./logs/nginx:/var/log/nginx
+      - ./mula-erp-frontend/dist:/usr/share/nginx/html
     depends_on:
-      - frontend
       - backend
     networks:
       - mulaerp-network
@@ -127,7 +127,7 @@ services:
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD:-mulaerp123}
       - PGPASSWORD=${DATABASE_PASSWORD:-mulaerp123}
     volumes:
-      - postgres-backups:/backups
+      - ./postgres_backups:/backups
       - ./backup-scripts:/scripts
     networks:
       - mulaerp-network
@@ -166,7 +166,8 @@ services:
       - mulaerp-network
     restart: unless-stopped
     volumes:
-      - batch-logs:/app/logs
+      - ./logs/batch:/app/logs
+    command: sh -c "crond -f -d 8 && tail -f /dev/null"
 
 networks:
   mulaerp-network:
@@ -175,16 +176,3 @@ networks:
       config:
         - subnet: 172.20.0.0/16
 
-volumes:
-  postgres-data:
-    driver: local
-  postgres-backups:
-    driver: local
-  valkey-data:
-    driver: local
-  backend-logs:
-    driver: local
-  batch-logs:
-    driver: local
-  nginx-logs:
-    driver: local
