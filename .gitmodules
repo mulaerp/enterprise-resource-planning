@@ -1,0 +1,9 @@
+[submodule "mula-erp-backend"]
+	path = mula-erp-backend
+	url = https://github.com/rexeo-asia/mula-erp-backend
+[submodule "mula-erp-frontend"]
+	path = mula-erp-frontend
+	url = https://github.com/rexeo-asia/mula-erp-frontend
+[submodule "mula-erp-middleware"]
+	path = mula-erp-middleware
+	url = https://github.com/rexeo-asia/mula-erp-middleware
