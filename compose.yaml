@@ -2,7 +2,7 @@ services:
   # Frontend - React Application
   frontend:
     build:
-      context: .
+      context: ./mula-erp-frontend
       dockerfile: Dockerfile.frontend
     ports:
       - "3000:80"
@@ -21,7 +21,7 @@ services:
   # Backend - Java Spring Boot Application
   backend:
     build:
-      context: .
+      context: ./mula-erp-backend
       dockerfile: Dockerfile.backend
     ports:
       - "8080:8080"
@@ -147,7 +147,7 @@ services:
   # Batch Job Runner
   batch-runner:
     build:
-      context: .
+      context: ./mula-erp-backend
       dockerfile: Dockerfile.batch
     environment:
       - SPRING_PROFILES_ACTIVE=batch
