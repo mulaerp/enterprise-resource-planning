@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Select } from '../../components/ui/Select';
+import Input from '../../components/ui/Input';
+import Select from '../../components/ui/Select';
 import { api } from '../../lib/api';
 import { useToast } from '../../components/ui/Toast';
 
@@ -41,7 +41,7 @@ export default function UserFormPage() {
       setValue('role', user.role);
       setValue('status', user.status);
     } catch (error) {
-      showToast('Failed to fetch user', 'error');
+      showToast('error', 'Failed to fetch user');
     }
   };
 
@@ -50,14 +50,14 @@ export default function UserFormPage() {
       setLoading(true);
       if (id) {
         await api.put(`/users/${id}`, data);
-        showToast('User updated successfully', 'success');
+        showToast('success', 'User updated successfully');
       } else {
         await api.post('/users', data);
-        showToast('User created successfully', 'success');
+        showToast('success', 'User created successfully');
       }
       navigate('/users');
     } catch (error: any) {
-      showToast(error.response?.data?.message || 'Failed to save user', 'error');
+      showToast('error', error.response?.data?.message || 'Failed to save user');
     } finally {
       setLoading(false);
     }
@@ -135,7 +135,7 @@ export default function UserFormPage() {
           <Button type="submit" disabled={loading}>
             {loading ? 'Saving...' : id ? 'Update' : 'Create'} User
           </Button>
-          <Button type="button" variant="outline" onClick={() => navigate('/users')}>
+          <Button type="button" variant="ghost" onClick={() => navigate('/users')}>
             Cancel
           </Button>
         </div>

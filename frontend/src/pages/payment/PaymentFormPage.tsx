@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Select } from '../../components/ui/Select';
+import Input from '../../components/ui/Input';
+import Select from '../../components/ui/Select';
 import { api } from '../../lib/api';
 import { useToast } from '../../components/ui/Toast';
 

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import Layout from '../../components/Layout';
 import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import Input from '../../components/ui/Input';
 import { api } from '../../lib/api';
 import { useToast } from '../../components/ui/Toast';
 
@@ -67,6 +68,7 @@ export default function CompanySettingsPage() {
   };
 
   return (
+    <Layout>
     <div className="max-w-2xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold">Company Settings</h1>
 
@@ -136,5 +138,6 @@ export default function CompanySettingsPage() {
         </div>
       </form>
     </div>
+    </Layout>
   );
 }

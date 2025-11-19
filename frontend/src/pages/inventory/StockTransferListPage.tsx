@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Eye, Trash2 } from 'lucide-react';
 import Layout from '../../components/Layout';
-import { DataTable } from '../../components/ui/DataTable';
+import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface StockTransfer {
@@ -31,7 +31,7 @@ export default function StockTransferListPage() {
       const response = await api.get('/stock-transfers');
       setTransfers(response.data);
     } catch (error) {
-      toast.error('Failed to fetch stock transfers');
+      error('Failed to fetch stock transfers');
     } finally {
       setLoading(false);
     }
@@ -42,10 +42,10 @@ export default function StockTransferListPage() {
 
     try {
       await api.delete(`/stock-transfers/${id}`);
-      toast.success('Transfer deleted successfully');
+      success('Transfer deleted successfully');
       fetchTransfers();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete transfer');
+      error(error.response?.data?.message || 'Failed to delete transfer');
     }
   };
 
@@ -64,9 +64,9 @@ export default function StockTransferListPage() {
   };
 
   const columns = [
-    { key: 'transferNumber', label: 'Transfer #' },
-    { key: 'fromWarehouseName', label: 'From Warehouse' },
-    { key: 'toWarehouseName', label: 'To Warehouse' },
+    { key: 'transferNumber', header: 'Transfer #' },
+    { key: 'fromWarehouseName', header: 'From Warehouse' },
+    { key: 'toWarehouseName', header: 'To Warehouse' },
     {
       key: 'transferDate',
       label: 'Transfer Date',

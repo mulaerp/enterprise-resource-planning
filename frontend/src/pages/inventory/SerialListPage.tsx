@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, AlertTriangle } from 'lucide-react';
 import Layout from '../../components/Layout';
-import { DataTable } from '../../components/ui/DataTable';
+import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface ProductSerial {
@@ -32,7 +32,7 @@ export default function SerialListPage() {
       const response = await api.get('/serials');
       setSerials(response.data);
     } catch (error) {
-      toast.error('Failed to fetch serial numbers');
+      error('Failed to fetch serial numbers');
     } finally {
       setLoading(false);
     }
@@ -43,10 +43,10 @@ export default function SerialListPage() {
 
     try {
       await api.delete(`/serials/${id}`);
-      toast.success('Serial number deleted successfully');
+      success('Serial number deleted successfully');
       fetchSerials();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete serial number');
+      error(error.response?.data?.message || 'Failed to delete serial number');
     }
   };
 
@@ -74,9 +74,9 @@ export default function SerialListPage() {
   };
 
   const columns = [
-    { key: 'serialNumber', label: 'Serial Number' },
-    { key: 'productSku', label: 'SKU' },
-    { key: 'productName', label: 'Product' },
+    { key: 'serialNumber', header: 'Serial Number' },
+    { key: 'productSku', header: 'SKU' },
+    { key: 'productName', header: 'Product' },
     {
       key: 'purchaseDate',
       label: 'Purchase Date',

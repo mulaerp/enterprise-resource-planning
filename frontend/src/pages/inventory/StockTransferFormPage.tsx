@@ -4,7 +4,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
 import Layout from '../../components/Layout';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface TransferForm {
@@ -54,7 +54,7 @@ export default function StockTransferFormPage() {
       const response = await api.get('/products');
       setProducts(response.data.content || response.data);
     } catch (error) {
-      toast.error('Failed to fetch products');
+      error('Failed to fetch products');
     }
   };
 
@@ -73,7 +73,7 @@ export default function StockTransferFormPage() {
         })),
       });
     } catch (error) {
-      toast.error('Failed to fetch transfer');
+      error('Failed to fetch transfer');
     }
   };
 
@@ -82,14 +82,14 @@ export default function StockTransferFormPage() {
     try {
       if (isEdit) {
         await api.put(`/stock-transfers/${id}`, data);
-        toast.success('Transfer updated successfully');
+        success('Transfer updated successfully');
       } else {
         await api.post('/stock-transfers', data);
-        toast.success('Transfer created successfully');
+        success('Transfer created successfully');
       }
       navigate('/inventory/transfers');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} transfer`);
+      error(error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} transfer`);
     } finally {
       setLoading(false);
     }

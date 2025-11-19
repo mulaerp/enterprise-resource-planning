@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, AlertTriangle } from 'lucide-react';
 import Layout from '../../components/Layout';
-import { DataTable } from '../../components/ui/DataTable';
+import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface ProductBatch {
@@ -32,7 +32,7 @@ export default function BatchListPage() {
       const response = await api.get('/batches');
       setBatches(response.data);
     } catch (error) {
-      toast.error('Failed to fetch batches');
+      error('Failed to fetch batches');
     } finally {
       setLoading(false);
     }
@@ -43,10 +43,10 @@ export default function BatchListPage() {
 
     try {
       await api.delete(`/batches/${id}`);
-      toast.success('Batch deleted successfully');
+      success('Batch deleted successfully');
       fetchBatches();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete batch');
+      error(error.response?.data?.message || 'Failed to delete batch');
     }
   };
 
@@ -72,9 +72,9 @@ export default function BatchListPage() {
   };
 
   const columns = [
-    { key: 'batchNumber', label: 'Batch Number' },
-    { key: 'productSku', label: 'SKU' },
-    { key: 'productName', label: 'Product' },
+    { key: 'batchNumber', header: 'Batch Number' },
+    { key: 'productSku', header: 'SKU' },
+    { key: 'productName', header: 'Product' },
     {
       key: 'manufactureDate',
       label: 'Manufacture Date',
@@ -93,7 +93,7 @@ export default function BatchListPage() {
         </div>
       ),
     },
-    { key: 'quantity', label: 'Quantity' },
+    { key: 'quantity', header: 'Quantity' },
     {
       key: 'status',
       label: 'Status',

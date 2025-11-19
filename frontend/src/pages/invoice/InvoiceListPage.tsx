@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
-import { DataTable } from '../../components/ui/DataTable';
+import Layout from '../../components/Layout';
+import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import Input from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
 import { api } from '../../lib/api';
 import { useToast } from '../../components/ui/Toast';
@@ -79,13 +80,13 @@ export default function InvoiceListPage() {
   };
 
   const columns = [
-    { key: 'invoiceNumber', label: 'Invoice #' },
-    { key: 'customerName', label: 'Customer' },
-    { key: 'invoiceDate', label: 'Invoice Date', render: (row: Invoice) => new Date(row.invoiceDate).toLocaleDateString() },
-    { key: 'dueDate', label: 'Due Date', render: (row: Invoice) => new Date(row.dueDate).toLocaleDateString() },
-    { key: 'status', label: 'Status', render: (row: Invoice) => getStatusBadge(row.status) },
-    { key: 'total', label: 'Total', render: (row: Invoice) => `$${row.total.toFixed(2)}` },
-    { key: 'balanceDue', label: 'Balance', render: (row: Invoice) => `$${row.balanceDue.toFixed(2)}` },
+    { key: 'invoiceNumber', header: 'Invoice #' },
+    { key: 'customerName', header: 'Customer' },
+    { key: 'invoiceDate', header: 'Invoice Date', render: (row: Invoice) => new Date(row.invoiceDate).toLocaleDateString() },
+    { key: 'dueDate', header: 'Due Date', render: (row: Invoice) => new Date(row.dueDate).toLocaleDateString() },
+    { key: 'status', header: 'Status', render: (row: Invoice) => getStatusBadge(row.status) },
+    { key: 'total', header: 'Total', render: (row: Invoice) => `$${row.total.toFixed(2)}` },
+    { key: 'balanceDue', header: 'Balance', render: (row: Invoice) => `$${row.balanceDue.toFixed(2)}` },
     {
       key: 'actions',
       label: 'Actions',
@@ -114,6 +115,7 @@ export default function InvoiceListPage() {
   ];
 
   return (
+    <Layout>
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Invoices</h1>
@@ -144,7 +146,9 @@ export default function InvoiceListPage() {
         columns={columns}
         data={invoices}
         loading={loading}
+        keyExtractor={(inv) => inv.id}
       />
     </div>
+    </Layout>
   );
 }

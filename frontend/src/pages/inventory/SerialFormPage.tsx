@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Layout from '../../components/Layout';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface SerialForm {
@@ -36,7 +36,7 @@ export default function SerialFormPage() {
       const response = await api.get('/products');
       setProducts(response.data.content || response.data);
     } catch (error) {
-      toast.error('Failed to fetch products');
+      error('Failed to fetch products');
     }
   };
 
@@ -52,7 +52,7 @@ export default function SerialFormPage() {
         notes: response.data.notes || '',
       });
     } catch (error) {
-      toast.error('Failed to fetch serial number');
+      error('Failed to fetch serial number');
     }
   };
 
@@ -61,14 +61,14 @@ export default function SerialFormPage() {
     try {
       if (isEdit) {
         await api.put(`/serials/${id}`, data);
-        toast.success('Serial number updated successfully');
+        success('Serial number updated successfully');
       } else {
         await api.post('/serials', data);
-        toast.success('Serial number created successfully');
+        success('Serial number created successfully');
       }
       navigate('/inventory/serials');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} serial number`);
+      error(error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} serial number`);
     } finally {
       setLoading(false);
     }

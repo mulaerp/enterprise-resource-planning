@@ -63,7 +63,7 @@ export default function CustomerListPage() {
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error('Failed to fetch customers:', error);
-      toast.error('Failed to load customers');
+      error('Failed to load customers');
     } finally {
       setLoading(false);
     }
@@ -74,12 +74,12 @@ export default function CustomerListPage() {
 
     try {
       await api.delete(`/customers/${deleteModal.customerId}`);
-      toast.success(`Customer "${deleteModal.customerName}" deleted successfully`);
+      success(`Customer "${deleteModal.customerName}" deleted successfully`);
       closeDeleteModal();
       fetchCustomers();
     } catch (error) {
       console.error('Failed to delete customer:', error);
-      toast.error('Failed to delete customer');
+      error('Failed to delete customer');
     }
   };
 

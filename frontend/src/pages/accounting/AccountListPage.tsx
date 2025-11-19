@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { DataTable } from '../../components/ui/DataTable';
+import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface Account {
@@ -29,7 +29,7 @@ export default function AccountListPage() {
       const response = await api.get('/accounting/accounts');
       setAccounts(response.data);
     } catch (error) {
-      toast.error('Failed to fetch accounts');
+      error('Failed to fetch accounts');
     } finally {
       setLoading(false);
     }
@@ -40,17 +40,17 @@ export default function AccountListPage() {
 
     try {
       await api.delete(`/accounting/accounts/${id}`);
-      toast.success('Account deleted successfully');
+      success('Account deleted successfully');
       fetchAccounts();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete account');
+      error(error.response?.data?.message || 'Failed to delete account');
     }
   };
 
   const columns = [
-    { key: 'code', label: 'Code' },
-    { key: 'name', label: 'Name' },
-    { key: 'accountType', label: 'Type' },
+    { key: 'code', header: 'Code' },
+    { key: 'name', header: 'Name' },
+    { key: 'accountType', header: 'Type' },
     {
       key: 'balance',
       label: 'Balance',

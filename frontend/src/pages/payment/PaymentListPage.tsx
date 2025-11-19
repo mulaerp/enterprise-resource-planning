@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search } from 'lucide-react';
-import { DataTable } from '../../components/ui/DataTable';
+import Layout from '../../components/Layout';
+import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import Input from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
 import { api } from '../../lib/api';
 import { useToast } from '../../components/ui/Toast';
@@ -65,15 +66,16 @@ export default function PaymentListPage() {
   };
 
   const columns = [
-    { key: 'paymentNumber', label: 'Payment #' },
-    { key: 'invoiceNumber', label: 'Invoice #' },
-    { key: 'paymentDate', label: 'Date', render: (row: Payment) => new Date(row.paymentDate).toLocaleDateString() },
-    { key: 'amount', label: 'Amount', render: (row: Payment) => `$${row.amount.toFixed(2)}` },
-    { key: 'method', label: 'Method' },
-    { key: 'status', label: 'Status', render: (row: Payment) => getStatusBadge(row.status) },
+    { key: 'paymentNumber', header: 'Payment #' },
+    { key: 'invoiceNumber', header: 'Invoice #' },
+    { key: 'paymentDate', header: 'Date', render: (row: Payment) => new Date(row.paymentDate).toLocaleDateString() },
+    { key: 'amount', header: 'Amount', render: (row: Payment) => `$${row.amount.toFixed(2)}` },
+    { key: 'method', header: 'Method' },
+    { key: 'status', header: 'Status', render: (row: Payment) => getStatusBadge(row.status) },
   ];
 
   return (
+    <Layout>
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Payments</h1>
@@ -104,7 +106,9 @@ export default function PaymentListPage() {
         columns={columns}
         data={payments}
         loading={loading}
+        keyExtractor={(pay) => pay.id}
       />
     </div>
+    </Layout>
   );
 }

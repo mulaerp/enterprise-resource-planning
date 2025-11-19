@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
-import { DataTable } from '../../components/ui/DataTable';
+import Layout from '../../components/Layout';
+import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import Input from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
 import { api } from '../../lib/api';
 import { useToast } from '../../components/ui/Toast';
@@ -77,12 +78,12 @@ export default function PurchaseOrderListPage() {
   };
 
   const columns = [
-    { key: 'poNumber', label: 'PO Number' },
-    { key: 'supplierName', label: 'Supplier' },
-    { key: 'orderDate', label: 'Order Date', render: (row: PurchaseOrder) => new Date(row.orderDate).toLocaleDateString() },
-    { key: 'expectedDate', label: 'Expected Date', render: (row: PurchaseOrder) => row.expectedDate ? new Date(row.expectedDate).toLocaleDateString() : '-' },
-    { key: 'status', label: 'Status', render: (row: PurchaseOrder) => getStatusBadge(row.status) },
-    { key: 'total', label: 'Total', render: (row: PurchaseOrder) => `$${row.total.toFixed(2)}` },
+    { key: 'poNumber', header: 'PO Number' },
+    { key: 'supplierName', header: 'Supplier' },
+    { key: 'orderDate', header: 'Order Date', render: (row: PurchaseOrder) => new Date(row.orderDate).toLocaleDateString() },
+    { key: 'expectedDate', header: 'Expected Date', render: (row: PurchaseOrder) => row.expectedDate ? new Date(row.expectedDate).toLocaleDateString() : '-' },
+    { key: 'status', header: 'Status', render: (row: PurchaseOrder) => getStatusBadge(row.status) },
+    { key: 'total', header: 'Total', render: (row: PurchaseOrder) => `$${row.total.toFixed(2)}` },
     {
       key: 'actions',
       label: 'Actions',
@@ -111,37 +112,40 @@ export default function PurchaseOrderListPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Purchase Orders</h1>
-        <Link to="/purchase-orders/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            New Purchase Order
-          </Button>
-        </Link>
-      </div>
-
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <Input
-            placeholder="Search purchase orders..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-          />
+    <Layout>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold">Purchase Orders</h1>
+          <Link to="/purchase-orders/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              New Purchase Order
+            </Button>
+          </Link>
         </div>
-        <Button onClick={handleSearch}>
-          <Search className="h-4 w-4 mr-2" />
-          Search
-        </Button>
-      </div>
 
-      <DataTable
-        columns={columns}
-        data={purchaseOrders}
-        loading={loading}
-      />
-    </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <Input
+              placeholder="Search purchase orders..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            />
+          </div>
+          <Button onClick={handleSearch}>
+            <Search className="h-4 w-4 mr-2" />
+            Search
+          </Button>
+        </div>
+
+        <DataTable
+          columns={columns}
+          data={purchaseOrders}
+          loading={loading}
+          keyExtractor={(po) => po.id}
+        />
+      </div>
+    </Layout>
   );
 }

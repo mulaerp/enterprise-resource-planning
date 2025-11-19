@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface AccountForm {
@@ -47,7 +47,7 @@ export default function AccountFormPage() {
       const response = await api.get(`/accounting/accounts/${id}`);
       reset(response.data);
     } catch (error) {
-      toast.error('Failed to fetch account');
+      error('Failed to fetch account');
     }
   };
 
@@ -56,14 +56,14 @@ export default function AccountFormPage() {
     try {
       if (id) {
         await api.put(`/accounting/accounts/${id}`, data);
-        toast.success('Account updated successfully');
+        success('Account updated successfully');
       } else {
         await api.post('/accounting/accounts', data);
-        toast.success('Account created successfully');
+        success('Account created successfully');
       }
       navigate('/accounting/accounts');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to save account');
+      error(error.response?.data?.message || 'Failed to save account');
     } finally {
       setLoading(false);
     }

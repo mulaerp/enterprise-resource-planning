@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Layout from '../../components/Layout';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface AdjustmentForm {
@@ -38,7 +38,7 @@ export default function StockAdjustmentFormPage() {
       const response = await api.get('/products');
       setProducts(response.data.content || response.data);
     } catch (error) {
-      toast.error('Failed to fetch products');
+      error('Failed to fetch products');
     }
   };
 
@@ -55,10 +55,10 @@ export default function StockAdjustmentFormPage() {
     setLoading(true);
     try {
       await api.post('/inventory/adjustments', data);
-      toast.success('Stock adjustment created successfully');
+      success('Stock adjustment created successfully');
       navigate('/inventory/adjustments');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to create adjustment');
+      error(error.response?.data?.message || 'Failed to create adjustment');
     } finally {
       setLoading(false);
     }

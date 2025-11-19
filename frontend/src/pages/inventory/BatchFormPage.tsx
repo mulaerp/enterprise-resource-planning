@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Layout from '../../components/Layout';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface BatchForm {
@@ -21,6 +21,7 @@ export default function BatchFormPage() {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const isEdit = !!id;
+  const { error, success } = useToast();
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<BatchForm>();
 
@@ -35,8 +36,8 @@ export default function BatchFormPage() {
     try {
       const response = await api.get('/products');
       setProducts(response.data.content || response.data);
-    } catch (error) {
-      toast.error('Failed to fetch products');
+    } catch (err) {
+      error('Failed to fetch products');
     }
   };
 
@@ -51,8 +52,8 @@ export default function BatchFormPage() {
         quantity: response.data.quantity,
         notes: response.data.notes || '',
       });
-    } catch (error) {
-      toast.error('Failed to fetch batch');
+    } catch (err) {
+      error('Failed to fetch batch');
     }
   };
 
@@ -61,14 +62,14 @@ export default function BatchFormPage() {
     try {
       if (isEdit) {
         await api.put(`/batches/${id}`, data);
-        toast.success('Batch updated successfully');
+        success('Batch updated successfully');
       } else {
         await api.post('/batches', data);
-        toast.success('Batch created successfully');
+        success('Batch created successfully');
       }
       navigate('/inventory/batches');
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} batch`);
+    } catch (err: any) {
+      error(err.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} batch`);
     } finally {
       setLoading(false);
     }

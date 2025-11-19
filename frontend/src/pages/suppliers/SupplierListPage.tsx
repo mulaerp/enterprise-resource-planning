@@ -63,7 +63,7 @@ export default function SupplierListPage() {
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error('Failed to fetch suppliers:', error);
-      toast.error('Failed to load suppliers');
+      error('Failed to load suppliers');
     } finally {
       setLoading(false);
     }
@@ -74,12 +74,12 @@ export default function SupplierListPage() {
 
     try {
       await api.delete(`/suppliers/${deleteModal.supplierId}`);
-      toast.success(`Supplier "${deleteModal.supplierName}" deleted successfully`);
+      success(`Supplier "${deleteModal.supplierName}" deleted successfully`);
       closeDeleteModal();
       fetchSuppliers();
     } catch (error) {
       console.error('Failed to delete supplier:', error);
-      toast.error('Failed to delete supplier');
+      error('Failed to delete supplier');
     }
   };
 

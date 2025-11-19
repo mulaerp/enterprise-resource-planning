@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, CheckCircle } from 'lucide-react';
-import { DataTable } from '../../components/ui/DataTable';
+import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface JournalEntry {
@@ -29,7 +29,7 @@ export default function JournalEntryListPage() {
       const response = await api.get('/accounting/journal-entries');
       setEntries(response.data);
     } catch (error) {
-      toast.error('Failed to fetch journal entries');
+      error('Failed to fetch journal entries');
     } finally {
       setLoading(false);
     }
@@ -40,10 +40,10 @@ export default function JournalEntryListPage() {
 
     try {
       await api.post(`/accounting/journal-entries/${id}/post`);
-      toast.success('Journal entry posted successfully');
+      success('Journal entry posted successfully');
       fetchEntries();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to post journal entry');
+      error(error.response?.data?.message || 'Failed to post journal entry');
     }
   };
 
@@ -52,22 +52,22 @@ export default function JournalEntryListPage() {
 
     try {
       await api.delete(`/accounting/journal-entries/${id}`);
-      toast.success('Journal entry deleted successfully');
+      success('Journal entry deleted successfully');
       fetchEntries();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete journal entry');
+      error(error.response?.data?.message || 'Failed to delete journal entry');
     }
   };
 
   const columns = [
-    { key: 'entryNumber', label: 'Entry #' },
+    { key: 'entryNumber', header: 'Entry #' },
     {
       key: 'entryDate',
       label: 'Date',
       render: (entry: JournalEntry) => new Date(entry.entryDate).toLocaleDateString(),
     },
-    { key: 'description', label: 'Description' },
-    { key: 'reference', label: 'Reference' },
+    { key: 'description', header: 'Description' },
+    { key: 'reference', header: 'Reference' },
     {
       key: 'status',
       label: 'Status',

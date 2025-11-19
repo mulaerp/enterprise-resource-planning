@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Trash2 } from 'lucide-react';
 import Layout from '../../components/Layout';
-import { DataTable } from '../../components/ui/DataTable';
+import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface StockAdjustment {
@@ -33,7 +33,7 @@ export default function StockAdjustmentListPage() {
       const response = await api.get('/inventory/adjustments');
       setAdjustments(response.data);
     } catch (error) {
-      toast.error('Failed to fetch stock adjustments');
+      error('Failed to fetch stock adjustments');
     } finally {
       setLoading(false);
     }
@@ -44,21 +44,21 @@ export default function StockAdjustmentListPage() {
 
     try {
       await api.delete(`/inventory/adjustments/${id}`);
-      toast.success('Adjustment deleted successfully');
+      success('Adjustment deleted successfully');
       fetchAdjustments();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete adjustment');
+      error(error.response?.data?.message || 'Failed to delete adjustment');
     }
   };
 
   const columns = [
-    { key: 'adjustmentNumber', label: 'Adjustment #' },
-    { key: 'productName', label: 'Product' },
-    { key: 'adjustmentType', label: 'Type' },
-    { key: 'quantityBefore', label: 'Before' },
-    { key: 'quantityAdjusted', label: 'Adjusted' },
-    { key: 'quantityAfter', label: 'After' },
-    { key: 'reason', label: 'Reason' },
+    { key: 'adjustmentNumber', header: 'Adjustment #' },
+    { key: 'productName', header: 'Product' },
+    { key: 'adjustmentType', header: 'Type' },
+    { key: 'quantityBefore', header: 'Before' },
+    { key: 'quantityAdjusted', header: 'Adjusted' },
+    { key: 'quantityAfter', header: 'After' },
+    { key: 'reason', header: 'Reason' },
     {
       key: 'adjustmentDate',
       label: 'Date',

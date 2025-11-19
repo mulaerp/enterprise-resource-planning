@@ -65,7 +65,7 @@ export default function ProductListPage() {
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error('Failed to fetch products:', error);
-      toast.error('Failed to load products');
+      error('Failed to load products');
     } finally {
       setLoading(false);
     }
@@ -76,12 +76,12 @@ export default function ProductListPage() {
 
     try {
       await api.delete(`/products/${deleteModal.productId}`);
-      toast.success(`Product "${deleteModal.productName}" deleted successfully`);
+      success(`Product "${deleteModal.productName}" deleted successfully`);
       closeDeleteModal();
       fetchProducts();
     } catch (error) {
       console.error('Failed to delete product:', error);
-      toast.error('Failed to delete product');
+      error('Failed to delete product');
     }
   };
 

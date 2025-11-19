@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { DataTable } from '../../components/ui/DataTable';
+import Layout from '../../components/Layout';
+import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { api } from '../../lib/api';
@@ -31,7 +32,7 @@ export default function UserListPage() {
       const response = await api.get('/users');
       setUsers(response.data.content || []);
     } catch (error) {
-      showToast('Failed to fetch users', 'error');
+      showToast('error', 'Failed to fetch users');
     } finally {
       setLoading(false);
     }
@@ -42,16 +43,16 @@ export default function UserListPage() {
 
     try {
       await api.delete(`/users/${id}`);
-      showToast('User deleted successfully', 'success');
+      showToast('success', 'User deleted successfully');
       fetchUsers();
     } catch (error: any) {
-      showToast(error.response?.data?.message || 'Failed to delete user', 'error');
+      showToast('error', error.response?.data?.message || 'Failed to delete user');
     }
   };
 
   const getRoleBadge = (role: string) => {
-    const variants: Record<string, 'default' | 'success' | 'warning'> = {
-      ADMIN: 'error',
+    const variants: Record<string, 'default' | 'success' | 'warning' | 'danger' | 'info'> = {
+      ADMIN: 'danger',
       MANAGER: 'warning',
       USER: 'default',
     };
@@ -59,23 +60,23 @@ export default function UserListPage() {
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'success' | 'error'> = {
+    const variants: Record<string, 'default' | 'success' | 'danger' | 'info' | 'warning'> = {
       ACTIVE: 'success',
       INACTIVE: 'default',
-      SUSPENDED: 'error',
+      SUSPENDED: 'danger',
     };
     return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
   };
 
   const columns = [
-    { key: 'fullName', label: 'Name' },
-    { key: 'email', label: 'Email' },
-    { key: 'role', label: 'Role', render: (row: User) => getRoleBadge(row.role) },
-    { key: 'status', label: 'Status', render: (row: User) => getStatusBadge(row.status) },
-    { key: 'createdAt', label: 'Created', render: (row: User) => new Date(row.createdAt).toLocaleDateString() },
+    { key: 'fullName', header: 'Name' },
+    { key: 'email', header: 'Email' },
+    { key: 'role', header: 'Role', render: (row: User) => getRoleBadge(row.role) },
+    { key: 'status', header: 'Status', render: (row: User) => getStatusBadge(row.status) },
+    { key: 'createdAt', header: 'Created', render: (row: User) => new Date(row.createdAt).toLocaleDateString() },
     {
       key: 'actions',
-      label: 'Actions',
+      header: 'Actions',
       render: (row: User) => (
         <div className="flex gap-2">
           <Link to={`/users/${row.id}/edit`}>
@@ -92,6 +93,7 @@ export default function UserListPage() {
   ];
 
   return (
+    <Layout>
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Users</h1>
@@ -106,8 +108,10 @@ export default function UserListPage() {
       <DataTable
         columns={columns}
         data={users}
+        keyExtractor={(user) => user.id}
         loading={loading}
       />
     </div>
+    </Layout>
   );
 }

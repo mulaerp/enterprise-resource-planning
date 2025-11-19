@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface JournalEntryLine {
@@ -55,7 +55,7 @@ export default function JournalEntryFormPage() {
       const response = await api.get('/accounting/accounts');
       setAccounts(response.data.filter((a: any) => a.isActive));
     } catch (error) {
-      toast.error('Failed to fetch accounts');
+      error('Failed to fetch accounts');
     }
   };
 
@@ -64,7 +64,7 @@ export default function JournalEntryFormPage() {
       const response = await api.get(`/accounting/journal-entries/${id}`);
       reset(response.data);
     } catch (error) {
-      toast.error('Failed to fetch journal entry');
+      error('Failed to fetch journal entry');
     }
   };
 
@@ -78,7 +78,7 @@ export default function JournalEntryFormPage() {
   const onSubmit = async (data: JournalEntryForm) => {
     const { difference } = calculateTotals();
     if (Math.abs(difference) > 0.01) {
-      toast.error('Journal entry must be balanced (debits = credits)');
+      error('Journal entry must be balanced (debits = credits)');
       return;
     }
 
@@ -86,14 +86,14 @@ export default function JournalEntryFormPage() {
     try {
       if (id) {
         await api.put(`/accounting/journal-entries/${id}`, data);
-        toast.success('Journal entry updated successfully');
+        success('Journal entry updated successfully');
       } else {
         await api.post('/accounting/journal-entries', data);
-        toast.success('Journal entry created successfully');
+        success('Journal entry created successfully');
       }
       navigate('/accounting/journal-entries');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to save journal entry');
+      error(error.response?.data?.message || 'Failed to save journal entry');
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { toast } from '../../components/ui/Toast';
+import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
 
 interface TrialBalanceItem {
@@ -29,7 +29,7 @@ export default function TrialBalancePage() {
       const response = await api.get('/accounting/reports/trial-balance');
       setTrialBalance(response.data);
     } catch (error) {
-      toast.error('Failed to fetch trial balance');
+      error('Failed to fetch trial balance');
     } finally {
       setLoading(false);
     }

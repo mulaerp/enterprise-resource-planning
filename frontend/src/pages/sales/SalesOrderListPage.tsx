@@ -64,7 +64,7 @@ export default function SalesOrderListPage() {
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error('Failed to fetch sales orders:', error);
-      toast.error('Failed to load sales orders');
+      error('Failed to load sales orders');
     } finally {
       setLoading(false);
     }
@@ -75,12 +75,12 @@ export default function SalesOrderListPage() {
 
     try {
       await api.delete(`/sales-orders/${deleteModal.orderId}`);
-      toast.success(`Sales order "${deleteModal.orderNumber}" deleted successfully`);
+      success(`Sales order "${deleteModal.orderNumber}" deleted successfully`);
       closeDeleteModal();
       fetchOrders();
     } catch (error) {
       console.error('Failed to delete sales order:', error);
-      toast.error('Failed to delete sales order');
+      error('Failed to delete sales order');
     }
   };
 
