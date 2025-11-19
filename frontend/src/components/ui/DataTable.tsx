@@ -64,10 +64,10 @@ export default function DataTable<T>({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200">
             <tr>
               {columns.map((column) => (
                 <th

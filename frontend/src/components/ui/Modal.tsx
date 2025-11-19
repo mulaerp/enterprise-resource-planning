@@ -58,17 +58,17 @@ export default function Modal({
       <div className="flex min-h-full items-center justify-center p-4">
         <div
           ref={modalRef}
-          className={`relative bg-white rounded-lg shadow-xl w-full ${sizes[size]} transform transition-all`}
+          className={`relative bg-white rounded-2xl shadow-2xl w-full ${sizes[size]} transform transition-all border border-gray-200`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           {(title || showCloseButton) && (
-            <div className="flex items-center justify-between p-6 border-b">
-              {title && <h3 className="text-lg font-semibold text-gray-900">{title}</h3>}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-gray-50 to-blue-50">
+              {title && <h3 className="text-lg font-bold text-gray-900">{title}</h3>}
               {showCloseButton && (
                 <button
                   onClick={onClose}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-gray-400 hover:text-gray-600 transition-colors hover:bg-gray-200 rounded-lg p-1"
                 >
                   <X className="w-5 h-5" />
                 </button>

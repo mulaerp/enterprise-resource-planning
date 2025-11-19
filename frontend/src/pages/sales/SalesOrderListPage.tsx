@@ -196,11 +196,17 @@ export default function SalesOrderListPage() {
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Sales Orders</h1>
-          <Button onClick={() => navigate('/sales-orders/new')} icon={<Plus className="w-5 h-5" />}>
-            New Sales Order
-          </Button>
+        {/* Page Header with Gradient */}
+        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-xl p-8 text-white">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Sales Orders</h1>
+              <p className="text-purple-100">Track and manage your sales orders</p>
+            </div>
+            <Button onClick={() => navigate('/sales-orders/new')} icon={<Plus className="w-5 h-5" />}>
+              New Sales Order
+            </Button>
+          </div>
         </div>
 
         <div className="space-y-4">

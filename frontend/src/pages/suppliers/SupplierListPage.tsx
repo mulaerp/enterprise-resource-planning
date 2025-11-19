@@ -170,11 +170,17 @@ export default function SupplierListPage() {
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Suppliers</h1>
-          <Button onClick={() => navigate('/suppliers/new')} icon={<Plus className="w-5 h-5" />}>
-            Add Supplier
-          </Button>
+        {/* Page Header with Gradient */}
+        <div className="bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl shadow-xl p-8 text-white">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Suppliers</h1>
+              <p className="text-orange-100">Manage your supplier network</p>
+            </div>
+            <Button onClick={() => navigate('/suppliers/new')} icon={<Plus className="w-5 h-5" />}>
+              Add Supplier
+            </Button>
+          </div>
         </div>
 
         <div className="space-y-4">

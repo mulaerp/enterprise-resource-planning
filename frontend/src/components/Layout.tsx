@@ -27,14 +27,22 @@ export default function Layout({ children }: LayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white">
-        <div className="p-6">
-          <h1 className="text-2xl font-bold">Mula ERP</h1>
+      <div className="fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-indigo-600 via-purple-600 to-pink-600 text-white shadow-2xl">
+        <div className="p-6 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+              <span className="text-2xl font-bold">M</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold">Mula ERP</h1>
+              <p className="text-xs text-white/70">Enterprise System</p>
+            </div>
+          </div>
         </div>
 
-        <nav className="mt-6">
+        <nav className="mt-4 px-3">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname.startsWith(item.path);
@@ -42,35 +50,37 @@ export default function Layout({ children }: LayoutProps) {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-6 py-3 hover:bg-gray-800 transition-colors ${
-                  isActive ? 'bg-gray-800 border-l-4 border-blue-500' : ''
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-1 transition-all duration-200 ${
+                  isActive
+                    ? 'bg-white/20 backdrop-blur-sm shadow-lg scale-105'
+                    : 'hover:bg-white/10 hover:translate-x-1'
                 }`}
               >
-                <Icon size={20} />
-                <span>{item.label}</span>
+                <Icon size={20} className={isActive ? 'animate-pulse' : ''} />
+                <span className="font-medium">{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        <div className="absolute bottom-0 w-full p-6 border-t border-gray-800">
-          <div className="mb-4">
-            <p className="text-sm text-gray-400">Logged in as</p>
-            <p className="font-medium">{user?.fullName}</p>
-            <p className="text-sm text-gray-400">{user?.email}</p>
+        <div className="absolute bottom-0 w-full p-4 border-t border-white/10 bg-black/10 backdrop-blur-sm">
+          <div className="mb-3 px-2">
+            <p className="text-xs text-white/60">Logged in as</p>
+            <p className="font-semibold text-sm truncate">{user?.fullName}</p>
+            <p className="text-xs text-white/70 truncate">{user?.email}</p>
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 text-red-400 hover:text-red-300"
+            className="flex items-center gap-2 w-full px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors text-red-100 hover:text-white"
           >
-            <LogOut size={20} />
-            <span>Logout</span>
+            <LogOut size={18} />
+            <span className="font-medium">Logout</span>
           </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="ml-64">
+      <div className="ml-64 min-h-screen">
         {children}
       </div>
     </div>

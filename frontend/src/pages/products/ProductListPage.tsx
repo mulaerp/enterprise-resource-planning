@@ -186,11 +186,17 @@ export default function ProductListPage() {
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Products</h1>
-          <Button onClick={() => navigate('/products/new')} icon={<Plus className="w-5 h-5" />}>
-            Add Product
-          </Button>
+        {/* Page Header with Gradient */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-8 text-white">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Products</h1>
+              <p className="text-blue-100">Manage your product inventory</p>
+            </div>
+            <Button onClick={() => navigate('/products/new')} icon={<Plus className="w-5 h-5" />}>
+              Add Product
+            </Button>
+          </div>
         </div>
 
         <div className="space-y-4">
