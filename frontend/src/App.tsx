@@ -10,6 +10,9 @@ import SupplierFormPage from './pages/suppliers/SupplierFormPage';
 import SalesOrderListPage from './pages/sales/SalesOrderListPage';
 import SalesOrderFormPage from './pages/sales/SalesOrderFormPage';
 import SalesOrderDetailPage from './pages/sales/SalesOrderDetailPage';
+import ReportsPage from './pages/reports/ReportsPage';
+import SalesReportPage from './pages/reports/SalesReportPage';
+import InventoryReportPage from './pages/reports/InventoryReportPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './components/ui';
 
@@ -34,6 +37,9 @@ function App() {
             <Route path="/sales-orders/new" element={<SalesOrderFormPage />} />
             <Route path="/sales-orders/:id" element={<SalesOrderDetailPage />} />
             <Route path="/sales-orders/:id/edit" element={<SalesOrderFormPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/reports/sales" element={<SalesReportPage />} />
+            <Route path="/reports/inventory" element={<InventoryReportPage />} />
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </Router>

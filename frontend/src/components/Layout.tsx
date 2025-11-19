@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Package, Users, ShoppingCart, FileText, LogOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { GlobalSearch } from './GlobalSearch';
+import { NotificationBell } from './NotificationBell';
 
 interface LayoutProps {
   children: ReactNode;
@@ -23,6 +25,7 @@ export default function Layout({ children }: LayoutProps) {
     { path: '/customers', icon: Users, label: 'Customers' },
     { path: '/suppliers', icon: Package, label: 'Suppliers' },
     { path: '/sales-orders', icon: ShoppingCart, label: 'Sales Orders' },
+    { path: '/reports', icon: FileText, label: 'Reports' },
     { path: '/invoices', icon: FileText, label: 'Invoices' },
   ];
 
@@ -40,6 +43,13 @@ export default function Layout({ children }: LayoutProps) {
               <p className="text-xs text-white/70">Enterprise System</p>
             </div>
           </div>
+        </div>
+
+        <div className="px-3 mt-4 flex items-center gap-2">
+          <div className="flex-1">
+            <GlobalSearch />
+          </div>
+          <NotificationBell />
         </div>
 
         <nav className="mt-4 px-3">
