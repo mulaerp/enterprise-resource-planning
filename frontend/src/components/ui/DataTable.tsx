@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import Button from './Button';
+import { Button } from './Button';
 
 export interface Column<T> {
   key: string;

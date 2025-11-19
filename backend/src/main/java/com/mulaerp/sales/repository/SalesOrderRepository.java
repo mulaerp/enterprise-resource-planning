@@ -30,4 +30,7 @@ public interface SalesOrderRepository extends JpaRepository<SalesOrder, String> 
 
     @Query("SELECT COUNT(so) FROM SalesOrder so WHERE so.deletedAt IS NULL")
     long countActive();
+
+    @Query("SELECT COUNT(so) FROM SalesOrder so WHERE so.status = :status AND so.deletedAt IS NULL")
+    Long countByStatus(@Param("status") String status);
 }

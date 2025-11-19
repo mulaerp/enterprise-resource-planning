@@ -1,12 +1,64 @@
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Navigate, Link } from 'react-router-dom';
-import { Package, Users, ShoppingCart, TrendingUp, DollarSign, ArrowUpRight } from 'lucide-react';
+import { Package, Users, ShoppingCart, TrendingUp, DollarSign, ArrowUpRight, AlertTriangle, Plus, Eye } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import Layout from '../../components/Layout';
+import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
+import api from '../../lib/api';
+
+interface DashboardStats {
+  totalProducts: number;
+  totalCustomers: number;
+  totalSuppliers: number;
+  totalSalesOrders: number;
+  pendingSalesOrders: number;
+  confirmedSalesOrders: number;
+  totalRevenue: number;
+  monthlyRevenue: number;
+  lowStockProducts: number;
+  outOfStockProducts: number;
+}
+
+interface ChartDataPoint {
+  label: string;
+  value: number;
+  count: number;
+}
+
+interface SalesChartData {
+  dailySales: ChartDataPoint[];
+}
 
 export default function DashboardPage() {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [chartData, setChartData] = useState<SalesChartData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (loading) {
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadDashboardData();
+    }
+  }, [isAuthenticated]);
+
+  const loadDashboardData = async () => {
+    try {
+      const [statsRes, chartRes] = await Promise.all([
+        api.get('/analytics/dashboard-stats'),
+        api.get('/analytics/sales-chart?days=7')
+      ]);
+      setStats(statsRes.data);
+      setChartData(chartRes.data);
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="text-gray-600 text-lg">Loading...</div>
@@ -18,46 +70,46 @@ export default function DashboardPage() {
     return <Navigate to="/login" replace />;
   }
 
-  const stats = [
+  const statsData = [
     { 
       label: 'Total Products', 
-      value: '0', 
+      value: stats?.totalProducts || 0, 
       icon: Package, 
       gradient: 'from-blue-500 to-cyan-500',
-      change: '+0%',
-      changePositive: true
+      subtext: stats && stats.lowStockProducts > 0 ? `${stats.lowStockProducts} low stock` : null,
+      subtextColor: 'text-orange-600'
     },
     { 
       label: 'Total Customers', 
-      value: '0', 
+      value: stats?.totalCustomers || 0, 
       icon: Users, 
       gradient: 'from-green-500 to-emerald-500',
-      change: '+0%',
-      changePositive: true
+      subtext: `${stats?.totalSuppliers || 0} suppliers`,
+      subtextColor: 'text-gray-500'
     },
     { 
       label: 'Sales Orders', 
-      value: '0', 
+      value: stats?.totalSalesOrders || 0, 
       icon: ShoppingCart, 
       gradient: 'from-purple-500 to-pink-500',
-      change: '+0%',
-      changePositive: true
+      subtext: `${stats?.pendingSalesOrders || 0} pending, ${stats?.confirmedSalesOrders || 0} confirmed`,
+      subtextColor: 'text-gray-500'
     },
     { 
-      label: 'Revenue', 
-      value: '$0', 
+      label: 'Total Revenue', 
+      value: `$${stats?.totalRevenue?.toFixed(2) || '0.00'}`, 
       icon: DollarSign, 
       gradient: 'from-orange-500 to-red-500',
-      change: '+0%',
-      changePositive: true
+      subtext: `$${stats?.monthlyRevenue?.toFixed(2) || '0.00'} this month`,
+      subtextColor: 'text-green-600'
     },
   ];
 
   const quickActions = [
-    { label: 'Add Product', path: '/products/new', icon: Package, color: 'from-blue-500 to-cyan-500' },
-    { label: 'View Products', path: '/products', icon: Package, color: 'from-indigo-500 to-purple-500' },
-    { label: 'Add Customer', path: '/customers/new', icon: Users, color: 'from-green-500 to-teal-500' },
-    { label: 'New Sales Order', path: '/sales-orders/new', icon: ShoppingCart, color: 'from-purple-500 to-pink-500' },
+    { label: 'Add Product', path: '/products/new', icon: Plus, color: 'from-blue-500 to-cyan-500' },
+    { label: 'View Products', path: '/products', icon: Eye, color: 'from-indigo-500 to-purple-500' },
+    { label: 'Add Customer', path: '/customers/new', icon: Plus, color: 'from-green-500 to-teal-500' },
+    { label: 'New Sales Order', path: '/sales-orders/new', icon: Plus, color: 'from-purple-500 to-pink-500' },
   ];
 
   return (
@@ -80,7 +132,7 @@ export default function DashboardPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat) => {
+          {statsData.map((stat) => {
             const Icon = stat.icon;
             return (
               <div 
@@ -91,23 +143,77 @@ export default function DashboardPage() {
                   <div className={`bg-gradient-to-br ${stat.gradient} p-3 rounded-xl shadow-lg`}>
                     <Icon className="text-white" size={24} />
                   </div>
-                  <div className={`flex items-center gap-1 text-sm font-semibold ${
-                    stat.changePositive ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    <ArrowUpRight size={16} />
-                    {stat.change}
-                  </div>
                 </div>
                 <div>
                   <p className="text-gray-500 text-sm font-medium">{stat.label}</p>
                   <p className="text-3xl font-bold mt-1 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                     {stat.value}
                   </p>
+                  {stat.subtext && (
+                    <p className={`text-xs mt-2 ${stat.subtextColor}`}>{stat.subtext}</p>
+                  )}
                 </div>
               </div>
             );
           })}
         </div>
+
+        {/* Sales Chart */}
+        {chartData && chartData.dailySales.length > 0 && (
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+            <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              Sales Overview (Last 7 Days)
+            </h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData.dailySales}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="label" stroke="#6b7280" />
+                <YAxis stroke="#6b7280" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'white', 
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="value" 
+                  stroke="#8b5cf6" 
+                  strokeWidth={3}
+                  name="Revenue ($)"
+                  dot={{ fill: '#8b5cf6', r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {/* Inventory Alerts */}
+        {stats && (stats.lowStockProducts > 0 || stats.outOfStockProducts > 0) && (
+          <div className="bg-orange-50 border-2 border-orange-200 rounded-xl shadow-lg p-6">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-6 h-6 text-orange-600 flex-shrink-0 mt-1" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-orange-900 mb-2">Inventory Alerts</h3>
+                <div className="space-y-1 text-sm text-orange-800">
+                  {stats.lowStockProducts > 0 && (
+                    <p>• {stats.lowStockProducts} product(s) running low on stock</p>
+                  )}
+                  {stats.outOfStockProducts > 0 && (
+                    <p>• {stats.outOfStockProducts} product(s) out of stock</p>
+                  )}
+                </div>
+                <Link to="/products">
+                  <Button variant="outline" size="sm" className="mt-3 border-orange-300 hover:bg-orange-100">
+                    View Products
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Quick Actions */}
         <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
@@ -133,29 +239,6 @@ export default function DashboardPage() {
                 </Link>
               );
             })}
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-            <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Recent Orders
-            </h2>
-            <div className="text-gray-500 text-center py-8">
-              <ShoppingCart size={48} className="mx-auto mb-3 text-gray-300" />
-              <p>No recent orders</p>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-            <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
-              Low Stock Alerts
-            </h2>
-            <div className="text-gray-500 text-center py-8">
-              <Package size={48} className="mx-auto mb-3 text-gray-300" />
-              <p>All products are well stocked</p>
-            </div>
           </div>
         </div>
       </div>
