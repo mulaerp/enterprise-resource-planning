@@ -1,0 +1,113 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Plus, Edit, Trash2 } from 'lucide-react';
+import { DataTable } from '../../components/ui/DataTable';
+import { Button } from '../../components/ui/Button';
+import { Badge } from '../../components/ui/Badge';
+import { api } from '../../lib/api';
+import { useToast } from '../../components/ui/Toast';
+
+interface User {
+  id: string;
+  email: string;
+  fullName: string;
+  role: string;
+  status: string;
+  createdAt: string;
+}
+
+export default function UserListPage() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/users');
+      setUsers(response.data.content || []);
+    } catch (error) {
+      showToast('Failed to fetch users', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this user?')) return;
+
+    try {
+      await api.delete(`/users/${id}`);
+      showToast('User deleted successfully', 'success');
+      fetchUsers();
+    } catch (error: any) {
+      showToast(error.response?.data?.message || 'Failed to delete user', 'error');
+    }
+  };
+
+  const getRoleBadge = (role: string) => {
+    const variants: Record<string, 'default' | 'success' | 'warning'> = {
+      ADMIN: 'error',
+      MANAGER: 'warning',
+      USER: 'default',
+    };
+    return <Badge variant={variants[role] || 'default'}>{role}</Badge>;
+  };
+
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, 'default' | 'success' | 'error'> = {
+      ACTIVE: 'success',
+      INACTIVE: 'default',
+      SUSPENDED: 'error',
+    };
+    return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
+  };
+
+  const columns = [
+    { key: 'fullName', label: 'Name' },
+    { key: 'email', label: 'Email' },
+    { key: 'role', label: 'Role', render: (row: User) => getRoleBadge(row.role) },
+    { key: 'status', label: 'Status', render: (row: User) => getStatusBadge(row.status) },
+    { key: 'createdAt', label: 'Created', render: (row: User) => new Date(row.createdAt).toLocaleDateString() },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (row: User) => (
+        <div className="flex gap-2">
+          <Link to={`/users/${row.id}/edit`}>
+            <Button variant="ghost" size="sm">
+              <Edit className="h-4 w-4" />
+            </Button>
+          </Link>
+          <Button variant="ghost" size="sm" onClick={() => handleDelete(row.id)}>
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Users</h1>
+        <Link to="/users/new">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New User
+          </Button>
+        </Link>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={users}
+        loading={loading}
+      />
+    </div>
+  );
+}

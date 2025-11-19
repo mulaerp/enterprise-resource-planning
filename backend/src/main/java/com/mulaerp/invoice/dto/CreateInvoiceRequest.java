@@ -1,4 +1,4 @@
-package com.mulaerp.sales.dto;
+package com.mulaerp.invoice.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -15,30 +15,32 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateSalesOrderRequest {
-
-    @NotNull(message = "Customer ID is required")
+public class CreateInvoiceRequest {
+    @NotNull(message = "Customer is required")
     private UUID customerId;
 
-    @NotNull(message = "Order date is required")
-    private LocalDate orderDate;
+    @NotNull(message = "Invoice date is required")
+    private LocalDate invoiceDate;
 
-    private LocalDate deliveryDate;
+    @NotNull(message = "Due date is required")
+    private LocalDate dueDate;
 
     private BigDecimal tax;
 
     private String notes;
 
-    @NotEmpty(message = "Order must have at least one item")
+    @NotEmpty(message = "At least one item is required")
     @Valid
-    private List<CreateSalesOrderItemRequest> items;
+    private List<InvoiceItemRequest> items;
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreateSalesOrderItemRequest {
-        @NotNull(message = "Product ID is required")
+    public static class InvoiceItemRequest {
         private UUID productId;
+
+        @NotNull(message = "Description is required")
+        private String description;
 
         @NotNull(message = "Quantity is required")
         private Integer quantity;
@@ -46,7 +48,6 @@ public class CreateSalesOrderRequest {
         @NotNull(message = "Unit price is required")
         private BigDecimal unitPrice;
 
-        private BigDecimal discount;
         private BigDecimal taxRate;
     }
 }

@@ -18,6 +18,17 @@ const SalesOrderDetailPage = lazy(() => import('./pages/sales/SalesOrderDetailPa
 const ReportsPage = lazy(() => import('./pages/reports/ReportsPage'));
 const SalesReportPage = lazy(() => import('./pages/reports/SalesReportPage'));
 const InventoryReportPage = lazy(() => import('./pages/reports/InventoryReportPage'));
+const PurchaseOrderListPage = lazy(() => import('./pages/purchase/PurchaseOrderListPage'));
+const PurchaseOrderFormPage = lazy(() => import('./pages/purchase/PurchaseOrderFormPage'));
+const PurchaseOrderDetailPage = lazy(() => import('./pages/purchase/PurchaseOrderDetailPage'));
+const InvoiceListPage = lazy(() => import('./pages/invoice/InvoiceListPage'));
+const InvoiceFormPage = lazy(() => import('./pages/invoice/InvoiceFormPage'));
+const InvoiceDetailPage = lazy(() => import('./pages/invoice/InvoiceDetailPage'));
+const PaymentListPage = lazy(() => import('./pages/payment/PaymentListPage'));
+const PaymentFormPage = lazy(() => import('./pages/payment/PaymentFormPage'));
+const UserListPage = lazy(() => import('./pages/users/UserListPage'));
+const UserFormPage = lazy(() => import('./pages/users/UserFormPage'));
+const CompanySettingsPage = lazy(() => import('./pages/settings/CompanySettingsPage'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -51,6 +62,20 @@ function App() {
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/reports/sales" element={<SalesReportPage />} />
               <Route path="/reports/inventory" element={<InventoryReportPage />} />
+              <Route path="/purchase-orders" element={<PurchaseOrderListPage />} />
+              <Route path="/purchase-orders/new" element={<PurchaseOrderFormPage />} />
+              <Route path="/purchase-orders/:id" element={<PurchaseOrderDetailPage />} />
+              <Route path="/purchase-orders/:id/edit" element={<PurchaseOrderFormPage />} />
+              <Route path="/invoices" element={<InvoiceListPage />} />
+              <Route path="/invoices/new" element={<InvoiceFormPage />} />
+              <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
+              <Route path="/invoices/:id/edit" element={<InvoiceFormPage />} />
+              <Route path="/payments" element={<PaymentListPage />} />
+              <Route path="/payments/new" element={<PaymentFormPage />} />
+              <Route path="/users" element={<UserListPage />} />
+              <Route path="/users/new" element={<UserFormPage />} />
+              <Route path="/users/:id/edit" element={<UserFormPage />} />
+              <Route path="/settings/company" element={<CompanySettingsPage />} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </Suspense>

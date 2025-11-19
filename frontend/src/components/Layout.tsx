@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Package, Users, ShoppingCart, FileText, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, Users, ShoppingCart, FileText, LogOut, Truck, CreditCard, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { GlobalSearch } from './GlobalSearch';
 import { NotificationBell } from './NotificationBell';
@@ -23,10 +23,14 @@ export default function Layout({ children }: LayoutProps) {
     { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { path: '/products', icon: Package, label: 'Products' },
     { path: '/customers', icon: Users, label: 'Customers' },
-    { path: '/suppliers', icon: Package, label: 'Suppliers' },
+    { path: '/suppliers', icon: Truck, label: 'Suppliers' },
     { path: '/sales-orders', icon: ShoppingCart, label: 'Sales Orders' },
-    { path: '/reports', icon: FileText, label: 'Reports' },
+    { path: '/purchase-orders', icon: Truck, label: 'Purchase Orders' },
     { path: '/invoices', icon: FileText, label: 'Invoices' },
+    { path: '/payments', icon: CreditCard, label: 'Payments' },
+    { path: '/reports', icon: FileText, label: 'Reports' },
+    { path: '/users', icon: Users, label: 'Users' },
+    { path: '/settings/company', icon: Settings, label: 'Settings' },
   ];
 
   return (

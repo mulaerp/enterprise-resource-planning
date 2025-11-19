@@ -2,7 +2,7 @@ package com.mulaerp.auth.controller;
 
 import com.mulaerp.auth.dto.LoginRequest;
 import com.mulaerp.auth.dto.LoginResponse;
-import com.mulaerp.auth.dto.UserDto;
+import com.mulaerp.auth.dto.UserDTO;
 import com.mulaerp.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

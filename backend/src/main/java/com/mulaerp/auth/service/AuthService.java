@@ -2,7 +2,7 @@ package com.mulaerp.auth.service;
 
 import com.mulaerp.auth.dto.LoginRequest;
 import com.mulaerp.auth.dto.LoginResponse;
-import com.mulaerp.auth.dto.UserDto;
+import com.mulaerp.auth.dto.UserDTO;
 import com.mulaerp.auth.entity.User;
 import com.mulaerp.auth.repository.UserRepository;
 import com.mulaerp.auth.security.JwtUtil;
