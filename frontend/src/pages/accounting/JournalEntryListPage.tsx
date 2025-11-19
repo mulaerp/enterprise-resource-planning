@@ -1,0 +1,144 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Edit, Trash2, CheckCircle } from 'lucide-react';
+import { DataTable } from '../../components/ui/DataTable';
+import { Button } from '../../components/ui/Button';
+import { toast } from '../../components/ui/Toast';
+import api from '../../lib/api';
+
+interface JournalEntry {
+  id: string;
+  entryNumber: string;
+  entryDate: string;
+  description: string;
+  status: string;
+  reference?: string;
+}
+
+export default function JournalEntryListPage() {
+  const navigate = useNavigate();
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEntries();
+  }, []);
+
+  const fetchEntries = async () => {
+    try {
+      const response = await api.get('/accounting/journal-entries');
+      setEntries(response.data);
+    } catch (error) {
+      toast.error('Failed to fetch journal entries');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePost = async (id: string) => {
+    if (!confirm('Are you sure you want to post this journal entry?')) return;
+
+    try {
+      await api.post(`/accounting/journal-entries/${id}/post`);
+      toast.success('Journal entry posted successfully');
+      fetchEntries();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to post journal entry');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this journal entry?')) return;
+
+    try {
+      await api.delete(`/accounting/journal-entries/${id}`);
+      toast.success('Journal entry deleted successfully');
+      fetchEntries();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to delete journal entry');
+    }
+  };
+
+  const columns = [
+    { key: 'entryNumber', label: 'Entry #' },
+    {
+      key: 'entryDate',
+      label: 'Date',
+      render: (entry: JournalEntry) => new Date(entry.entryDate).toLocaleDateString(),
+    },
+    { key: 'description', label: 'Description' },
+    { key: 'reference', label: 'Reference' },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (entry: JournalEntry) => (
+        <span className={`px-2 py-1 rounded text-xs ${
+          entry.status === 'POSTED' ? 'bg-green-100 text-green-800' :
+          entry.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
+          'bg-yellow-100 text-yellow-800'
+        }`}>
+          {entry.status}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (entry: JournalEntry) => (
+        <div className="flex gap-2">
+          {entry.status === 'DRAFT' && (
+            <>
+              <button
+                onClick={() => navigate(`/accounting/journal-entries/${entry.id}/edit`)}
+                className="text-blue-600 hover:text-blue-800"
+                title="Edit"
+              >
+                <Edit className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => handlePost(entry.id)}
+                className="text-green-600 hover:text-green-800"
+                title="Post"
+              >
+                <CheckCircle className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => handleDelete(entry.id)}
+                className="text-red-600 hover:text-red-800"
+                title="Delete"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </>
+          )}
+          {entry.status === 'POSTED' && (
+            <button
+              onClick={() => navigate(`/accounting/journal-entries/${entry.id}`)}
+              className="text-blue-600 hover:text-blue-800"
+            >
+              View
+            </button>
+          )}
+        </div>
+      ),
+    },
+  ];
+
+  if (loading) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Journal Entries</h1>
+        <Button onClick={() => navigate('/accounting/journal-entries/new')}>
+          <Plus className="w-4 h-4 mr-2" />
+          New Entry
+        </Button>
+      </div>
+
+      <DataTable columns={columns} data={entries} />
+    </div>
+  );
+}

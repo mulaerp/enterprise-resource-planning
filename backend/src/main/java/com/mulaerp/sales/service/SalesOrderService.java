@@ -10,6 +10,7 @@ import com.mulaerp.sales.dto.UpdateSalesOrderRequest;
 import com.mulaerp.sales.entity.SalesOrder;
 import com.mulaerp.sales.entity.SalesOrderItem;
 import com.mulaerp.sales.repository.SalesOrderRepository;
+import com.mulaerp.websocket.service.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ public class SalesOrderService {
     private final SalesOrderRepository salesOrderRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+    private final WebSocketService webSocketService;
 
     @Transactional(readOnly = true)
     public Page<SalesOrderDto> getAllSalesOrders(String search, Pageable pageable) {
@@ -78,6 +80,10 @@ public class SalesOrderService {
 
         order.calculateTotals();
         SalesOrder savedOrder = salesOrderRepository.save(order);
+        
+        // Send WebSocket notification (Phase 6.7)
+        webSocketService.notifyNewOrder(SalesOrderDto.fromEntity(savedOrder));
+        
         return SalesOrderDto.fromEntity(savedOrder);
     }
 
@@ -141,6 +147,10 @@ public class SalesOrderService {
 
         order.setStatus(newStatus);
         SalesOrder updatedOrder = salesOrderRepository.save(order);
+        
+        // Send WebSocket notification (Phase 6.7)
+        webSocketService.notifyOrderStatusChange(SalesOrderDto.fromEntity(updatedOrder));
+        
         return SalesOrderDto.fromEntity(updatedOrder);
     }
 

@@ -1,7 +1,8 @@
 import { type ReactNode } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Package, Users, ShoppingCart, FileText, LogOut, Truck, CreditCard, Settings } from 'lucide-react';
+import { LayoutDashboard, Package, Users, ShoppingCart, FileText, LogOut, Truck, CreditCard, Settings, Calculator, Wifi, WifiOff } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useWebSocket } from '../contexts/WebSocketContext';
 import { GlobalSearch } from './GlobalSearch';
 import { NotificationBell } from './NotificationBell';
 
@@ -11,6 +12,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const { user, logout } = useAuth();
+  const { connected } = useWebSocket();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,6 +30,7 @@ export default function Layout({ children }: LayoutProps) {
     { path: '/purchase-orders', icon: Truck, label: 'Purchase Orders' },
     { path: '/invoices', icon: FileText, label: 'Invoices' },
     { path: '/payments', icon: CreditCard, label: 'Payments' },
+    { path: '/accounting', icon: Calculator, label: 'Accounting' },
     { path: '/reports', icon: FileText, label: 'Reports' },
     { path: '/users', icon: Users, label: 'Users' },
     { path: '/settings/company', icon: Settings, label: 'Settings' },
@@ -54,6 +57,16 @@ export default function Layout({ children }: LayoutProps) {
             <GlobalSearch />
           </div>
           <NotificationBell />
+          <div className="relative group">
+            {connected ? (
+              <Wifi className="w-5 h-5 text-green-300" />
+            ) : (
+              <WifiOff className="w-5 h-5 text-red-300" />
+            )}
+            <div className="absolute right-0 top-8 hidden group-hover:block bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+              {connected ? 'Real-time updates active' : 'Disconnected'}
+            </div>
+          </div>
         </div>
 
         <nav className="mt-4 px-3">

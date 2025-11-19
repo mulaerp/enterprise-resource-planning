@@ -112,6 +112,12 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         
+        <!-- WebSocket support (Phase 6.7) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        
         <!-- Bucket4j for rate limiting (Phase 5.2) -->
         <dependency>
             <groupId>com.bucket4j</groupId>

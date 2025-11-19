@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/auth/LoginPage';
 import { AuthProvider } from './contexts/AuthContext';
+import { WebSocketProvider } from './contexts/WebSocketContext';
 import { ToastProvider } from './components/ui';
 
 // Lazy load pages for better performance (Phase 5.1)
@@ -29,6 +30,14 @@ const PaymentFormPage = lazy(() => import('./pages/payment/PaymentFormPage'));
 const UserListPage = lazy(() => import('./pages/users/UserListPage'));
 const UserFormPage = lazy(() => import('./pages/users/UserFormPage'));
 const CompanySettingsPage = lazy(() => import('./pages/settings/CompanySettingsPage'));
+const AccountingPage = lazy(() => import('./pages/accounting/AccountingPage'));
+const AccountListPage = lazy(() => import('./pages/accounting/AccountListPage'));
+const AccountFormPage = lazy(() => import('./pages/accounting/AccountFormPage'));
+const JournalEntryListPage = lazy(() => import('./pages/accounting/JournalEntryListPage'));
+const JournalEntryFormPage = lazy(() => import('./pages/accounting/JournalEntryFormPage'));
+const TrialBalancePage = lazy(() => import('./pages/accounting/TrialBalancePage'));
+const StockAdjustmentListPage = lazy(() => import('./pages/inventory/StockAdjustmentListPage'));
+const StockAdjustmentFormPage = lazy(() => import('./pages/inventory/StockAdjustmentFormPage'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -40,9 +49,10 @@ const LoadingFallback = () => (
 function App() {
   return (
     <AuthProvider>
-      <ToastProvider>
-        <Router>
-          <Suspense fallback={<LoadingFallback />}>
+      <WebSocketProvider>
+        <ToastProvider>
+          <Router>
+            <Suspense fallback={<LoadingFallback />}>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
@@ -76,11 +86,22 @@ function App() {
               <Route path="/users/new" element={<UserFormPage />} />
               <Route path="/users/:id/edit" element={<UserFormPage />} />
               <Route path="/settings/company" element={<CompanySettingsPage />} />
+              <Route path="/accounting" element={<AccountingPage />} />
+              <Route path="/accounting/accounts" element={<AccountListPage />} />
+              <Route path="/accounting/accounts/new" element={<AccountFormPage />} />
+              <Route path="/accounting/accounts/:id/edit" element={<AccountFormPage />} />
+              <Route path="/accounting/journal-entries" element={<JournalEntryListPage />} />
+              <Route path="/accounting/journal-entries/new" element={<JournalEntryFormPage />} />
+              <Route path="/accounting/journal-entries/:id/edit" element={<JournalEntryFormPage />} />
+              <Route path="/accounting/trial-balance" element={<TrialBalancePage />} />
+              <Route path="/inventory/adjustments" element={<StockAdjustmentListPage />} />
+              <Route path="/inventory/adjustments/new" element={<StockAdjustmentFormPage />} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Routes>
-          </Suspense>
-        </Router>
-      </ToastProvider>
+            </Suspense>
+          </Router>
+        </ToastProvider>
+      </WebSocketProvider>
     </AuthProvider>
   );
 }

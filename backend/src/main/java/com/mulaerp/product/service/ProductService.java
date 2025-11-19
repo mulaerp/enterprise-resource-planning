@@ -5,6 +5,7 @@ import com.mulaerp.product.entity.Product;
 import com.mulaerp.product.entity.ProductCategory;
 import com.mulaerp.product.repository.ProductCategoryRepository;
 import com.mulaerp.product.repository.ProductRepository;
+import com.mulaerp.websocket.service.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -24,6 +25,7 @@ public class ProductService {
     
     private final ProductRepository productRepository;
     private final ProductCategoryRepository categoryRepository;
+    private final WebSocketService webSocketService;
     
     @Transactional(readOnly = true)
     public Page<ProductDto> getAllProducts(Pageable pageable) {
@@ -96,7 +98,17 @@ public class ProductService {
         }
         
         Product updatedProduct = productRepository.save(product);
+        
+        // Check for low stock and send WebSocket notification (Phase 6.7)
+        checkAndNotifyLowStock(updatedProduct);
+        
         return convertToDto(updatedProduct);
+    }
+    
+    private void checkAndNotifyLowStock(Product product) {
+        if (product.getStockQuantity() <= product.getReorderLevel()) {
+            webSocketService.notifyLowStock(convertToDto(product));
+        }
     }
     
     @CacheEvict(value = "products", key = "#id")
