@@ -1,9 +1,10 @@
 import { useAuth } from '../../contexts/AuthContext';
-import { Navigate } from 'react-router-dom';
-import { LayoutDashboard, Package, Users, ShoppingCart, FileText, LogOut } from 'lucide-react';
+import { Navigate, Link } from 'react-router-dom';
+import { Package, Users, ShoppingCart, FileText, AlertCircle } from 'lucide-react';
+import Layout from '../../components/Layout';
 
 export default function DashboardPage() {
-  const { user, loading, logout, isAuthenticated } = useAuth();
+  const { user, loading, isAuthenticated } = useAuth();
 
   if (loading) {
     return (
@@ -17,104 +18,79 @@ export default function DashboardPage() {
     return <Navigate to="/login" replace />;
   }
 
+  const stats = [
+    { label: 'Total Products', value: '0', icon: Package, color: 'bg-blue-500' },
+    { label: 'Total Customers', value: '0', icon: Users, color: 'bg-green-500' },
+    { label: 'Sales Orders', value: '0', icon: ShoppingCart, color: 'bg-purple-500' },
+    { label: 'Invoices', value: '0', icon: FileText, color: 'bg-orange-500' },
+  ];
+
+  const quickActions = [
+    { label: 'Add Product', path: '/products/new', icon: Package },
+    { label: 'View Products', path: '/products', icon: Package },
+    { label: 'Add Customer', path: '/customers/new', icon: Users },
+    { label: 'Create Invoice', path: '/invoices/new', icon: FileText },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Mula ERP</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
-              Welcome, {user?.fullName}
-            </span>
-            <button
-              onClick={logout}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-gray-900"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Dashboard</h2>
-          <p className="mt-2 text-gray-600">Welcome to your ERP system</p>
+    <Layout>
+      <div className="p-6">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-gray-600">Welcome back, {user?.fullName}!</p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Products</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <div key={stat.label} className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-gray-500 text-sm">{stat.label}</p>
+                    <p className="text-3xl font-bold mt-2">{stat.value}</p>
+                  </div>
+                  <div className={`${stat.color} p-3 rounded-lg`}>
+                    <Icon className="text-white" size={24} />
+                  </div>
+                </div>
               </div>
-              <Package className="h-10 w-10 text-blue-600" />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Customers</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
-              </div>
-              <Users className="h-10 w-10 text-green-600" />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Sales Orders</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
-              </div>
-              <ShoppingCart className="h-10 w-10 text-purple-600" />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Invoices</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
-              </div>
-              <FileText className="h-10 w-10 text-orange-600" />
-            </div>
-          </div>
+            );
+          })}
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                <Package className="h-6 w-6 text-blue-600" />
-                <span className="font-medium text-gray-900">Add Product</span>
-              </button>
-              <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                <Users className="h-6 w-6 text-green-600" />
-                <span className="font-medium text-gray-900">Add Customer</span>
-              </button>
-              <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                <ShoppingCart className="h-6 w-6 text-purple-600" />
-                <span className="font-medium text-gray-900">Create Sales Order</span>
-              </button>
-              <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                <FileText className="h-6 w-6 text-orange-600" />
-                <span className="font-medium text-gray-900">Create Invoice</span>
-              </button>
-            </div>
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <Link
+                  key={action.path}
+                  to={action.path}
+                  className="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                >
+                  <Icon size={32} className="text-gray-600 mb-2" />
+                  <span className="text-sm font-medium text-center">{action.label}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
-      </main>
-    </div>
+
+        {/* Alerts */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <AlertCircle className="text-yellow-500" />
+            Alerts & Notifications
+          </h2>
+          <div className="text-gray-500 text-center py-8">
+            No alerts at the moment
+          </div>
+        </div>
+      </div>
+    </Layout>
   );
 }

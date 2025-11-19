@@ -23,12 +23,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetchUser();
-    } else {
-      setLoading(false);
-    }
+    // TEMPORARY: Bypass authentication for development
+    setUser({
+      id: 'dev-user',
+      email: 'dev@mulaerp.com',
+      fullName: 'Development User',
+      role: 'ADMIN'
+    });
+    setLoading(false);
   }, []);
 
   const fetchUser = async () => {
