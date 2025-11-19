@@ -69,7 +69,8 @@ enterprise-resource-planning/
 - **Database Tables**: 24
 - **Frontend Pages**: 40+
 - **Reusable Components**: 14
-- **Modules**: 16 core modules
+- **Fully Functional Modules**: 15
+- **Infrastructure-Only Features**: 5 (not yet functional)
 
 ## 📊 Current Features
 
@@ -113,41 +114,50 @@ enterprise-resource-planning/
 - **Phase 0**: ✅ 100% - Foundation
 - **Phase 1**: ✅ 100% - Core Infrastructure
 - **Phase 2**: ✅ 100% - Frontend Foundation
-- **Phase 3**: ✅ 100% - ERP Modules
+- **Phase 3**: ✅ 100% - Core ERP Modules
 - **Phase 4**: ✅ 100% - Advanced Features
-- **Phase 5**: ✅ 100% - Production Ready
-- **Phase 6**: ✅ 100% - Advanced ERP Features (Purchase Orders, Invoicing, Payments, Accounting, Real-time Updates, Advanced Inventory)
+- **Phase 5**: ✅ 100% - Performance & Security
+- **Phase 6**: ⏳ 62.5% - Advanced ERP Features (5/8 modules complete)
 
-**Overall**: ✅ 100% Complete - Full-Featured ERP System!
+**Overall**: ⏳ ~85% Complete - Core ERP Functional, Advanced Features In Progress
 
-## ✨ New in Phase 6
+**See `.kiro/steering/feature-status.md` for detailed feature tracking**
 
-### 🧮 Accounting System
+## ✨ Latest Features (Phase 6)
+
+### ✅ Fully Functional
+
+#### 🧮 Accounting System
 - **Double-entry Bookkeeping** - Full accounting with balanced entries
 - **Chart of Accounts** - 30+ default accounts (Assets, Liabilities, Equity, Revenue, Expenses)
 - **Journal Entries** - Create and post journal entries with validation
 - **Trial Balance** - Real-time trial balance report
 - **Account Ledger** - View transaction history by account
 
-### 🔔 Real-time Updates
+#### 🔔 Real-time Updates
 - **WebSocket Integration** - STOMP over SockJS for live updates
-- **Live Notifications** - Real-time alerts for orders, stock, invoices, payments
+- **Live Notifications** - Real-time alerts for orders, stock changes
 - **Connection Indicator** - Visual status in sidebar
-- **Automatic Toasts** - Instant feedback for all events
+- **Automatic Toasts** - Instant feedback for events
 
-### 📦 Advanced Inventory
-- **Stock Adjustments** - INCREASE, DECREASE, RECOUNT with reason tracking
-- **Batch/Lot Tracking** - Track products by batch with expiry dates
-- **Serial Numbers** - Individual serial number tracking
-- **Multi-warehouse** - Support for multiple warehouse locations
-- **Stock Transfers** - Inter-warehouse transfer workflow
-
-### 💼 Business Management
+#### 💼 Business Management
 - **Purchase Orders** - Full procurement workflow with stock receiving
 - **Invoicing** - Multi-line invoices with payment tracking
 - **Payments** - Record payments with invoice allocation
 - **User Management** - User CRUD with role-based permissions
 - **Company Settings** - Multi-company support
+
+#### 📦 Basic Inventory
+- **Stock Adjustments** - INCREASE, DECREASE, RECOUNT with reason tracking
+
+### 🔶 Infrastructure Only (Coming Soon)
+
+These features have database tables and entities created, but are **not yet functional**:
+- **Batch/Lot Tracking** - Needs: Repository, Service, Controller, UI
+- **Serial Numbers** - Needs: Entity, Repository, Service, Controller, UI
+- **Multi-warehouse** - Needs: Entity, Service integration, UI
+- **Stock Transfers** - Needs: Repository, Service, Controller, UI
+- **Email Notifications** - Needs: Templates, Integration with modules
 
 ## 🔧 Development
 
@@ -206,10 +216,12 @@ cd frontend && npm install && npm run dev
 - **All Phases**: `docs/phases/` - Complete phase documentation
 
 ### Project Guidelines
-- **Recovery Plan**: `.kiro/steering/recovery-plan.md` - Complete implementation roadmap
+- **Feature Status**: `.kiro/steering/feature-status.md` - **Honest feature tracking (source of truth)**
 - **Development Guide**: `.kiro/steering/development-guide.md` - Development workflow
 - **Tech Stack**: `.kiro/steering/tech.md` - Technology stack details
 - **Testing Guide**: `.kiro/steering/testing.md` - E2E testing with Playwright
+- **Product Overview**: `.kiro/steering/product.md` - Product description
+- **Project Structure**: `.kiro/steering/structure.md` - Repository organization
 
 ## 🧪 Testing
 
@@ -234,7 +246,7 @@ cd frontend && npm install && npm run dev
 
 ## 🗺️ Roadmap
 
-### ✅ Completed (Phases 0-6)
+### ✅ Fully Functional (15 Modules)
 
 **Core ERP Features:**
 - [x] Product Management
@@ -252,18 +264,22 @@ cd frontend && npm install && npm run dev
 **Advanced Features:**
 - [x] User & Company Management
 - [x] Basic Accounting (Double-entry, Chart of Accounts, Journal Entries, Trial Balance)
-- [x] Email Notifications Infrastructure
 - [x] WebSocket Real-time Updates
-- [x] Advanced Inventory (Stock Adjustments, Batch Tracking, Multi-warehouse)
-- [x] Performance Optimization (Caching, Indexes)
-- [x] Security Hardening (Rate Limiting, Audit Logging)
-- [x] Testing & Documentation
-- [x] Production Ready
+- [x] Stock Adjustments
 
-### 🚀 Future Enhancements (Optional)
-- [ ] Complete Batch/Lot Tracking UI
-- [ ] Serial Number Management UI
-- [ ] Stock Transfer Workflow
+### 🔶 Infrastructure Only (Not Yet Functional)
+- [ ] Email Notifications (service exists, needs templates & integration)
+- [ ] Batch/Lot Tracking (database + entity only)
+- [ ] Serial Number Tracking (database only)
+- [ ] Stock Transfers (database + entities only)
+- [ ] Multi-warehouse Support (database only)
+
+### 🚀 Planned Features
+- [ ] Complete Batch/Lot Tracking (Repository, Service, Controller, UI)
+- [ ] Complete Serial Number Tracking (Entity, Repository, Service, Controller, UI)
+- [ ] Complete Stock Transfer Workflow (Repository, Service, Controller, UI)
+- [ ] Complete Multi-warehouse Integration (Entity, Service, UI)
+- [ ] Complete Email Notifications (Templates, Integration)
 - [ ] Financial Statements (P&L, Balance Sheet)
 - [ ] Automatic Journal Entries from Transactions
 - [ ] Mobile App (React Native)
@@ -271,6 +287,8 @@ cd frontend && npm install && npm run dev
 - [ ] Advanced Analytics with ML
 - [ ] Manufacturing Module (MRP)
 - [ ] HR Management Module
+
+**See `.kiro/steering/feature-status.md` for detailed status of each feature**
 
 See `.kiro/steering/recovery-plan.md` for complete roadmap.
 
