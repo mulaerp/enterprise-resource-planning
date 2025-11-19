@@ -22,7 +22,7 @@ export default function Layout({ children }: LayoutProps) {
     { path: '/products', icon: Package, label: 'Products' },
     { path: '/customers', icon: Users, label: 'Customers' },
     { path: '/suppliers', icon: Package, label: 'Suppliers' },
-    { path: '/sales', icon: ShoppingCart, label: 'Sales' },
+    { path: '/sales-orders', icon: ShoppingCart, label: 'Sales Orders' },
     { path: '/invoices', icon: FileText, label: 'Invoices' },
   ];
 

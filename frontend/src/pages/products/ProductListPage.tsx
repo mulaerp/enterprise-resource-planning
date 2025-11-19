@@ -1,8 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Plus, Search, Edit, Trash2, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Edit, Trash2, AlertCircle } from 'lucide-react';
 import api from '../../lib/api';
 import Layout from '../../components/Layout';
+import {
+  DataTable,
+  SearchInput,
+  Button,
+  Badge,
+  Modal,
+  ModalFooter,
+  useToast,
+  type Column,
+} from '../../components/ui';
 
 interface Product {
   id: string;
@@ -16,179 +26,220 @@ interface Product {
 }
 
 export default function ProductListPage() {
+  const navigate = useNavigate();
+  const toast = useToast();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [sortBy, setSortBy] = useState('name');
+  const [sortDir, setSortDir] = useState<'ASC' | 'DESC'>('ASC');
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    productId: string | null;
+    productName: string | null;
+  }>({
+    isOpen: false,
+    productId: null,
+    productName: null,
+  });
 
   useEffect(() => {
     fetchProducts();
-  }, [page, search]);
+  }, [page, search, sortBy, sortDir]);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const params: any = { page, size: 10 };
-      if (search) params.search = search;
-      
-      const response = await api.get('/products', { params });
+      const params = new URLSearchParams({
+        page: page.toString(),
+        size: '10',
+        sortBy,
+        sortDir,
+      });
+      if (search) params.append('search', search);
+
+      const response = await api.get(`/products?${params}`);
       setProducts(response.data.content);
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error('Failed to fetch products:', error);
+      toast.error('Failed to load products');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
-    
+  const handleDelete = async () => {
+    if (!deleteModal.productId) return;
+
     try {
-      await api.delete(`/products/${id}`);
+      await api.delete(`/products/${deleteModal.productId}`);
+      toast.success(`Product "${deleteModal.productName}" deleted successfully`);
+      closeDeleteModal();
       fetchProducts();
     } catch (error) {
       console.error('Failed to delete product:', error);
-      alert('Failed to delete product');
+      toast.error('Failed to delete product');
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPage(0);
-    fetchProducts();
+  const openDeleteModal = (product: Product) => {
+    setDeleteModal({
+      isOpen: true,
+      productId: product.id,
+      productName: product.name,
+    });
   };
+
+  const closeDeleteModal = () => {
+    setDeleteModal({
+      isOpen: false,
+      productId: null,
+      productName: null,
+    });
+  };
+
+  const columns: Column<Product>[] = [
+    {
+      key: 'sku',
+      header: 'SKU',
+      sortable: true,
+      render: (product) => <span className="font-medium text-gray-900">{product.sku}</span>,
+    },
+    {
+      key: 'name',
+      header: 'Name',
+      sortable: true,
+    },
+    {
+      key: 'categoryName',
+      header: 'Category',
+      render: (product) => (
+        <span className="text-gray-500">{product.categoryName || '-'}</span>
+      ),
+    },
+    {
+      key: 'unitPrice',
+      header: 'Price',
+      sortable: true,
+      render: (product) => `$${product.unitPrice.toFixed(2)}`,
+    },
+    {
+      key: 'stockQuantity',
+      header: 'Stock',
+      sortable: true,
+      render: (product) => (
+        <div className="flex items-center gap-1">
+          <span className={product.stockQuantity <= product.reorderLevel ? 'text-red-600 font-medium' : ''}>
+            {product.stockQuantity}
+          </span>
+          {product.stockQuantity <= product.reorderLevel && (
+            <span title="Low stock">
+              <AlertCircle size={16} className="text-red-500" />
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (product) => (
+        <Badge variant={product.status === 'ACTIVE' ? 'success' : 'default'}>
+          {product.status}
+        </Badge>
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      className: 'text-right',
+      render: (product) => (
+        <div className="flex items-center justify-end gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/products/${product.id}/edit`);
+            }}
+            className="text-indigo-600 hover:text-indigo-900 p-1"
+            title="Edit"
+          >
+            <Edit className="w-5 h-5" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              openDeleteModal(product);
+            }}
+            className="text-red-600 hover:text-red-900 p-1"
+            title="Delete"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <Layout>
-      <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Products</h1>
-        <Link
-          to="/products/new"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
-        >
-          <Plus size={20} />
-          Add Product
-        </Link>
-      </div>
-
-      <form onSubmit={handleSearch} className="mb-6">
-        <div className="flex gap-2">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search by name or SKU..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button
-            type="submit"
-            className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
-          >
-            Search
-          </button>
+      <div className="p-6 space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-gray-900">Products</h1>
+          <Button onClick={() => navigate('/products/new')} icon={<Plus className="w-5 h-5" />}>
+            Add Product
+          </Button>
         </div>
-      </form>
 
-      {loading ? (
-        <div className="text-center py-12">Loading...</div>
-      ) : (
-        <>
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">SKU</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {products.map((product) => (
-                  <tr key={product.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {product.sku}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {product.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {product.categoryName || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${product.unitPrice.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex items-center gap-1">
-                        {product.stockQuantity}
-                        {product.stockQuantity <= product.reorderLevel && (
-                          <AlertCircle size={16} className="text-red-500" />
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        product.status === 'ACTIVE' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {product.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex gap-2">
-                        <Link
-                          to={`/products/${product.id}/edit`}
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          <Edit size={18} />
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(product.id)}
-                          className="text-red-600 hover:text-red-800"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="space-y-4">
+          <SearchInput
+            placeholder="Search by name or SKU..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(0);
+            }}
+          />
 
-          {totalPages > 1 && (
-            <div className="mt-4 flex justify-center gap-2">
-              <button
-                onClick={() => setPage(p => Math.max(0, p - 1))}
-                disabled={page === 0}
-                className="px-4 py-2 border rounded-lg disabled:opacity-50"
-              >
-                Previous
-              </button>
-              <span className="px-4 py-2">
-                Page {page + 1} of {totalPages}
-              </span>
-              <button
-                onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                disabled={page >= totalPages - 1}
-                className="px-4 py-2 border rounded-lg disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </>
-      )}
+          <DataTable
+            data={products}
+            columns={columns}
+            keyExtractor={(product) => product.id}
+            loading={loading}
+            emptyMessage="No products found. Create your first product!"
+            pagination={{
+              currentPage: page,
+              totalPages,
+              onPageChange: setPage,
+            }}
+            sorting={{
+              sortBy,
+              sortDir,
+              onSortChange: (newSortBy, newSortDir) => {
+                setSortBy(newSortBy);
+                setSortDir(newSortDir);
+              },
+            }}
+          />
+        </div>
+
+        {/* Delete Confirmation Modal */}
+        <Modal isOpen={deleteModal.isOpen} onClose={closeDeleteModal} title="Delete Product" size="sm">
+          <p className="text-gray-600">
+            Are you sure you want to delete <strong>{deleteModal.productName}</strong>? This action
+            cannot be undone.
+          </p>
+          <ModalFooter>
+            <Button variant="ghost" onClick={closeDeleteModal}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDelete}>
+              Delete
+            </Button>
+          </ModalFooter>
+        </Modal>
       </div>
     </Layout>
   );

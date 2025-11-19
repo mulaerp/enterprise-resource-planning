@@ -107,25 +107,47 @@ npm run dev
   - User profile display
   - Route protection
 
+### Phase 2 ✅ Complete
+- ✅ **Customer Management (CRM)**
+  - Complete CRUD operations
+  - Credit limit tracking
+  - Search and pagination
+  - Contact management (entity ready)
+- ✅ **Supplier Management**
+  - Complete CRUD operations
+  - Payment terms tracking
+  - Search and pagination
+  - Contact management (entity ready)
+
+### Phase 3 ✅ Complete
+- ✅ **Sales Order Management**
+  - Complete CRUD operations
+  - Multi-line item support
+  - Status workflow (DRAFT → CONFIRMED → DELIVERED → INVOICED)
+  - Automatic calculations (subtotal, tax, total)
+  - Customer and product integration
+  - Order detail view with status management
+  - Search by order number or customer
+
 ## 🗺️ Roadmap
 
-### Phase 2 (Next)
-- [ ] Customer Management (CRM)
-- [ ] Supplier Management
-- [ ] Sales Orders Module
-- [ ] UI Component Library
-
-### Phase 3
-- [ ] Purchase Orders
-- [ ] Invoicing
+### Phase 4 (Next)
+- [ ] Purchase Orders Module
+- [ ] Invoicing Module
 - [ ] Payment Management
 - [ ] Dashboard Analytics
 
-### Phase 4
+### Phase 5
 - [ ] Reporting System
 - [ ] Basic Accounting
 - [ ] Notifications & Alerts
+- [ ] Stock Movement Tracking
+
+### Phase 6
 - [ ] Advanced Features
+- [ ] Performance Optimization
+- [ ] Security Hardening
+- [ ] Production Deployment
 
 See `.kiro/steering/recovery-plan.md` for the complete roadmap.
 
@@ -154,14 +176,43 @@ JWT_SECRET=your-super-secret-jwt-key-change-in-production-min-32-chars
 - `GET /api/v1/products/categories` - List categories
 - `GET /api/v1/products/low-stock` - Get low stock products
 
+### Customers
+- `GET /api/v1/customers` - List customers (with pagination, search)
+- `GET /api/v1/customers/{id}` - Get customer by ID
+- `POST /api/v1/customers` - Create customer
+- `PUT /api/v1/customers/{id}` - Update customer
+- `DELETE /api/v1/customers/{id}` - Delete customer (soft delete)
+
+### Suppliers
+- `GET /api/v1/suppliers` - List suppliers (with pagination, search)
+- `GET /api/v1/suppliers/{id}` - Get supplier by ID
+- `POST /api/v1/suppliers` - Create supplier
+- `PUT /api/v1/suppliers/{id}` - Update supplier
+- `DELETE /api/v1/suppliers/{id}` - Delete supplier (soft delete)
+
+### Sales Orders
+- `GET /api/v1/sales-orders` - List sales orders (with pagination, search)
+- `GET /api/v1/sales-orders/{id}` - Get sales order with details
+- `POST /api/v1/sales-orders` - Create sales order
+- `PUT /api/v1/sales-orders/{id}` - Update sales order (draft only)
+- `DELETE /api/v1/sales-orders/{id}` - Delete sales order (draft only)
+- `PATCH /api/v1/sales-orders/{id}/status` - Update order status
+
 ### Health
 - `GET /api/v1/health` - Service health check
 
 ## 🧪 Testing
 
-### Quick Test Script
+### Validation Scripts
 ```bash
+# Test all phases (0, 1, 2, 3)
+./validate-phases.sh
+
+# Test Phase 1 only
 ./test-phase1.sh
+
+# Test Phase 3 only
+./test-phase3.sh
 ```
 
 ### Manual Testing
@@ -203,6 +254,8 @@ curl -X POST http://localhost:8080/api/v1/products \
 
 - **Phase 0 Complete**: `PHASE_0_COMPLETE.md`
 - **Phase 1 Complete**: `PHASE_1_COMPLETE.md`
+- **Phase 2 Complete**: `PHASE_2_COMPLETE.md`
+- **Phase 3 Complete**: `PHASE_3_COMPLETE.md`
 - **Development Guide**: `.kiro/steering/development-guide.md`
 - **Recovery Plan**: `.kiro/steering/recovery-plan.md`
 - **Tech Stack**: `.kiro/steering/tech.md`
