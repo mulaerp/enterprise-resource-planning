@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
- *     https://github.com/cc8t/mula-erp/blob/main/LICENSE
+ *     https://github.com/mulaerp/enterprise-resource-planning/blob/main/LICENSE
  * 
  * Change Date: 2029-01-19
  * Change License: GNU General Public License v3.0 or later
