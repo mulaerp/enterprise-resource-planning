@@ -38,6 +38,12 @@ const JournalEntryFormPage = lazy(() => import('./pages/accounting/JournalEntryF
 const TrialBalancePage = lazy(() => import('./pages/accounting/TrialBalancePage'));
 const StockAdjustmentListPage = lazy(() => import('./pages/inventory/StockAdjustmentListPage'));
 const StockAdjustmentFormPage = lazy(() => import('./pages/inventory/StockAdjustmentFormPage'));
+const BatchListPage = lazy(() => import('./pages/inventory/BatchListPage'));
+const BatchFormPage = lazy(() => import('./pages/inventory/BatchFormPage'));
+const SerialListPage = lazy(() => import('./pages/inventory/SerialListPage'));
+const SerialFormPage = lazy(() => import('./pages/inventory/SerialFormPage'));
+const StockTransferListPage = lazy(() => import('./pages/inventory/StockTransferListPage'));
+const StockTransferFormPage = lazy(() => import('./pages/inventory/StockTransferFormPage'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -96,6 +102,15 @@ function App() {
               <Route path="/accounting/trial-balance" element={<TrialBalancePage />} />
               <Route path="/inventory/adjustments" element={<StockAdjustmentListPage />} />
               <Route path="/inventory/adjustments/new" element={<StockAdjustmentFormPage />} />
+              <Route path="/inventory/batches" element={<BatchListPage />} />
+              <Route path="/inventory/batches/new" element={<BatchFormPage />} />
+              <Route path="/inventory/batches/:id/edit" element={<BatchFormPage />} />
+              <Route path="/inventory/serials" element={<SerialListPage />} />
+              <Route path="/inventory/serials/new" element={<SerialFormPage />} />
+              <Route path="/inventory/serials/:id/edit" element={<SerialFormPage />} />
+              <Route path="/inventory/transfers" element={<StockTransferListPage />} />
+              <Route path="/inventory/transfers/new" element={<StockTransferFormPage />} />
+              <Route path="/inventory/transfers/:id" element={<StockTransferFormPage />} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Routes>
             </Suspense>
