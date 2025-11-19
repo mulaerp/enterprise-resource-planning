@@ -14,13 +14,25 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Client-side validation
+    if (!email) {
+      setError('Email is required');
+      return;
+    }
+    if (!password) {
+      setError('Password is required');
+      return;
+    }
+
     setLoading(true);
 
     try {
       await login(email, password);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      const errorMessage = err.response?.data?.message || 'Invalid credentials. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -47,10 +59,10 @@ export default function LoginPage() {
             </div>
           </div>
           <h2 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Mula ERP System
+            Sign In
           </h2>
           <p className="mt-3 text-lg text-gray-600 font-medium">
-            Enterprise Resource Planning
+            Mula ERP - Enterprise Resource Planning
           </p>
         </div>
 
