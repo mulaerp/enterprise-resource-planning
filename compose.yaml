@@ -2,29 +2,26 @@ services:
   # Frontend - React Application
   frontend:
     build:
-      context: ./mula-erp-frontend
-      dockerfile: Dockerfile.frontend.dev
-      args:
-        VITE_BASE_URL: /
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "5172:5173"
+      - "5173:5173"
     volumes:
-      - ./mula-erp-frontend/dist:/app/dist
+      - ./frontend:/app
+      - /app/node_modules
     environment:
-      - VITE_API_BASE_URL=http://backend:8080
-      - VITE_CAS_BASE_URL=https://app.penril.net/pineapple-backend
-      - NODE_ENV=production
-      - VITE_BASE_URL=/
+      - VITE_API_BASE_URL=http://localhost:8080
     networks:
       - mulaerp-network
     restart: unless-stopped
+    command: npm run dev -- --host
 
 
   # Backend - Java Spring Boot Application
   backend:
     build:
-      context: ./mula-erp-backend
-      dockerfile: Dockerfile.backend
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -36,10 +33,7 @@ services:
       - REDIS_HOST=valkey
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
-      - CAS_BASE_URL=https://app.penril.net/pineapple-backend
-      - CAS_ADMIN_TOKEN=${CAS_ADMIN_TOKEN:-your-cas-admin-token}
-      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
-      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-your-32-char-encryption-key-here}
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production-min-32-chars}
     depends_on:
       postgres:
         condition: service_healthy
@@ -50,7 +44,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./logs/backend:/app/logs
-      - ./config:/app/config:ro
 
   # PostgreSQL Database (RDS Compatible)
   postgres:
@@ -66,8 +59,7 @@ services:
       - mulaerp-network
     restart: unless-stopped
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data
-      - ./init-scripts:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U mulaerp -d mulaerp"]
       interval: 10s
@@ -93,7 +85,7 @@ services:
       - mulaerp-network
     restart: unless-stopped
     volumes:
-      - ./valkey_data:/data
+      - valkey-data:/data
     environment:
       - VALKEY_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
     healthcheck:
@@ -103,22 +95,21 @@ services:
       retries: 5
       start_period: 10s
 
-  # Nginx Reverse Proxy
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
-      - ./logs/nginx:/var/log/nginx
-      - ./mula-erp-frontend/dist:/usr/share/nginx/html
-    depends_on:
-      - backend
-    networks:
-      - mulaerp-network
-    restart: unless-stopped
+  # Nginx Reverse Proxy (disabled for development, using Vite dev server)
+  # nginx:
+  #   image: nginx:alpine
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./logs/nginx:/var/log/nginx
+  #     - ./frontend/dist:/usr/share/nginx/html
+  #   depends_on:
+  #     - backend
+  #     - frontend
+  #   networks:
+  #     - mulaerp-network
+  #   restart: unless-stopped
 
   # Database Backup Service
   db-backup:
@@ -146,30 +137,26 @@ services:
         done
       "
 
-  # Batch Job Runner
-  batch-runner:
-    build:
-      context: ./mula-erp-backend
-      dockerfile: Dockerfile.batch
-    environment:
-      - SPRING_PROFILES_ACTIVE=batch
-      - DATABASE_URL=jdbc:postgresql://postgres:5432/mulaerp
-      - DATABASE_USERNAME=mulaerp
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-mulaerp123}
-      - REDIS_HOST=valkey
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
-      - BATCH_SCHEDULE=${BATCH_SCHEDULE:-0 2 * * *}
-    depends_on:
-      - postgres
-      - valkey
-      - backend
-    networks:
-      - mulaerp-network
-    restart: unless-stopped
-    volumes:
-      - ./logs/batch:/app/logs
-    command: sh -c "crond -f -d 8 && tail -f /dev/null"
+  # Batch Job Runner (disabled for now, will be implemented later)
+  # batch-runner:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=batch
+  #     - DATABASE_URL=jdbc:postgresql://postgres:5432/mulaerp
+  #     - DATABASE_USERNAME=mulaerp
+  #     - DATABASE_PASSWORD=${DATABASE_PASSWORD:-mulaerp123}
+  #     - REDIS_HOST=valkey
+  #     - REDIS_PORT=6379
+  #     - REDIS_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
+  #   depends_on:
+  #     - postgres
+  #     - valkey
+  #     - backend
+  #   networks:
+  #     - mulaerp-network
+  #   restart: unless-stopped
 
 networks:
   mulaerp-network:
@@ -177,4 +164,8 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/16
+
+volumes:
+  postgres-data:
+  valkey-data:
 

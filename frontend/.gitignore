@@ -7,21 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Dependencies
 node_modules
 dist
 dist-ssr
 *.local
-
-# Java/Maven
-backend/target/
-backend/.mvn/
-backend/mvnw
-backend/mvnw.cmd
-*.class
-*.jar
-*.war
-*.ear
 
 # Editor directories and files
 .vscode/*
@@ -33,14 +22,3 @@ backend/mvnw.cmd
 *.njsproj
 *.sln
 *.sw?
-
-# Environment
-.env
-
-# Database & Cache data
-postgres_data/
-valkey_data/
-postgres_backups/*.sql
-
-# Logs
-logs/

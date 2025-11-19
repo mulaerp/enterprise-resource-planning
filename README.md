@@ -1,66 +1,183 @@
-# Enterprise Resource Planning System
+# Mula ERP - Enterprise Resource Planning System
 
-This project is a full-featured Enterprise Resource Planning (ERP) system, split into three main components: 
+A full-featured Enterprise Resource Planning (ERP) system built with modern technologies.
 
-1. **Frontend** - A modern React application for the user interface
-2. **Backend** - A robust Java Spring Boot application serving the core business logic
-3. **Middleware** - A simple node.js middleware to handle various integrations
+## 🚀 Tech Stack
 
-## Project Structure
+- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS
+- **Backend**: Java Spring Boot 3.2 + PostgreSQL + Spring Security
+- **Cache**: Valkey (Redis fork)
+- **Authentication**: JWT
+- **Database Migrations**: Flyway
+- **Containerization**: Docker + Docker Compose
 
-- **mula-erp-frontend**: React-based frontend
-- **mula-erp-backend**: Java Spring Boot-based backend
-- **mula-erp-middleware**: Node.js middleware
+## 📁 Project Structure (Monorepo)
 
-## Getting Started
+```
+enterprise-resource-planning/
+├── frontend/          # React TypeScript application
+├── backend/           # Spring Boot application
+├── nginx/             # Nginx configuration (production)
+├── postgres_data/     # PostgreSQL data (gitignored)
+├── valkey_data/       # Valkey cache data (gitignored)
+└── compose.yaml       # Docker Compose orchestration
+```
 
-This system uses Docker Compose for container orchestration. Make sure you have Docker and Docker Compose installed on your system.
+## 🏃 Quick Start
 
-### Build and Run
+### Prerequisites
+- Docker and Docker Compose
+- Node.js 20+ (optional, for local development)
+- Java 17+ (optional, for local development)
+
+### Start with Docker
 
 ```bash
+# Start all services
 docker-compose up --build
+
+# Or run in background
+docker-compose up -d
 ```
 
-This command builds and starts all the containers, including:
-- The **Frontend** on port 3000
-- The **Backend** on port 8080
-- A **PostgreSQL** database on port 5432
-- A **Redis Fork (Valkey)** on port 6379
-- An **Nginx** reverse proxy on port 80
+### Access the Application
 
-### Submodules
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:8080
+- **Health Check**: http://localhost:8080/api/v1/health
 
-This project includes several Git submodules:
+### Default Login Credentials
 
-- **[mula-erp-frontend](https://github.com/rexeo-asia/mula-erp-frontend)**
-- **[mula-erp-backend](https://github.com/rexeo-asia/mula-erp-backend)**
-- **[mula-erp-middleware](https://github.com/rexeo-asia/mula-erp-middleware)**
+- **Email**: admin@mulaerp.com
+- **Password**: admin123
 
-Ensure that you have initialized and updated the submodules by running:
+## 🛠️ Local Development (Without Docker)
 
+### Backend
+
+1. Start PostgreSQL and Valkey:
 ```bash
-git submodule update --init --recursive
+docker-compose up postgres valkey -d
 ```
 
-### Environment Variables
+2. Run backend:
+```bash
+cd backend
+mvn spring-boot:run
+```
 
-Some environment variables need to be set for the system to run properly. These can be set in a `.env` file which is read by Docker Compose:
+### Frontend
 
-- **DATABASE_PASSWORD** - Password for the PostgreSQL user
-- **REDIS_PASSWORD** - Password for Redis
-- **JWT_SECRET** - Secret key for JWT
+1. Install dependencies:
+```bash
+cd frontend
+npm install
+```
 
-### Access the Services
+2. Run development server:
+```bash
+npm run dev
+```
 
-- Frontend: `http://localhost:3000`
-- Backend: `http://localhost:8080`
-- Nginx Proxy: `http://localhost`
+## 📊 Current Features (Phase 0 Complete)
 
-## Contributing
+- ✅ User authentication with JWT
+- ✅ Login page
+- ✅ Dashboard (basic)
+- ✅ Database migrations
+- ✅ Docker development environment
+- ✅ CORS configuration
+- ✅ Global exception handling
 
-Feel free to fork and contribute to this project by submitting a pull request.
+## 🗺️ Roadmap
 
-## License
+### Phase 1 (In Progress)
+- [ ] Product & Inventory Management
+- [ ] Customer Management (CRM)
+- [ ] Supplier Management
+- [ ] UI Component Library
+
+### Phase 2
+- [ ] Sales Orders
+- [ ] Purchase Orders
+- [ ] Invoicing
+- [ ] Payment Management
+
+### Phase 3
+- [ ] Dashboard & Analytics
+- [ ] Reporting System
+- [ ] Basic Accounting
+- [ ] Notifications
+
+See `.kiro/steering/recovery-plan.md` for the complete roadmap.
+
+## 🔧 Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+DATABASE_PASSWORD=mulaerp123
+REDIS_PASSWORD=mulaerp-redis-password
+JWT_SECRET=your-super-secret-jwt-key-change-in-production-min-32-chars
+```
+
+## 📚 API Documentation
+
+### Authentication
+- `POST /api/v1/auth/login` - User login
+- `GET /api/v1/auth/me` - Get current user
+
+### Health
+- `GET /api/v1/health` - Service health check
+
+## 🧪 Testing
+
+### Test Backend Health
+```bash
+curl http://localhost:8080/api/v1/health
+```
+
+### Test Login
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@mulaerp.com","password":"admin123"}'
+```
+
+## 📖 Documentation
+
+- **Development Guide**: `.kiro/steering/development-guide.md`
+- **Recovery Plan**: `.kiro/steering/recovery-plan.md`
+- **Tech Stack**: `.kiro/steering/tech.md`
+- **Project Structure**: `.kiro/steering/structure.md`
+
+## 🐛 Common Issues
+
+### Port Already in Use
+Stop other services using ports 5173, 8080, 5432, or 6379.
+
+### Database Connection Error
+Ensure PostgreSQL is running:
+```bash
+docker-compose up postgres -d
+```
+
+### Frontend Can't Connect to Backend
+Check if backend is running and CORS is configured correctly.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
+
+## 📄 License
 
 This project is licensed under the MIT License.
+
+## 🙏 Acknowledgments
+
+- Inspired by [Odoo](https://github.com/odoo/odoo) and [ERPNext](https://github.com/frappe/erpnext)
+- Built with modern open-source technologies
