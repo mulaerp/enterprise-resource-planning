@@ -98,7 +98,7 @@ public class NotificationService {
 
     private NotificationDTO toDTO(Notification notification) {
         return NotificationDTO.builder()
-            .id(notification.getId())
+            .id(notification.getId().toString())
             .type(notification.getType())
             .title(notification.getTitle())
             .message(notification.getMessage())

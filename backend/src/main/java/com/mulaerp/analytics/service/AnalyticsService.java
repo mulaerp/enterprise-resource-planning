@@ -41,7 +41,7 @@ public class AnalyticsService {
             .map(SalesOrder::getTotal)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         
-        LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
         BigDecimal monthlyRevenue = salesOrderRepository.findAll().stream()
             .filter(order -> order.getOrderDate().isAfter(startOfMonth))
             .filter(order -> "CONFIRMED".equals(order.getStatus()) || "DELIVERED".equals(order.getStatus()))
@@ -71,7 +71,7 @@ public class AnalyticsService {
     }
 
     public SalesChartDataDTO getSalesChartData(int days) {
-        LocalDateTime startDate = LocalDateTime.now().minusDays(days);
+        LocalDate startDate = LocalDate.now().minusDays(days);
         List<SalesOrder> recentOrders = salesOrderRepository.findAll().stream()
             .filter(order -> order.getOrderDate().isAfter(startDate))
             .filter(order -> "CONFIRMED".equals(order.getStatus()) || "DELIVERED".equals(order.getStatus()))
@@ -87,12 +87,12 @@ public class AnalyticsService {
             LocalDateTime dayEnd = date.plusDays(1).atStartOfDay();
             
             BigDecimal dayTotal = recentOrders.stream()
-                .filter(order -> order.getOrderDate().isAfter(dayStart) && order.getOrderDate().isBefore(dayEnd))
+                .filter(order -> order.getOrderDate().isAfter(date.minusDays(1)) && order.getOrderDate().isBefore(date.plusDays(1)))
                 .map(SalesOrder::getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
             
             Long dayCount = recentOrders.stream()
-                .filter(order -> order.getOrderDate().isAfter(dayStart) && order.getOrderDate().isBefore(dayEnd))
+                .filter(order -> order.getOrderDate().isAfter(date.minusDays(1)) && order.getOrderDate().isBefore(date.plusDays(1)))
                 .count();
             
             dailySales.add(SalesChartDataDTO.ChartDataPoint.builder()

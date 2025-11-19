@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .headers(headers -> headers
                         .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))
                         .frameOptions(frame -> frame.deny())
-                        .xssProtection(xss -> xss.headerValue("1; mode=block"))
+                        .xssProtection(xss -> xss.headerValue(org.springframework.security.web.header.writers.XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
                         .contentTypeOptions(contentType -> {})
                 )
                 .authorizeHttpRequests(auth -> auth

@@ -37,22 +37,22 @@ public class AuthService {
         
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getRole().name());
         
-        return new LoginResponse(token, UserDto.fromEntity(user));
+        return new LoginResponse(token, UserDTO.fromEntity(user));
     }
     
     @Transactional(readOnly = true)
-    public UserDto getCurrentUser() {
+    public UserDTO getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         
         User user = userRepository.findByEmailAndDeletedFalse(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
-        return UserDto.fromEntity(user);
+        return UserDTO.fromEntity(user);
     }
     
     @Transactional
-    public UserDto createUser(String email, String password, String fullName, User.UserRole role) {
+    public UserDTO createUser(String email, String password, String fullName, User.UserRole role) {
         if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("Email already exists");
         }
@@ -65,6 +65,6 @@ public class AuthService {
         user.setStatus(User.UserStatus.ACTIVE);
         
         user = userRepository.save(user);
-        return UserDto.fromEntity(user);
+        return UserDTO.fromEntity(user);
     }
 }

@@ -174,7 +174,7 @@ class ProductServiceTest {
         // Assert
         verify(productRepository, times(1)).findByIdAndDeletedFalse(productId);
         verify(productRepository, times(1)).save(any(Product.class));
-        assertTrue(testProduct.isDeleted());
+        assertTrue(testProduct.getDeleted());
         assertNotNull(testProduct.getDeletedAt());
     }
 }

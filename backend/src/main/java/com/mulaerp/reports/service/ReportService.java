@@ -26,7 +26,7 @@ public class ReportService {
 
     public SalesReportDTO generateSalesReport(LocalDateTime startDate, LocalDateTime endDate) {
         List<SalesOrder> orders = salesOrderRepository.findAll().stream()
-            .filter(order -> order.getOrderDate().isAfter(startDate) && order.getOrderDate().isBefore(endDate))
+            .filter(order -> order.getOrderDate().isAfter(startDate.toLocalDate()) && order.getOrderDate().isBefore(endDate.toLocalDate()))
             .filter(order -> "CONFIRMED".equals(order.getStatus()) || "DELIVERED".equals(order.getStatus()))
             .collect(Collectors.toList());
 
@@ -43,7 +43,7 @@ public class ReportService {
         Map<String, SalesReportDTO.SalesByProduct> productSales = new HashMap<>();
         for (SalesOrder order : orders) {
             for (SalesOrderItem item : order.getItems()) {
-                String productId = item.getProduct().getId();
+                String productId = item.getProduct().getId().toString();
                 String productName = item.getProduct().getName();
                 
                 productSales.compute(productId, (k, v) -> {
@@ -79,7 +79,7 @@ public class ReportService {
         // Sales by customer
         Map<String, SalesReportDTO.SalesByCustomer> customerSales = new HashMap<>();
         for (SalesOrder order : orders) {
-            String customerId = order.getCustomer().getId();
+            String customerId = order.getCustomer().getId().toString();
             String customerName = order.getCustomer().getName();
             
             customerSales.compute(customerId, (k, v) -> {
@@ -170,10 +170,10 @@ public class ReportService {
                 }
 
                 return InventoryReportDTO.ProductStock.builder()
-                    .productId(p.getId())
+                    .productId(p.getId().toString())
                     .sku(p.getSku())
                     .productName(p.getName())
-                    .category(p.getCategory())
+                    .category(p.getCategory() != null ? p.getCategory().getName() : "Uncategorized")
                     .stockQuantity(p.getStockQuantity())
                     .reorderLevel(p.getReorderLevel())
                     .unitPrice(p.getUnitPrice())
@@ -187,7 +187,7 @@ public class ReportService {
         // Group by category
         Map<String, InventoryReportDTO.CategoryStock> categoryMap = new HashMap<>();
         for (Product p : products) {
-            String category = p.getCategory() != null ? p.getCategory() : "Uncategorized";
+            String category = p.getCategory() != null ? p.getCategory().getName() : "Uncategorized";
             
             categoryMap.compute(category, (k, v) -> {
                 if (v == null) {

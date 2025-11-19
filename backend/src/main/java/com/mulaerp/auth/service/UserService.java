@@ -94,8 +94,9 @@ public class UserService {
         dto.setId(user.getId());
         dto.setEmail(user.getEmail());
         dto.setFullName(user.getFullName());
-        dto.setRole(user.getRole());
-        dto.setStatus(user.getStatus());
+        dto.setRole(user.getRole().name());
+        dto.setStatus(user.getStatus().name());
+        dto.setCompanyId(null);
         dto.setCreatedAt(user.getCreatedAt());
         dto.setUpdatedAt(user.getUpdatedAt());
         return dto;

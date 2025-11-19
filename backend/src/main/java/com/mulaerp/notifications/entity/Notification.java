@@ -35,11 +35,13 @@ public class Notification extends BaseEntity {
     
     private String referenceId;
 
+    @lombok.Builder.Default
     @Column(nullable = false)
     private Boolean isRead = false;
 
     private LocalDateTime readAt;
 
+    @lombok.Builder.Default
     @Column(nullable = false)
     private String priority = "NORMAL"; // LOW, NORMAL, HIGH, URGENT
 }

@@ -4,7 +4,7 @@ import com.mulaerp.auth.dto.LoginRequest;
 import com.mulaerp.auth.dto.LoginResponse;
 import com.mulaerp.auth.entity.User;
 import com.mulaerp.auth.repository.UserRepository;
-import com.mulaerp.auth.security.JwtService;
+import com.mulaerp.auth.security.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +34,7 @@ class AuthServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private JwtService jwtService;
+    private JwtUtil jwtUtil;
 
     @Mock
     private AuthenticationManager authenticationManager;
@@ -50,10 +50,10 @@ class AuthServiceTest {
         testUser = new User();
         testUser.setId(UUID.randomUUID());
         testUser.setEmail("test@mulaerp.com");
-        testUser.setPassword("$2a$10$hashedpassword");
+        testUser.setPasswordHash("$2a$10$hashedpassword");
         testUser.setFullName("Test User");
-        testUser.setRole("USER");
-        testUser.setStatus("ACTIVE");
+        testUser.setRole(User.UserRole.USER);
+        testUser.setStatus(User.UserStatus.ACTIVE);
 
         loginRequest = new LoginRequest();
         loginRequest.setEmail("test@mulaerp.com");
@@ -66,9 +66,9 @@ class AuthServiceTest {
         Authentication authentication = mock(Authentication.class);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
-        when(userRepository.findByEmail(loginRequest.getEmail()))
+        when(userRepository.findByEmailAndDeletedFalse(loginRequest.getEmail()))
                 .thenReturn(Optional.of(testUser));
-        when(jwtService.generateToken(testUser))
+        when(jwtUtil.generateToken(testUser.getEmail(), testUser.getId(), testUser.getRole().name()))
                 .thenReturn("mock-jwt-token");
 
         // Act
@@ -82,8 +82,8 @@ class AuthServiceTest {
         assertEquals("Test User", response.getUser().getFullName());
         
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(userRepository, times(1)).findByEmail(loginRequest.getEmail());
-        verify(jwtService, times(1)).generateToken(testUser);
+        verify(userRepository, times(1)).findByEmailAndDeletedFalse(loginRequest.getEmail());
+        verify(jwtUtil, times(1)).generateToken(anyString(), any(UUID.class), anyString());
     }
 
     @Test
@@ -96,8 +96,8 @@ class AuthServiceTest {
         assertThrows(BadCredentialsException.class, () -> authService.login(loginRequest));
         
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(userRepository, never()).findByEmail(any());
-        verify(jwtService, never()).generateToken(any());
+        verify(userRepository, never()).findByEmailAndDeletedFalse(any());
+        verify(jwtUtil, never()).generateToken(anyString(), any(), anyString());
     }
 
     @Test
@@ -106,14 +106,14 @@ class AuthServiceTest {
         Authentication authentication = mock(Authentication.class);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
-        when(userRepository.findByEmail(loginRequest.getEmail()))
+        when(userRepository.findByEmailAndDeletedFalse(loginRequest.getEmail()))
                 .thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(RuntimeException.class, () -> authService.login(loginRequest));
         
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(userRepository, times(1)).findByEmail(loginRequest.getEmail());
-        verify(jwtService, never()).generateToken(any());
+        verify(userRepository, times(1)).findByEmailAndDeletedFalse(loginRequest.getEmail());
+        verify(jwtUtil, never()).generateToken(anyString(), any(), anyString());
     }
 }

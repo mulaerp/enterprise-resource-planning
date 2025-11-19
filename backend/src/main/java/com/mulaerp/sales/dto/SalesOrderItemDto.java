@@ -23,8 +23,8 @@ public class SalesOrderItemDto {
 
     public static SalesOrderItemDto fromEntity(SalesOrderItem item) {
         SalesOrderItemDto dto = new SalesOrderItemDto();
-        dto.setId(item.getId());
-        dto.setProductId(item.getProduct().getId());
+        dto.setId(item.getId().toString());
+        dto.setProductId(item.getProduct().getId().toString());
         dto.setProductName(item.getProduct().getName());
         dto.setProductSku(item.getProduct().getSku());
         dto.setQuantity(item.getQuantity());

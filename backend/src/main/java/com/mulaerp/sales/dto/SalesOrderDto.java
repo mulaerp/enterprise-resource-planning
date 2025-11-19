@@ -32,9 +32,9 @@ public class SalesOrderDto {
 
     public static SalesOrderDto fromEntity(SalesOrder order) {
         SalesOrderDto dto = new SalesOrderDto();
-        dto.setId(order.getId());
+        dto.setId(order.getId().toString());
         dto.setOrderNumber(order.getOrderNumber());
-        dto.setCustomerId(order.getCustomer().getId());
+        dto.setCustomerId(order.getCustomer().getId().toString());
         dto.setCustomerName(order.getCustomer().getName());
         dto.setOrderDate(order.getOrderDate());
         dto.setDeliveryDate(order.getDeliveryDate());

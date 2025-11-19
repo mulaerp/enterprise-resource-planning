@@ -3,6 +3,9 @@ package com.mulaerp.common.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -14,6 +17,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
@@ -37,6 +43,7 @@ public abstract class BaseEntity {
     @LastModifiedBy
     private String updatedBy;
     
+    @lombok.Builder.Default
     @Column(nullable = false)
     private Boolean deleted = false;
     
