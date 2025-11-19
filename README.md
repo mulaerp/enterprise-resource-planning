@@ -198,30 +198,23 @@ cd frontend && npm install && npm run dev
 
 ## 📚 Documentation
 
-### User Documentation
-- **User Manual**: `docs/USER_MANUAL.md` - Complete user guide
-- **Quick Reference**: `QUICK_REFERENCE.md` - Common commands and tasks
-- **Production Ready**: `PRODUCTION_READY.md` - Production readiness summary
+**Documentation Index:** [`docs/README.md`](docs/README.md)
 
-### Technical Documentation
-- **Deployment Guide**: `docs/DEPLOYMENT_GUIDE.md` - Production deployment instructions
-- **Architecture**: `docs/ARCHITECTURE.md` - System architecture and design
-- **API Documentation**: `docs/API_DOCUMENTATION.md` - REST API reference
-- **Interactive API Docs**: http://localhost:8080/swagger-ui.html
+### Essential Docs
+- **[User Manual](docs/USER_MANUAL.md)** - How to use the system
+- **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)** - How to deploy
+- **[Architecture](docs/ARCHITECTURE.md)** - System design
+- **[API Docs](docs/API_DOCUMENTATION.md)** - REST API reference
 
-### Phase Documentation
-- **Phase 6 Complete**: `docs/phases/PHASE_6_COMPLETE.md` - Latest features (Accounting, WebSocket, Inventory)
-- **Phase 6 Installation**: `PHASE_6_INSTALLATION.md` - Setup guide for Phase 6 features
-- **Phase 6 Quick Reference**: `PHASE_6_QUICK_REFERENCE.md` - Quick reference for new features
-- **All Phases**: `docs/phases/` - Complete phase documentation
+### Project Status
+- **[Feature Status](.kiro/steering/feature-status.md)** - ⭐ Source of truth
+- **[Roadmap](.kiro/steering/roadmap.md)** - Path to v1.0.0
+- **[Phase History](docs/phases/)** - What was completed when
 
-### Project Guidelines
-- **Feature Status**: `.kiro/steering/feature-status.md` - **Honest feature tracking (source of truth)**
-- **Development Guide**: `.kiro/steering/development-guide.md` - Development workflow
-- **Tech Stack**: `.kiro/steering/tech.md` - Technology stack details
-- **Testing Guide**: `.kiro/steering/testing.md` - E2E testing with Playwright
-- **Product Overview**: `.kiro/steering/product.md` - Product description
-- **Project Structure**: `.kiro/steering/structure.md` - Repository organization
+### Development
+- **[Development Guide](.kiro/steering/development-guide.md)** - How to develop
+- **[Tech Stack](.kiro/steering/tech.md)** - Technologies used
+- **[Testing Guide](.kiro/steering/testing.md)** - How to test
 
 ## 🧪 Testing
 
