@@ -1,293 +1,171 @@
 # Mula ERP - Enterprise Resource Planning System
 
-A full-featured Enterprise Resource Planning (ERP) system built with modern technologies.
+A modern, full-featured ERP system built with React, Spring Boot, and PostgreSQL.
 
-## 🚀 Tech Stack
-
-- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS
-- **Backend**: Java Spring Boot 3.2 + PostgreSQL + Spring Security
-- **Cache**: Valkey (Redis fork)
-- **Authentication**: JWT
-- **Database Migrations**: Flyway
-- **Containerization**: Docker + Docker Compose
-
-## 📁 Project Structure (Monorepo)
-
-```
-enterprise-resource-planning/
-├── frontend/          # React TypeScript application
-├── backend/           # Spring Boot application
-├── nginx/             # Nginx configuration (production)
-├── postgres_data/     # PostgreSQL data (gitignored)
-├── valkey_data/       # Valkey cache data (gitignored)
-└── compose.yaml       # Docker Compose orchestration
-```
-
-## 🏃 Quick Start
-
-### Prerequisites
-- Docker and Docker Compose
-- Node.js 20+ (optional, for local development)
-- Java 17+ (optional, for local development)
-
-### Start with Docker
+## 🚀 Quick Start
 
 ```bash
 # Start all services
-docker-compose up --build
+docker compose up --build
 
-# Or run in background
-docker-compose up -d
+# Access the application
+# Frontend: http://localhost:5173
+# Backend API: http://localhost:8080
 ```
 
-### Access the Application
+**Default Login**: `admin@mulaerp.com` / `admin123`
 
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8080
-- **Health Check**: http://localhost:8080/api/v1/health
+## 📁 Project Structure
 
-### Default Login Credentials
-
-- **Email**: admin@mulaerp.com
-- **Password**: admin123
-
-## 🛠️ Local Development (Without Docker)
-
-### Backend
-
-1. Start PostgreSQL and Valkey:
-```bash
-docker-compose up postgres valkey -d
+```
+enterprise-resource-planning/
+├── README.md              # This file
+├── compose.yaml           # Docker Compose configuration
+├── .env.example           # Environment variables template
+│
+├── frontend/              # React + TypeScript + Vite
+├── backend/               # Java Spring Boot + PostgreSQL
+│
+├── docs/                  # 📚 Documentation
+│   ├── phases/           # Phase completion documents
+│   └── guides/           # Development guides
+│
+├── scripts/               # 🔧 Utility scripts
+│   ├── start-dev.sh      # Start development environment
+│   ├── validate-phases.sh # Validate all phases
+│   └── test-*.sh         # Test scripts
+│
+├── docker/                # 🐳 Docker configurations
+│   ├── nginx/            # Nginx reverse proxy config
+│   └── init-scripts/     # Database initialization
+│
+└── .kiro/                 # Kiro IDE configuration
+    └── steering/         # Project guidelines
 ```
 
-2. Run backend:
-```bash
-cd backend
-mvn spring-boot:run
-```
+## 🎨 Tech Stack
 
-### Frontend
-
-1. Install dependencies:
-```bash
-cd frontend
-npm install
-```
-
-2. Run development server:
-```bash
-npm run dev
-```
+- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS v4
+- **Backend**: Java Spring Boot 3.2 + PostgreSQL 16
+- **Cache**: Valkey 7.2 (Redis fork)
+- **Auth**: JWT with Spring Security
+- **Migrations**: Flyway
+- **Container**: Docker + Docker Compose
 
 ## 📊 Current Features
 
-### Phase 0 ✅ Complete
-- ✅ User authentication with JWT
-- ✅ Login page
-- ✅ Dashboard with navigation
-- ✅ Database migrations
-- ✅ Docker development environment
-- ✅ CORS configuration
-- ✅ Global exception handling
+### ✅ Completed Modules
+1. **Product Management** - Full CRUD, categories, low stock tracking
+2. **Customer Management** - Full CRUD, credit limits
+3. **Supplier Management** - Full CRUD, payment terms
+4. **Sales Orders** - Multi-line items, status workflow, calculations
 
-### Phase 1 ✅ Complete
-- ✅ **Product Management Module**
-  - Complete CRUD operations
-  - Search and pagination
-  - Low stock indicators
-  - Category management
-  - Responsive UI
-- ✅ **Database Schema** (20 tables created)
-  - Products & Inventory
-  - Customers & Suppliers
-  - Sales & Purchase Orders
-  - Invoices & Payments
-- ✅ **Application Layout**
-  - Sidebar navigation
-  - User profile display
-  - Route protection
+### 🎨 UI Component Library
+- 14 reusable components (DataTable, Modal, Toast, Forms, etc.)
+- Modern gradient design with purple/pink/blue theme
+- Professional UX with animations and transitions
 
-### Phase 2 ✅ Complete
-- ✅ **Customer Management (CRM)**
-  - Complete CRUD operations
-  - Credit limit tracking
-  - Search and pagination
-  - Contact management (entity ready)
-- ✅ **Supplier Management**
-  - Complete CRUD operations
-  - Payment terms tracking
-  - Search and pagination
-  - Contact management (entity ready)
+### 📈 Progress
+- **Phase 0**: ✅ 100% - Foundation
+- **Phase 1**: ✅ 90% - Core Infrastructure
+- **Phase 2**: ✅ 90% - Frontend Foundation
+- **Phase 3**: ⚠️ 25% - ERP Modules (4 of 8 complete)
 
-### Phase 3 ✅ Complete
-- ✅ **Sales Order Management**
-  - Complete CRUD operations
-  - Multi-line item support
-  - Status workflow (DRAFT → CONFIRMED → DELIVERED → INVOICED)
-  - Automatic calculations (subtotal, tax, total)
-  - Customer and product integration
-  - Order detail view with status management
-  - Search by order number or customer
+**Overall**: 65% Complete
 
-## 🗺️ Roadmap
+## 🔧 Development
 
-### Phase 4 (Next)
-- [ ] Purchase Orders Module
-- [ ] Invoicing Module
-- [ ] Payment Management
-- [ ] Dashboard Analytics
+### Prerequisites
+- Docker and Docker Compose
+- Node.js 20+ (optional, for local dev)
+- Java 17+ (optional, for local dev)
 
-### Phase 5
-- [ ] Reporting System
-- [ ] Basic Accounting
-- [ ] Notifications & Alerts
-- [ ] Stock Movement Tracking
+### Environment Setup
 
-### Phase 6
-- [ ] Advanced Features
-- [ ] Performance Optimization
-- [ ] Security Hardening
-- [ ] Production Deployment
-
-See `.kiro/steering/recovery-plan.md` for the complete roadmap.
-
-## 🔧 Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-DATABASE_PASSWORD=mulaerp123
-REDIS_PASSWORD=mulaerp-redis-password
-JWT_SECRET=your-super-secret-jwt-key-change-in-production-min-32-chars
+1. **Copy environment template**:
+```bash
+cp .env.example .env
 ```
 
-## 📚 API Documentation
+2. **Start services**:
+```bash
+docker compose up --build
+```
 
-### Authentication
-- `POST /api/v1/auth/login` - User login
-- `GET /api/v1/auth/me` - Get current user
+3. **Run validation**:
+```bash
+./scripts/validate-phases.sh
+```
 
-### Products
-- `GET /api/v1/products` - List products (with pagination, search, sorting)
-- `GET /api/v1/products/{id}` - Get product by ID
-- `POST /api/v1/products` - Create product
-- `PUT /api/v1/products/{id}` - Update product
-- `DELETE /api/v1/products/{id}` - Delete product (soft delete)
-- `GET /api/v1/products/categories` - List categories
-- `GET /api/v1/products/low-stock` - Get low stock products
+### Local Development (Without Docker)
 
-### Customers
-- `GET /api/v1/customers` - List customers (with pagination, search)
-- `GET /api/v1/customers/{id}` - Get customer by ID
-- `POST /api/v1/customers` - Create customer
-- `PUT /api/v1/customers/{id}` - Update customer
-- `DELETE /api/v1/customers/{id}` - Delete customer (soft delete)
+**Backend**:
+```bash
+docker compose up postgres valkey -d
+cd backend && mvn spring-boot:run
+```
 
-### Suppliers
-- `GET /api/v1/suppliers` - List suppliers (with pagination, search)
-- `GET /api/v1/suppliers/{id}` - Get supplier by ID
-- `POST /api/v1/suppliers` - Create supplier
-- `PUT /api/v1/suppliers/{id}` - Update supplier
-- `DELETE /api/v1/suppliers/{id}` - Delete supplier (soft delete)
+**Frontend**:
+```bash
+cd frontend && npm install && npm run dev
+```
 
-### Sales Orders
-- `GET /api/v1/sales-orders` - List sales orders (with pagination, search)
-- `GET /api/v1/sales-orders/{id}` - Get sales order with details
-- `POST /api/v1/sales-orders` - Create sales order
-- `PUT /api/v1/sales-orders/{id}` - Update sales order (draft only)
-- `DELETE /api/v1/sales-orders/{id}` - Delete sales order (draft only)
-- `PATCH /api/v1/sales-orders/{id}/status` - Update order status
+## 📚 Documentation
 
-### Health
-- `GET /api/v1/health` - Service health check
+- **Phase Documentation**: `docs/phases/` - Detailed phase completion docs
+- **Development Guides**: `docs/guides/` - Implementation guides and tracking
+- **Project Guidelines**: `.kiro/steering/` - Tech stack, structure, recovery plan
+- **API Docs**: See backend Swagger UI (when implemented)
 
 ## 🧪 Testing
 
-### Validation Scripts
 ```bash
-# Test all phases (0, 1, 2, 3)
-./validate-phases.sh
+# Validate all phases
+./scripts/validate-phases.sh
 
-# Test Phase 1 only
-./test-phase1.sh
-
-# Test Phase 3 only
-./test-phase3.sh
+# Test specific phase
+./scripts/test-phase1.sh
+./scripts/test-phase3.sh
 ```
 
-### Manual Testing
+## 📖 Key Documents
 
-#### Test Backend Health
-```bash
-curl http://localhost:8080/api/v1/health
-```
+| Document | Description |
+|----------|-------------|
+| `docs/phases/PHASE_*_COMPLETE.md` | Phase completion summaries |
+| `docs/guides/CURRENT_STATUS.md` | Overall project status |
+| `docs/guides/PHASE_TRACKING.md` | Detailed progress tracking |
+| `.kiro/steering/recovery-plan.md` | Complete implementation roadmap |
+| `.kiro/steering/development-guide.md` | Development workflow guide |
 
-#### Test Login
-```bash
-curl -X POST http://localhost:8080/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@mulaerp.com","password":"admin123"}'
-```
+## 🗺️ Roadmap
 
-#### Test Product Creation
-```bash
-# First, get token from login
-TOKEN="your-jwt-token-here"
+### Next Steps (Phase 3 Completion)
+- [ ] Purchase Orders Module
+- [ ] Invoicing Module
+- [ ] Payment Management
+- [ ] User & Company Management
 
-# Create a product
-curl -X POST http://localhost:8080/api/v1/products \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "sku": "PROD-001",
-    "name": "Test Product",
-    "description": "Test description",
-    "unitPrice": 100.00,
-    "costPrice": 50.00,
-    "stockQuantity": 10,
-    "reorderLevel": 5,
-    "status": "ACTIVE"
-  }'
-```
+### Future (Phase 4+)
+- [ ] Dashboard Analytics
+- [ ] Reporting System
+- [ ] Basic Accounting
+- [ ] Advanced Features
 
-## 📖 Documentation
+See `docs/guides/PHASE_TRACKING.md` for detailed progress.
 
-- **Phase 0 Complete**: `PHASE_0_COMPLETE.md`
-- **Phase 1 Complete**: `PHASE_1_COMPLETE.md`
-- **Phase 2 Complete**: `PHASE_2_COMPLETE.md`
-- **Phase 3 Complete**: `PHASE_3_COMPLETE.md`
-- **Development Guide**: `.kiro/steering/development-guide.md`
-- **Recovery Plan**: `.kiro/steering/recovery-plan.md`
-- **Tech Stack**: `.kiro/steering/tech.md`
-- **Project Structure**: `.kiro/steering/structure.md`
+## 🐛 Troubleshooting
 
-## 🐛 Common Issues
-
-### Port Already in Use
-Stop other services using ports 5173, 8080, 5432, or 6379.
-
-### Database Connection Error
-Ensure PostgreSQL is running:
-```bash
-docker-compose up postgres -d
-```
-
-### Frontend Can't Connect to Backend
-Check if backend is running and CORS is configured correctly.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
+See `docs/guides/TROUBLESHOOTING.md` for common issues and solutions.
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+MIT License
 
 ## 🙏 Acknowledgments
 
-- Inspired by [Odoo](https://github.com/odoo/odoo) and [ERPNext](https://github.com/frappe/erpnext)
-- Built with modern open-source technologies
+Inspired by [Odoo](https://github.com/odoo/odoo) and [ERPNext](https://github.com/frappe/erpnext)
+
+---
+
+**Built with ❤️ using modern open-source technologies**
