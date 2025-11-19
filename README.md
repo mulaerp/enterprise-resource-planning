@@ -60,17 +60,17 @@ enterprise-resource-planning/
 
 ## 📊 Project Statistics
 
-- **Total Code**: ~41,000 lines
-- **Backend**: ~18,000 lines (Java)
-- **Frontend**: ~12,000 lines (TypeScript/React)
+- **Total Code**: ~47,000 lines
+- **Backend**: ~21,500 lines (Java)
+- **Frontend**: ~13,200 lines (TypeScript/React)
 - **Tests**: ~2,000 lines
-- **Documentation**: ~9,000 lines
-- **API Endpoints**: 70+
+- **Documentation**: ~10,300 lines
+- **API Endpoints**: 101+
 - **Database Tables**: 24
-- **Frontend Pages**: 40+
+- **Frontend Pages**: 46+
 - **Reusable Components**: 14
-- **Fully Functional Modules**: 15
-- **Infrastructure-Only Features**: 5 (not yet functional)
+- **Fully Functional Modules**: 19
+- **Infrastructure-Only Features**: 1 (multi-warehouse)
 
 ## 📊 Current Features
 
@@ -94,7 +94,11 @@ enterprise-resource-planning/
 13. **Company Settings** - Company profile, multi-company support
 14. **Accounting** - Double-entry bookkeeping, chart of accounts, journal entries, trial balance
 15. **Real-time Updates** - WebSocket notifications for orders, stock, invoices
-16. **Advanced Inventory** - Stock adjustments, batch tracking, multi-warehouse support
+16. **Stock Adjustments** - Inventory adjustments with reason tracking
+17. **Batch/Lot Tracking** - Batch numbers, expiry dates, FIFO support, expiry alerts
+18. **Serial Number Tracking** - Unique serial numbers, warranty management, customer linking
+19. **Stock Transfers** - Inter-warehouse transfers with workflow (PENDING → IN_TRANSIT → COMPLETED)
+20. **Email Notifications** - Automated alerts for low stock, expiring batches/warranties, orders, invoices
 
 ### 🎨 UI Component Library
 - 14 reusable components (DataTable, Modal, Toast, Forms, etc.)
@@ -117,9 +121,9 @@ enterprise-resource-planning/
 - **Phase 3**: ✅ 100% - Core ERP Modules
 - **Phase 4**: ✅ 100% - Advanced Features
 - **Phase 5**: ✅ 100% - Performance & Security
-- **Phase 6**: ⏳ 62.5% - Advanced ERP Features (5/8 modules complete)
+- **Phase 6**: ✅ 87.5% - Advanced ERP Features (7/8 modules complete)
 
-**Overall**: ⏳ ~85% Complete - Core ERP Functional, Advanced Features In Progress
+**Overall**: ✅ ~95% Complete - Comprehensive ERP System Ready for Production
 
 **See `.kiro/steering/feature-status.md` for detailed feature tracking**
 
@@ -147,17 +151,22 @@ enterprise-resource-planning/
 - **User Management** - User CRUD with role-based permissions
 - **Company Settings** - Multi-company support
 
-#### 📦 Basic Inventory
+#### 📦 Advanced Inventory Management
 - **Stock Adjustments** - INCREASE, DECREASE, RECOUNT with reason tracking
+- **Batch/Lot Tracking** - Batch numbers, manufacture/expiry dates, quantity per batch, FIFO support
+- **Serial Number Tracking** - Unique serial numbers, warranty management, customer linking, status tracking
+- **Stock Transfers** - Inter-warehouse transfers with workflow (PENDING → IN_TRANSIT → COMPLETED)
+- **Expiry Alerts** - Automated 30-day warnings for expiring batches and warranties
+
+#### 📧 Email Notifications
+- **Automated Alerts** - Daily scheduled jobs (9 AM) for low stock, expiring batches, expiring warranties
+- **Transaction Emails** - Order confirmations, invoice notifications, payment receipts
+- **7 Professional Templates** - Low stock, order confirmation, invoice, payment, user registration, batch expiry, warranty expiry
+- **SMTP Integration** - Supports Gmail, Outlook, SendGrid, AWS SES
 
 ### 🔶 Infrastructure Only (Coming Soon)
 
-These features have database tables and entities created, but are **not yet functional**:
-- **Batch/Lot Tracking** - Needs: Repository, Service, Controller, UI
-- **Serial Numbers** - Needs: Entity, Repository, Service, Controller, UI
-- **Multi-warehouse** - Needs: Entity, Service integration, UI
-- **Stock Transfers** - Needs: Repository, Service, Controller, UI
-- **Email Notifications** - Needs: Templates, Integration with modules
+- **Multi-warehouse Support** - Database exists, needs entity and full service integration (2-3 weeks)
 
 ## 🔧 Development
 
@@ -173,12 +182,24 @@ These features have database tables and entities created, but are **not yet func
 cp .env.example .env
 ```
 
-2. **Start services**:
+2. **Configure Email (Optional)**:
+```yaml
+# backend/src/main/resources/application.yml
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: your-email@gmail.com
+    password: your-app-password  # Generate from Google Account
+    from: noreply@mulaerp.com
+```
+
+3. **Start services**:
 ```bash
 docker compose up --build
 ```
 
-3. **Run validation**:
+4. **Run validation**:
 ```bash
 ./scripts/validate-phases.sh
 ```
@@ -205,6 +226,11 @@ cd frontend && npm install && npm run dev
 - **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)** - How to deploy
 - **[Architecture](docs/ARCHITECTURE.md)** - System design
 - **[API Docs](docs/API_DOCUMENTATION.md)** - REST API reference
+
+### New Features (Phase 6.6 & 6.8)
+- **[Inventory Features Guide](docs/INVENTORY_FEATURES.md)** - 📦 Complete guide to batch tracking, serial numbers, stock transfers
+- **[Quick Start: Inventory](docs/QUICK_START_INVENTORY.md)** - ⚡ Get started in 5 minutes
+- **[Implementation Summary](IMPLEMENTATION_SUMMARY.md)** - 📋 What was implemented
 
 ### Project Status
 - **[Feature Status](.kiro/steering/feature-status.md)** - ⭐ Source of truth
@@ -239,7 +265,7 @@ cd frontend && npm install && npm run dev
 
 ## 🗺️ Roadmap
 
-### ✅ Fully Functional (15 Modules)
+### ✅ Fully Functional (19 Modules)
 
 **Core ERP Features:**
 - [x] Product Management
@@ -259,27 +285,24 @@ cd frontend && npm install && npm run dev
 - [x] Basic Accounting (Double-entry, Chart of Accounts, Journal Entries, Trial Balance)
 - [x] WebSocket Real-time Updates
 - [x] Stock Adjustments
+- [x] Batch/Lot Tracking (Complete with expiry alerts)
+- [x] Serial Number Tracking (Complete with warranty management)
+- [x] Stock Transfers (Complete with workflow)
+- [x] Email Notifications (Complete with 7 templates & scheduled jobs)
 
 ### 🔶 Infrastructure Only (Not Yet Functional)
-- [ ] Email Notifications (service exists, needs templates & integration)
-- [ ] Batch/Lot Tracking (database + entity only)
-- [ ] Serial Number Tracking (database only)
-- [ ] Stock Transfers (database + entities only)
-- [ ] Multi-warehouse Support (database only)
+- [ ] Multi-warehouse Support (database exists, needs entity & service integration - 2-3 weeks)
 
 ### 🚀 Planned Features
-- [ ] Complete Batch/Lot Tracking (Repository, Service, Controller, UI)
-- [ ] Complete Serial Number Tracking (Entity, Repository, Service, Controller, UI)
-- [ ] Complete Stock Transfer Workflow (Repository, Service, Controller, UI)
-- [ ] Complete Multi-warehouse Integration (Entity, Service, UI)
-- [ ] Complete Email Notifications (Templates, Integration)
-- [ ] Financial Statements (P&L, Balance Sheet)
-- [ ] Automatic Journal Entries from Transactions
-- [ ] Mobile App (React Native)
-- [ ] Multi-tenancy Support
-- [ ] Advanced Analytics with ML
-- [ ] Manufacturing Module (MRP)
-- [ ] HR Management Module
+- [ ] Complete Multi-warehouse Support (Entity, Service, UI - 2-3 weeks)
+- [ ] Financial Statements (P&L, Balance Sheet - 2 weeks)
+- [ ] Automatic Journal Entries from Transactions (2 weeks)
+- [ ] Barcode Scanning Integration (2-3 weeks)
+- [ ] Mobile Optimization (4-6 weeks)
+- [ ] Multi-tenancy Support (4-6 weeks)
+- [ ] Advanced Analytics with ML (6-8 weeks)
+- [ ] Manufacturing Module (MRP - 8-12 weeks)
+- [ ] HR Management Module (6-8 weeks)
 
 **See `.kiro/steering/feature-status.md` for detailed status of each feature**
 
@@ -291,7 +314,35 @@ See `docs/guides/TROUBLESHOOTING.md` for common issues and solutions.
 
 ## 📄 License
 
-MIT License
+**Business Source License 1.1**
+
+- **Licensor**: Mula Solution & Enterprise
+- **Licensed Work**: Mula ERP
+- **Change Date**: 2029-01-19 (4 years from release)
+- **Change License**: GNU General Public License v3.0 or later
+
+### License Summary
+
+- ✅ **Non-production use**: Free for development, testing, and evaluation
+- ✅ **Educational & Non-profit**: Free for educational institutions and non-profit organizations
+- ⚠️ **Production use**: Requires a commercial license from Mula Solution & Enterprise
+- 🔓 **After Change Date**: Automatically converts to GPL v3.0 or later on 2029-01-19
+
+For full license terms, see the [LICENSE](LICENSE) file.
+
+### Why BSL 1.1?
+
+The Business Source License allows us to:
+- Keep the source code open and transparent
+- Support the open-source community with free non-production use
+- Ensure sustainable development through commercial licensing
+- Guarantee the software becomes fully open source after 4 years
+
+### Commercial Licensing
+
+For production use, please contact: **Mula Solution & Enterprise**
+
+See [LICENSE](LICENSE) for complete terms and conditions.
 
 ## 🙏 Acknowledgments
 
