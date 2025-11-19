@@ -22,7 +22,7 @@ interface PurchaseOrderForm {
   }>;
 }
 
-export function PurchaseOrderFormPage() {
+export default function PurchaseOrderFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();

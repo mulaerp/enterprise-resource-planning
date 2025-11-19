@@ -6,7 +6,7 @@ import { Badge } from '../../components/ui/Badge';
 import { api } from '../../lib/api';
 import { useToast } from '../../components/ui/Toast';
 
-export function PurchaseOrderDetailPage() {
+export default function PurchaseOrderDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();

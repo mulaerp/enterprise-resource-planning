@@ -18,7 +18,7 @@ interface PurchaseOrder {
   total: number;
 }
 
-export function PurchaseOrderListPage() {
+export default function PurchaseOrderListPage() {
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
