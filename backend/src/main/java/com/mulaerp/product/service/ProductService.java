@@ -6,6 +6,8 @@ import com.mulaerp.product.entity.ProductCategory;
 import com.mulaerp.product.repository.ProductCategoryRepository;
 import com.mulaerp.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class ProductService {
                 .map(this::convertToDto);
     }
     
+    @Cacheable(value = "products", key = "#id")
     @Transactional(readOnly = true)
     public ProductDto getProductById(UUID id) {
         Product product = productRepository.findByIdAndDeletedFalse(id)
@@ -42,6 +45,7 @@ public class ProductService {
         return convertToDto(product);
     }
     
+    @CacheEvict(value = "products", allEntries = true)
     @Transactional
     public ProductDto createProduct(CreateProductRequest request) {
         // Check if SKU already exists
@@ -69,6 +73,7 @@ public class ProductService {
         return convertToDto(savedProduct);
     }
     
+    @CacheEvict(value = "products", key = "#id")
     @Transactional
     public ProductDto updateProduct(UUID id, UpdateProductRequest request) {
         Product product = productRepository.findByIdAndDeletedFalse(id)
@@ -94,6 +99,7 @@ public class ProductService {
         return convertToDto(updatedProduct);
     }
     
+    @CacheEvict(value = "products", key = "#id")
     @Transactional
     public void deleteProduct(UUID id) {
         Product product = productRepository.findByIdAndDeletedFalse(id)
@@ -104,6 +110,7 @@ public class ProductService {
         productRepository.save(product);
     }
     
+    @Cacheable(value = "categories")
     @Transactional(readOnly = true)
     public List<ProductCategoryDto> getAllCategories() {
         return categoryRepository.findByDeletedFalse().stream()

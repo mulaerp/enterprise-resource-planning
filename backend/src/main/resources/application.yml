@@ -3,9 +3,9 @@ spring:
     name: mula-erp-backend
   
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/mulaerp}
-    username: ${DATABASE_USERNAME:mulaerp}
-    password: ${DATABASE_PASSWORD:mulaerp123}
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:mulaerp}
+    username: ${DATABASE_USER:mulaerp}
+    password: ${DATABASE_PASSWORD:mulaerp}
     driver-class-name: org.postgresql.Driver
   
   jpa:
@@ -26,20 +26,51 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:mulaerp-redis-password}
+      password: ${REDIS_PASSWORD:}
   
-  security:
-    jwt:
-      secret: ${JWT_SECRET:your-super-secret-jwt-key-change-in-production-min-32-chars}
-      expiration: 86400000 # 24 hours
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000 # 30 minutes
 
-server:
-  port: 8080
-  servlet:
-    context-path: /
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-min-32-characters-long-please-change-in-production}
+  expiration: 86400000 # 24 hours
 
+# Actuator Configuration (Phase 5.4)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Swagger/OpenAPI Configuration (Phase 5.3)
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+
+# Logging
 logging:
   level:
+    root: INFO
     com.mulaerp: DEBUG
-    org.springframework.security: DEBUG
+    org.springframework.web: INFO
     org.hibernate.SQL: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
