@@ -17,6 +17,7 @@ interface SerialForm {
 
 export default function SerialFormPage() {
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
@@ -35,8 +36,8 @@ export default function SerialFormPage() {
     try {
       const response = await api.get('/products');
       setProducts(response.data.content || response.data);
-    } catch (error) {
-      error('Failed to fetch products');
+    } catch (err) {
+      showError('Failed to fetch products');
     }
   };
 
@@ -51,8 +52,8 @@ export default function SerialFormPage() {
         warehouseId: response.data.warehouseId || '',
         notes: response.data.notes || '',
       });
-    } catch (error) {
-      error('Failed to fetch serial number');
+    } catch (err) {
+      showError('Failed to fetch serial number');
     }
   };
 
@@ -67,8 +68,8 @@ export default function SerialFormPage() {
         success('Serial number created successfully');
       }
       navigate('/inventory/serials');
-    } catch (error: any) {
-      error(error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} serial number`);
+    } catch (err: any) {
+      showError(err.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} serial number`);
     } finally {
       setLoading(false);
     }
@@ -77,7 +78,27 @@ export default function SerialFormPage() {
   return (
     <Layout>
       <div className="p-6 max-w-2xl">
-        <h1 className="text-2xl font-bold mb-6">{isEdit ? 'Edit' : 'New'} Serial Number</h1>
+        {/* Gradient Banner Header */}
+        <div className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 rounded-xl shadow-lg p-8 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">
+                {isEdit ? 'Edit Serial Number' : 'New Serial Number'}
+              </h1>
+              <p className="text-sky-100">
+                {isEdit ? 'Update serial number tracking information' : 'Register a new product serial number'}
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => navigate('/inventory/serials')}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              Back to Serial Numbers
+            </Button>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>

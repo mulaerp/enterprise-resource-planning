@@ -23,7 +23,7 @@ export default function PurchaseOrderDetailPage() {
       const response = await api.get(`/purchase-orders/${id}`);
       setPo(response.data);
     } catch (error) {
-      showToast('Failed to fetch purchase order', 'error');
+      showToast('error', 'Failed to fetch purchase order');
     } finally {
       setLoading(false);
     }
@@ -32,10 +32,10 @@ export default function PurchaseOrderDetailPage() {
   const handleStatusChange = async (status: string) => {
     try {
       await api.patch(`/purchase-orders/${id}/status?status=${status}`);
-      showToast('Status updated successfully', 'success');
+      showToast('success', 'Status updated successfully');
       fetchPurchaseOrder();
     } catch (error: any) {
-      showToast(error.response?.data?.message || 'Failed to update status', 'error');
+      showToast('error', error.response?.data?.message || 'Failed to update status');
     }
   };
 
@@ -48,11 +48,11 @@ export default function PurchaseOrderDetailPage() {
   }
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'success' | 'warning' | 'error'> = {
+    const variants: Record<string, 'default' | 'success' | 'warning' | 'danger'> = {
       DRAFT: 'default',
       SENT: 'warning',
       RECEIVED: 'success',
-      CANCELLED: 'error',
+      CANCELLED: 'danger',
     };
     return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
   };
@@ -109,7 +109,7 @@ export default function PurchaseOrderDetailPage() {
                 </Link>
                 <Button
                   className="w-full"
-                  variant="outline"
+                  variant="ghost"
                   onClick={() => handleStatusChange('SENT')}
                 >
                   Mark as Sent
@@ -127,7 +127,7 @@ export default function PurchaseOrderDetailPage() {
             {po.status !== 'CANCELLED' && po.status !== 'RECEIVED' && (
               <Button
                 className="w-full"
-                variant="outline"
+                variant="ghost"
                 onClick={() => handleStatusChange('CANCELLED')}
               >
                 Cancel Order

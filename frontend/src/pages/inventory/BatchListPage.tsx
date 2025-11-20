@@ -20,6 +20,7 @@ interface ProductBatch {
 
 export default function BatchListPage() {
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const [batches, setBatches] = useState<ProductBatch[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,8 +32,8 @@ export default function BatchListPage() {
     try {
       const response = await api.get('/batches');
       setBatches(response.data);
-    } catch (error) {
-      error('Failed to fetch batches');
+    } catch (err) {
+      showError('Failed to fetch batches');
     } finally {
       setLoading(false);
     }
@@ -45,8 +46,8 @@ export default function BatchListPage() {
       await api.delete(`/batches/${id}`);
       success('Batch deleted successfully');
       fetchBatches();
-    } catch (error: any) {
-      error(error.response?.data?.message || 'Failed to delete batch');
+    } catch (err: any) {
+      showError(err.response?.data?.message || 'Failed to delete batch');
     }
   };
 
@@ -77,18 +78,18 @@ export default function BatchListPage() {
     { key: 'productName', header: 'Product' },
     {
       key: 'manufactureDate',
-      label: 'Manufacture Date',
+      header: 'Manufacture Date',
       render: (batch: ProductBatch) =>
         batch.manufactureDate ? new Date(batch.manufactureDate).toLocaleDateString() : '-',
     },
     {
       key: 'expiryDate',
-      label: 'Expiry Date',
+      header: 'Expiry Date',
       render: (batch: ProductBatch) => (
         <div className="flex items-center gap-2">
           {batch.expiryDate ? new Date(batch.expiryDate).toLocaleDateString() : '-'}
           {isExpiringSoon(batch.expiryDate) && (
-            <AlertTriangle className="w-4 h-4 text-yellow-500" title="Expiring soon" />
+            <AlertTriangle className="w-4 h-4 text-yellow-500" />
           )}
         </div>
       ),
@@ -96,12 +97,12 @@ export default function BatchListPage() {
     { key: 'quantity', header: 'Quantity' },
     {
       key: 'status',
-      label: 'Status',
+      header: 'Status',
       render: (batch: ProductBatch) => getStatusBadge(batch.status),
     },
     {
       key: 'actions',
-      label: 'Actions',
+      header: 'Actions',
       render: (batch: ProductBatch) => (
         <div className="flex gap-2">
           <button
@@ -132,15 +133,25 @@ export default function BatchListPage() {
   return (
     <Layout>
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Batch/Lot Tracking</h1>
-          <Button onClick={() => navigate('/inventory/batches/new')}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Batch
-          </Button>
+        {/* Gradient Banner Header */}
+        <div className="bg-gradient-to-r from-lime-600 via-green-600 to-emerald-600 rounded-xl shadow-lg p-8 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">Batch/Lot Tracking</h1>
+              <p className="text-lime-100">Monitor product batches, lots, and expiry dates</p>
+            </div>
+            <Button 
+              onClick={() => navigate('/inventory/batches/new')}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Batch
+            </Button>
+          </div>
         </div>
 
-        <DataTable columns={columns} data={batches} />
+        <DataTable columns={columns} data={batches}
+        keyExtractor={(batch) => batch.id} />
       </div>
     </Layout>
   );

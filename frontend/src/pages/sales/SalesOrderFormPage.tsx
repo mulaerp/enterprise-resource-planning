@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import api from '../../lib/api';
+import Layout from '../../components/Layout';
 
 interface Customer {
   id: string;
@@ -168,21 +169,24 @@ export default function SalesOrderFormPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <button
-          onClick={() => navigate('/sales-orders')}
-          className="p-2 hover:bg-gray-100 rounded-lg"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="text-2xl font-bold text-gray-900">
-          {isEdit ? 'Edit Sales Order' : 'New Sales Order'}
-        </h1>
-      </div>
+    <Layout>
+      <div className="p-6 space-y-6">
+        {/* Header Banner */}
+        <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 rounded-2xl shadow-xl p-8 text-white">
+          <button
+            onClick={() => navigate('/sales-orders')}
+            className="flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back to Sales Orders
+          </button>
+          <h1 className="text-4xl font-bold">
+            {isEdit ? 'Edit Sales Order' : 'New Sales Order'}
+          </h1>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white rounded-lg shadow p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Order Information</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -255,7 +259,7 @@ export default function SalesOrderFormPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6 space-y-4">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-900">Order Items</h2>
             <button
@@ -399,7 +403,8 @@ export default function SalesOrderFormPage() {
             Cancel
           </button>
         </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    </Layout>
   );
 }

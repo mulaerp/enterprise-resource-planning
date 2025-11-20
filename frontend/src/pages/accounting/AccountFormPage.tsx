@@ -17,6 +17,7 @@ interface AccountForm {
 export default function AccountFormPage() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { success, error: showError } = useToast();
   const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState<any[]>([]);
 
@@ -46,8 +47,8 @@ export default function AccountFormPage() {
     try {
       const response = await api.get(`/accounting/accounts/${id}`);
       reset(response.data);
-    } catch (error) {
-      error('Failed to fetch account');
+    } catch (err) {
+      showError('Failed to fetch account');
     }
   };
 
@@ -62,8 +63,8 @@ export default function AccountFormPage() {
         success('Account created successfully');
       }
       navigate('/accounting/accounts');
-    } catch (error: any) {
-      error(error.response?.data?.message || 'Failed to save account');
+    } catch (err: any) {
+      showError(err.response?.data?.message || 'Failed to save account');
     } finally {
       setLoading(false);
     }
@@ -71,9 +72,27 @@ export default function AccountFormPage() {
 
   return (
     <div className="p-6 max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">
-        {id ? 'Edit Account' : 'New Account'}
-      </h1>
+      {/* Gradient Banner Header */}
+      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-xl shadow-lg p-8 mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              {id ? 'Edit Account' : 'New Account'}
+            </h1>
+            <p className="text-emerald-100">
+              {id ? 'Update account details and settings' : 'Create a new chart of accounts entry'}
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => navigate('/accounting/accounts')}
+            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+          >
+            Back to Accounts
+          </Button>
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>

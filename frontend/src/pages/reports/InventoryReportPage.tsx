@@ -165,7 +165,7 @@ export default function InventoryReportPage() {
                         outerRadius={100}
                         label
                       >
-                        {report.categoryStocks.map((entry, index) => (
+                        {report.categoryStocks.map((_, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>

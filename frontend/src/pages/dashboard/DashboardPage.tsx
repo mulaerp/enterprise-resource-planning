@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Navigate, Link } from 'react-router-dom';
-import { Package, Users, ShoppingCart, TrendingUp, DollarSign, ArrowUpRight, AlertTriangle, Plus, Eye } from 'lucide-react';
+import { Package, Users, ShoppingCart, TrendingUp, DollarSign, AlertTriangle, Plus, Eye } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import Layout from '../../components/Layout';
-import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import api from '../../lib/api';
 
@@ -206,7 +205,7 @@ export default function DashboardPage() {
                   )}
                 </div>
                 <Link to="/products">
-                  <Button variant="outline" size="sm" className="mt-3 border-orange-300 hover:bg-orange-100">
+                  <Button variant="ghost" size="sm" className="mt-3 border-orange-300 hover:bg-orange-100">
                     View Products
                   </Button>
                 </Link>

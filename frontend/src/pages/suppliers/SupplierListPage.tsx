@@ -25,7 +25,7 @@ interface Supplier {
 
 export default function SupplierListPage() {
   const navigate = useNavigate();
-  const toast = useToast();
+  const { success, error: showError } = useToast();
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -61,9 +61,9 @@ export default function SupplierListPage() {
       const response = await api.get(`/suppliers?${params}`);
       setSuppliers(response.data.content);
       setTotalPages(response.data.totalPages);
-    } catch (error) {
-      console.error('Failed to fetch suppliers:', error);
-      error('Failed to load suppliers');
+    } catch (err) {
+      console.error('Failed to fetch suppliers:', err);
+      showError('Failed to load suppliers');
     } finally {
       setLoading(false);
     }
@@ -77,9 +77,9 @@ export default function SupplierListPage() {
       success(`Supplier "${deleteModal.supplierName}" deleted successfully`);
       closeDeleteModal();
       fetchSuppliers();
-    } catch (error) {
-      console.error('Failed to delete supplier:', error);
-      error('Failed to delete supplier');
+    } catch (err) {
+      console.error('Failed to delete supplier:', err);
+      showError('Failed to delete supplier');
     }
   };
 

@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import { api } from '../../lib/api';
 import { useToast } from '../../components/ui/Toast';
+import Layout from '../../components/Layout';
 
 interface InvoiceForm {
   customerId: string;
@@ -28,7 +29,6 @@ export default function InvoiceFormPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [customers, setCustomers] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<InvoiceForm>({
@@ -44,7 +44,6 @@ export default function InvoiceFormPage() {
 
   useEffect(() => {
     fetchCustomers();
-    fetchProducts();
     if (id) fetchInvoice();
   }, [id]);
 
@@ -53,18 +52,11 @@ export default function InvoiceFormPage() {
       const response = await api.get('/customers');
       setCustomers(response.data.content || []);
     } catch (error) {
-      showToast('Failed to fetch customers', 'error');
+      showToast('error', 'Failed to fetch customers');
     }
   };
 
-  const fetchProducts = async () => {
-    try {
-      const response = await api.get('/products');
-      setProducts(response.data.content || []);
-    } catch (error) {
-      showToast('Failed to fetch products', 'error');
-    }
-  };
+
 
   const fetchInvoice = async () => {
     try {
@@ -83,7 +75,7 @@ export default function InvoiceFormPage() {
         taxRate: item.taxRate,
       })));
     } catch (error) {
-      showToast('Failed to fetch invoice', 'error');
+      showToast('error', 'Failed to fetch invoice');
     }
   };
 
@@ -108,25 +100,38 @@ export default function InvoiceFormPage() {
       setLoading(true);
       if (id) {
         await api.put(`/invoices/${id}`, data);
-        showToast('Invoice updated successfully', 'success');
+        showToast('success', 'Invoice updated successfully');
       } else {
         await api.post('/invoices', data);
-        showToast('Invoice created successfully', 'success');
+        showToast('success', 'Invoice created successfully');
       }
       navigate('/invoices');
     } catch (error: any) {
-      showToast(error.response?.data?.message || 'Failed to save invoice', 'error');
+      showToast('error', error.response?.data?.message || 'Failed to save invoice');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold">{id ? 'Edit' : 'New'} Invoice</h1>
+    <Layout>
+      <div className="p-6 space-y-6">
+        {/* Header Banner */}
+        <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 rounded-2xl shadow-xl p-8 text-white">
+          <button
+            onClick={() => navigate('/invoices')}
+            className="flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back to Invoices
+          </button>
+          <h1 className="text-4xl font-bold">
+            {id ? 'Edit Invoice' : 'New Invoice'}
+          </h1>
+        </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 space-y-4">
           <h2 className="text-xl font-semibold">Invoice Information</h2>
 
           <div className="grid grid-cols-2 gap-4">
@@ -184,7 +189,7 @@ export default function InvoiceFormPage() {
         <div className="bg-white p-6 rounded-lg shadow space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Line Items</h2>
-            <Button type="button" onClick={addItem} variant="outline">
+            <Button type="button" onClick={addItem} variant="ghost">
               <Plus className="h-4 w-4 mr-2" />
               Add Item
             </Button>
@@ -263,11 +268,12 @@ export default function InvoiceFormPage() {
           <Button type="submit" disabled={loading}>
             {loading ? 'Saving...' : id ? 'Update' : 'Create'} Invoice
           </Button>
-          <Button type="button" variant="outline" onClick={() => navigate('/invoices')}>
+          <Button type="button" variant="ghost" onClick={() => navigate('/invoices')}>
             Cancel
           </Button>
         </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    </Layout>
   );
 }

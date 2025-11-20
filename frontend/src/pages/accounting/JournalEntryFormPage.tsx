@@ -22,6 +22,7 @@ interface JournalEntryForm {
 
 export default function JournalEntryFormPage() {
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState<any[]>([]);
@@ -54,8 +55,8 @@ export default function JournalEntryFormPage() {
     try {
       const response = await api.get('/accounting/accounts');
       setAccounts(response.data.filter((a: any) => a.isActive));
-    } catch (error) {
-      error('Failed to fetch accounts');
+    } catch (err) {
+      showError('Failed to fetch accounts');
     }
   };
 
@@ -63,8 +64,8 @@ export default function JournalEntryFormPage() {
     try {
       const response = await api.get(`/accounting/journal-entries/${id}`);
       reset(response.data);
-    } catch (error) {
-      error('Failed to fetch journal entry');
+    } catch (err) {
+      showError('Failed to fetch journal entry');
     }
   };
 
@@ -78,7 +79,7 @@ export default function JournalEntryFormPage() {
   const onSubmit = async (data: JournalEntryForm) => {
     const { difference } = calculateTotals();
     if (Math.abs(difference) > 0.01) {
-      error('Journal entry must be balanced (debits = credits)');
+      showError('Journal entry must be balanced (debits = credits)');
       return;
     }
 
@@ -103,9 +104,27 @@ export default function JournalEntryFormPage() {
 
   return (
     <div className="p-6 max-w-6xl">
-      <h1 className="text-2xl font-bold mb-6">
-        {id ? 'Edit Journal Entry' : 'New Journal Entry'}
-      </h1>
+      {/* Gradient Banner Header */}
+      <div className="bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 rounded-xl shadow-lg p-8 mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              {id ? 'Edit Journal Entry' : 'New Journal Entry'}
+            </h1>
+            <p className="text-teal-100">
+              {id ? 'Update journal entry details' : 'Create a new double-entry journal entry'}
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => navigate('/accounting/journal-entries')}
+            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+          >
+            Back to Journal Entries
+          </Button>
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-2 gap-4">

@@ -35,7 +35,7 @@ export default function PaymentListPage() {
       const response = await api.get('/payments');
       setPayments(response.data.content || []);
     } catch (error) {
-      showToast('Failed to fetch payments', 'error');
+      showToast('error', 'Failed to fetch payments');
     } finally {
       setLoading(false);
     }
@@ -51,16 +51,16 @@ export default function PaymentListPage() {
       const response = await api.get(`/payments/search?query=${searchQuery}`);
       setPayments(response.data.content || []);
     } catch (error) {
-      showToast('Search failed', 'error');
+      showToast('error', 'Search failed');
     }
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'success' | 'warning' | 'error'> = {
+    const variants: Record<string, 'default' | 'success' | 'warning' | 'danger'> = {
       PENDING: 'warning',
       COMPLETED: 'success',
-      FAILED: 'error',
-      CANCELLED: 'error',
+      FAILED: 'danger',
+      CANCELLED: 'danger',
     };
     return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
   };
@@ -77,14 +77,20 @@ export default function PaymentListPage() {
   return (
     <Layout>
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Payments</h1>
-        <Link to="/payments/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Record Payment
-          </Button>
-        </Link>
+      {/* Gradient Banner Header */}
+      <div className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 rounded-xl shadow-lg p-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Payments</h1>
+            <p className="text-green-100">Record and track customer payments</p>
+          </div>
+          <Link to="/payments/new">
+            <Button className="bg-white/20 hover:bg-white/30 text-white border-white/30">
+              <Plus className="h-4 w-4 mr-2" />
+              Record Payment
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="flex gap-4">

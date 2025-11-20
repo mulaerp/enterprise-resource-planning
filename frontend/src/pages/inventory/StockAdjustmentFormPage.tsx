@@ -18,6 +18,7 @@ interface AdjustmentForm {
 
 export default function StockAdjustmentFormPage() {
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [warehouses, setWarehouses] = useState<any[]>([]);
@@ -37,8 +38,8 @@ export default function StockAdjustmentFormPage() {
     try {
       const response = await api.get('/products');
       setProducts(response.data.content || response.data);
-    } catch (error) {
-      error('Failed to fetch products');
+    } catch (err) {
+      showError('Failed to fetch products');
     }
   };
 
@@ -46,7 +47,7 @@ export default function StockAdjustmentFormPage() {
     try {
       // For now, use a default warehouse
       setWarehouses([{ id: '00000000-0000-0000-0000-000000000001', name: 'Main Warehouse' }]);
-    } catch (error) {
+    } catch (err) {
       console.error('Failed to fetch warehouses');
     }
   };
@@ -57,8 +58,8 @@ export default function StockAdjustmentFormPage() {
       await api.post('/inventory/adjustments', data);
       success('Stock adjustment created successfully');
       navigate('/inventory/adjustments');
-    } catch (error: any) {
-      error(error.response?.data?.message || 'Failed to create adjustment');
+    } catch (err: any) {
+      showError(err.response?.data?.message || 'Failed to create adjustment');
     } finally {
       setLoading(false);
     }
@@ -67,7 +68,27 @@ export default function StockAdjustmentFormPage() {
   return (
     <Layout>
       <div className="p-6 max-w-2xl">
-        <h1 className="text-2xl font-bold mb-6">New Stock Adjustment</h1>
+        {/* Gradient Banner Header */}
+        <div className="bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 rounded-xl shadow-lg p-8 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">
+                New Stock Adjustment
+              </h1>
+              <p className="text-orange-100">
+                Adjust inventory quantities for products
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => navigate('/inventory/adjustments')}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              Back to Adjustments
+            </Button>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>

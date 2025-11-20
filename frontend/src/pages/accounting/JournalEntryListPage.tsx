@@ -17,6 +17,7 @@ interface JournalEntry {
 
 export default function JournalEntryListPage() {
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,8 +29,8 @@ export default function JournalEntryListPage() {
     try {
       const response = await api.get('/accounting/journal-entries');
       setEntries(response.data);
-    } catch (error) {
-      error('Failed to fetch journal entries');
+    } catch (err) {
+      showError('Failed to fetch journal entries');
     } finally {
       setLoading(false);
     }
@@ -43,7 +44,7 @@ export default function JournalEntryListPage() {
       success('Journal entry posted successfully');
       fetchEntries();
     } catch (error: any) {
-      error(error.response?.data?.message || 'Failed to post journal entry');
+      showError(error.response?.data?.message || 'Failed to post journal entry');
     }
   };
 
@@ -55,7 +56,7 @@ export default function JournalEntryListPage() {
       success('Journal entry deleted successfully');
       fetchEntries();
     } catch (error: any) {
-      error(error.response?.data?.message || 'Failed to delete journal entry');
+      showError(error.response?.data?.message || 'Failed to delete journal entry');
     }
   };
 
@@ -63,14 +64,14 @@ export default function JournalEntryListPage() {
     { key: 'entryNumber', header: 'Entry #' },
     {
       key: 'entryDate',
-      label: 'Date',
+      header: 'Date',
       render: (entry: JournalEntry) => new Date(entry.entryDate).toLocaleDateString(),
     },
     { key: 'description', header: 'Description' },
     { key: 'reference', header: 'Reference' },
     {
       key: 'status',
-      label: 'Status',
+      header: 'Status',
       render: (entry: JournalEntry) => (
         <span className={`px-2 py-1 rounded text-xs ${
           entry.status === 'POSTED' ? 'bg-green-100 text-green-800' :
@@ -83,7 +84,7 @@ export default function JournalEntryListPage() {
     },
     {
       key: 'actions',
-      label: 'Actions',
+      header: 'Actions',
       render: (entry: JournalEntry) => (
         <div className="flex gap-2">
           {entry.status === 'DRAFT' && (
@@ -130,15 +131,25 @@ export default function JournalEntryListPage() {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Journal Entries</h1>
-        <Button onClick={() => navigate('/accounting/journal-entries/new')}>
-          <Plus className="w-4 h-4 mr-2" />
-          New Entry
-        </Button>
+      {/* Gradient Banner Header */}
+      <div className="bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 rounded-xl shadow-lg p-8 mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Journal Entries</h1>
+            <p className="text-teal-100">Record and manage double-entry accounting transactions</p>
+          </div>
+          <Button 
+            onClick={() => navigate('/accounting/journal-entries/new')}
+            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Entry
+          </Button>
+        </div>
       </div>
 
-      <DataTable columns={columns} data={entries} />
+      <DataTable columns={columns} data={entries}
+        keyExtractor={(entry) => entry.id} />
     </div>
   );
 }

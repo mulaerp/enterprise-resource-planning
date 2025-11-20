@@ -31,8 +31,12 @@ export default function AccountingPage() {
 
   return (
     <Layout>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Accounting</h1>
+      <div className="p-6 space-y-6">
+        {/* Header Banner */}
+        <div className="bg-gradient-to-r from-slate-600 via-gray-600 to-zinc-600 rounded-2xl shadow-xl p-8 text-white">
+          <h1 className="text-4xl font-bold mb-2">Accounting</h1>
+          <p className="text-lg text-gray-100">Manage your financial records and reports</p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {modules.map((module) => {

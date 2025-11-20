@@ -23,7 +23,7 @@ export default function InvoiceDetailPage() {
       const response = await api.get(`/invoices/${id}`);
       setInvoice(response.data);
     } catch (error) {
-      showToast('Failed to fetch invoice', 'error');
+      showToast('error', 'Failed to fetch invoice');
     } finally {
       setLoading(false);
     }
@@ -32,10 +32,10 @@ export default function InvoiceDetailPage() {
   const handleStatusChange = async (status: string) => {
     try {
       await api.patch(`/invoices/${id}/status?status=${status}`);
-      showToast('Status updated successfully', 'success');
+      showToast('success', 'Status updated successfully');
       fetchInvoice();
     } catch (error: any) {
-      showToast(error.response?.data?.message || 'Failed to update status', 'error');
+      showToast('error', error.response?.data?.message || 'Failed to update status');
     }
   };
 
@@ -43,12 +43,12 @@ export default function InvoiceDetailPage() {
   if (!invoice) return <div>Invoice not found</div>;
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'success' | 'warning' | 'error'> = {
+    const variants: Record<string, 'default' | 'success' | 'warning' | 'danger'> = {
       DRAFT: 'default',
       SENT: 'warning',
       PAID: 'success',
-      OVERDUE: 'error',
-      CANCELLED: 'error',
+      OVERDUE: 'danger',
+      CANCELLED: 'danger',
     };
     return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
   };
@@ -103,7 +103,7 @@ export default function InvoiceDetailPage() {
                 </Link>
                 <Button
                   className="w-full"
-                  variant="outline"
+                  variant="ghost"
                   onClick={() => handleStatusChange('SENT')}
                 >
                   Mark as Sent
@@ -120,7 +120,7 @@ export default function InvoiceDetailPage() {
             )}
             {invoice.balanceDue > 0 && invoice.status !== 'CANCELLED' && (
               <Link to={`/payments/new?invoiceId=${id}`} className="block">
-                <Button className="w-full" variant="outline">
+                <Button className="w-full" variant="ghost">
                   Record Payment
                 </Button>
               </Link>

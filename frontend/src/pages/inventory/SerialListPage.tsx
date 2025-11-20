@@ -20,6 +20,7 @@ interface ProductSerial {
 
 export default function SerialListPage() {
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const [serials, setSerials] = useState<ProductSerial[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,8 +32,8 @@ export default function SerialListPage() {
     try {
       const response = await api.get('/serials');
       setSerials(response.data);
-    } catch (error) {
-      error('Failed to fetch serial numbers');
+    } catch (err) {
+      showError('Failed to fetch serial numbers');
     } finally {
       setLoading(false);
     }
@@ -45,8 +46,8 @@ export default function SerialListPage() {
       await api.delete(`/serials/${id}`);
       success('Serial number deleted successfully');
       fetchSerials();
-    } catch (error: any) {
-      error(error.response?.data?.message || 'Failed to delete serial number');
+    } catch (err: any) {
+      showError(err.response?.data?.message || 'Failed to delete serial number');
     }
   };
 
@@ -79,35 +80,35 @@ export default function SerialListPage() {
     { key: 'productName', header: 'Product' },
     {
       key: 'purchaseDate',
-      label: 'Purchase Date',
+      header: 'Purchase Date',
       render: (serial: ProductSerial) =>
         serial.purchaseDate ? new Date(serial.purchaseDate).toLocaleDateString() : '-',
     },
     {
       key: 'warrantyExpiryDate',
-      label: 'Warranty Expiry',
+      header: 'Warranty Expiry',
       render: (serial: ProductSerial) => (
         <div className="flex items-center gap-2">
           {serial.warrantyExpiryDate ? new Date(serial.warrantyExpiryDate).toLocaleDateString() : '-'}
           {isWarrantyExpiringSoon(serial.warrantyExpiryDate) && (
-            <AlertTriangle className="w-4 h-4 text-yellow-500" title="Warranty expiring soon" />
+            <AlertTriangle className="w-4 h-4 text-yellow-500" />
           )}
         </div>
       ),
     },
     {
       key: 'status',
-      label: 'Status',
+      header: 'Status',
       render: (serial: ProductSerial) => getStatusBadge(serial.status),
     },
     { 
       key: 'customerName', 
-      label: 'Customer',
+      header: 'Customer',
       render: (serial: ProductSerial) => serial.customerName || '-',
     },
     {
       key: 'actions',
-      label: 'Actions',
+      header: 'Actions',
       render: (serial: ProductSerial) => (
         <div className="flex gap-2">
           <button
@@ -138,15 +139,25 @@ export default function SerialListPage() {
   return (
     <Layout>
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Serial Number Tracking</h1>
-          <Button onClick={() => navigate('/inventory/serials/new')}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Serial Number
-          </Button>
+        {/* Gradient Banner Header */}
+        <div className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 rounded-xl shadow-lg p-8 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">Serial Number Tracking</h1>
+              <p className="text-sky-100">Track individual product serial numbers and warranties</p>
+            </div>
+            <Button 
+              onClick={() => navigate('/inventory/serials/new')}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Serial Number
+            </Button>
+          </div>
         </div>
 
-        <DataTable columns={columns} data={serials} />
+        <DataTable columns={columns} data={serials}
+        keyExtractor={(serial) => serial.id} />
       </div>
     </Layout>
   );

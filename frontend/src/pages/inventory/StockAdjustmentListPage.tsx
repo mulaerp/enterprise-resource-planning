@@ -21,6 +21,7 @@ interface StockAdjustment {
 
 export default function StockAdjustmentListPage() {
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const [adjustments, setAdjustments] = useState<StockAdjustment[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,8 +33,8 @@ export default function StockAdjustmentListPage() {
     try {
       const response = await api.get('/inventory/adjustments');
       setAdjustments(response.data);
-    } catch (error) {
-      error('Failed to fetch stock adjustments');
+    } catch (err) {
+      showError('Failed to fetch stock adjustments');
     } finally {
       setLoading(false);
     }
@@ -46,8 +47,8 @@ export default function StockAdjustmentListPage() {
       await api.delete(`/inventory/adjustments/${id}`);
       success('Adjustment deleted successfully');
       fetchAdjustments();
-    } catch (error: any) {
-      error(error.response?.data?.message || 'Failed to delete adjustment');
+    } catch (err: any) {
+      showError(err.response?.data?.message || 'Failed to delete adjustment');
     }
   };
 
@@ -61,12 +62,12 @@ export default function StockAdjustmentListPage() {
     { key: 'reason', header: 'Reason' },
     {
       key: 'adjustmentDate',
-      label: 'Date',
+      header: 'Date',
       render: (adj: StockAdjustment) => new Date(adj.adjustmentDate).toLocaleDateString(),
     },
     {
       key: 'actions',
-      label: 'Actions',
+      header: 'Actions',
       render: (adj: StockAdjustment) => (
         <button
           onClick={() => handleDelete(adj.id)}
@@ -89,15 +90,25 @@ export default function StockAdjustmentListPage() {
   return (
     <Layout>
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Stock Adjustments</h1>
-          <Button onClick={() => navigate('/inventory/adjustments/new')}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Adjustment
-          </Button>
+        {/* Gradient Banner Header */}
+        <div className="bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 rounded-xl shadow-lg p-8 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">Stock Adjustments</h1>
+              <p className="text-orange-100">Track inventory quantity adjustments and corrections</p>
+            </div>
+            <Button 
+              onClick={() => navigate('/inventory/adjustments/new')}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Adjustment
+            </Button>
+          </div>
         </div>
 
-        <DataTable columns={columns} data={adjustments} />
+        <DataTable columns={columns} data={adjustments}
+        keyExtractor={(adjustment) => adjustment.id} />
       </div>
     </Layout>
   );

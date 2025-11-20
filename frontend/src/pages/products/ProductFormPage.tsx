@@ -115,20 +115,22 @@ export default function ProductFormPage() {
 
   return (
     <Layout>
-      <div className="p-6">
-      <button
-        onClick={() => navigate('/products')}
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6"
-      >
-        <ArrowLeft size={20} />
-        Back to Products
-      </button>
+      <div className="p-6 space-y-6">
+        {/* Header Banner */}
+        <div className="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 rounded-2xl shadow-xl p-8 text-white">
+          <button
+            onClick={() => navigate('/products')}
+            className="flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back to Products
+          </button>
+          <h1 className="text-4xl font-bold">
+            {isEdit ? 'Edit Product' : 'Add New Product'}
+          </h1>
+        </div>
 
-      <h1 className="text-2xl font-bold mb-6">
-        {isEdit ? 'Edit Product' : 'Add New Product'}
-      </h1>
-
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 max-w-2xl">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 max-w-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

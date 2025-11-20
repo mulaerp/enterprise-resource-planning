@@ -25,7 +25,7 @@ interface Customer {
 
 export default function CustomerListPage() {
   const navigate = useNavigate();
-  const toast = useToast();
+  const { success, error: showError } = useToast();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -61,9 +61,9 @@ export default function CustomerListPage() {
       const response = await api.get(`/customers?${params}`);
       setCustomers(response.data.content);
       setTotalPages(response.data.totalPages);
-    } catch (error) {
-      console.error('Failed to fetch customers:', error);
-      error('Failed to load customers');
+    } catch (err) {
+      console.error('Failed to fetch customers:', err);
+      showError('Failed to load customers');
     } finally {
       setLoading(false);
     }
@@ -77,9 +77,9 @@ export default function CustomerListPage() {
       success(`Customer "${deleteModal.customerName}" deleted successfully`);
       closeDeleteModal();
       fetchCustomers();
-    } catch (error) {
-      console.error('Failed to delete customer:', error);
-      error('Failed to delete customer');
+    } catch (err) {
+      console.error('Failed to delete customer:', err);
+      showError('Failed to delete customer');
     }
   };
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Bell, Check, CheckCheck, Package, ShoppingCart, AlertTriangle } from 'lucide-react';
+import { Bell, CheckCheck, Package, ShoppingCart, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 

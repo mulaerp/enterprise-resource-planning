@@ -27,7 +27,7 @@ interface Product {
 
 export default function ProductListPage() {
   const navigate = useNavigate();
-  const toast = useToast();
+  const { success, error: showError } = useToast();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -63,9 +63,9 @@ export default function ProductListPage() {
       const response = await api.get(`/products?${params}`);
       setProducts(response.data.content);
       setTotalPages(response.data.totalPages);
-    } catch (error) {
-      console.error('Failed to fetch products:', error);
-      error('Failed to load products');
+    } catch (err) {
+      console.error('Failed to fetch products:', err);
+      showError('Failed to load products');
     } finally {
       setLoading(false);
     }
@@ -79,9 +79,9 @@ export default function ProductListPage() {
       success(`Product "${deleteModal.productName}" deleted successfully`);
       closeDeleteModal();
       fetchProducts();
-    } catch (error) {
-      console.error('Failed to delete product:', error);
-      error('Failed to delete product');
+    } catch (err) {
+      console.error('Failed to delete product:', err);
+      showError('Failed to delete product');
     }
   };
 

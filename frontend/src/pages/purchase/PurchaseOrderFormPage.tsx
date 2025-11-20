@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import { api } from '../../lib/api';
 import { useToast } from '../../components/ui/Toast';
+import Layout from '../../components/Layout';
 
 interface PurchaseOrderForm {
   supplierId: string;
@@ -51,7 +52,7 @@ export default function PurchaseOrderFormPage() {
       const response = await api.get('/suppliers');
       setSuppliers(response.data.content || []);
     } catch (error) {
-      showToast('Failed to fetch suppliers', 'error');
+      showToast('error', 'Failed to fetch suppliers');
     }
   };
 
@@ -60,7 +61,7 @@ export default function PurchaseOrderFormPage() {
       const response = await api.get('/products');
       setProducts(response.data.content || []);
     } catch (error) {
-      showToast('Failed to fetch products', 'error');
+      showToast('error', 'Failed to fetch products');
     }
   };
 
@@ -80,7 +81,7 @@ export default function PurchaseOrderFormPage() {
         taxRate: item.taxRate,
       })));
     } catch (error) {
-      showToast('Failed to fetch purchase order', 'error');
+      showToast('error', 'Failed to fetch purchase order');
     }
   };
 
@@ -105,25 +106,38 @@ export default function PurchaseOrderFormPage() {
       setLoading(true);
       if (id) {
         await api.put(`/purchase-orders/${id}`, data);
-        showToast('Purchase order updated successfully', 'success');
+        showToast('success', 'Purchase order updated successfully');
       } else {
         await api.post('/purchase-orders', data);
-        showToast('Purchase order created successfully', 'success');
+        showToast('success', 'Purchase order created successfully');
       }
       navigate('/purchase-orders');
     } catch (error: any) {
-      showToast(error.response?.data?.message || 'Failed to save purchase order', 'error');
+      showToast('error', error.response?.data?.message || 'Failed to save purchase order');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold">{id ? 'Edit' : 'New'} Purchase Order</h1>
+    <Layout>
+      <div className="p-6 space-y-6">
+        {/* Header Banner */}
+        <div className="bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 rounded-2xl shadow-xl p-8 text-white">
+          <button
+            onClick={() => navigate('/purchase-orders')}
+            className="flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back to Purchase Orders
+          </button>
+          <h1 className="text-4xl font-bold">
+            {id ? 'Edit Purchase Order' : 'New Purchase Order'}
+          </h1>
+        </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 space-y-4">
           <h2 className="text-xl font-semibold">Order Information</h2>
 
           <div className="grid grid-cols-2 gap-4">
@@ -181,7 +195,7 @@ export default function PurchaseOrderFormPage() {
         <div className="bg-white p-6 rounded-lg shadow space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Items</h2>
-            <Button type="button" onClick={addItem} variant="outline">
+            <Button type="button" onClick={addItem} variant="ghost">
               <Plus className="h-4 w-4 mr-2" />
               Add Item
             </Button>
@@ -272,11 +286,12 @@ export default function PurchaseOrderFormPage() {
           <Button type="submit" disabled={loading}>
             {loading ? 'Saving...' : id ? 'Update' : 'Create'} Purchase Order
           </Button>
-          <Button type="button" variant="outline" onClick={() => navigate('/purchase-orders')}>
+          <Button type="button" variant="ghost" onClick={() => navigate('/purchase-orders')}>
             Cancel
           </Button>
         </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    </Layout>
   );
 }

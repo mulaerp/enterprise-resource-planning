@@ -193,7 +193,7 @@ export default function SalesReportPage() {
                         outerRadius={100}
                         label
                       >
-                        {report.salesByProduct.slice(0, 6).map((entry, index) => (
+                        {report.salesByProduct.slice(0, 6).map((_, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>

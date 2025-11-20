@@ -36,7 +36,7 @@ export default function InvoiceListPage() {
       const response = await api.get('/invoices');
       setInvoices(response.data.content || []);
     } catch (error) {
-      showToast('Failed to fetch invoices', 'error');
+      showToast('error', 'Failed to fetch invoices');
     } finally {
       setLoading(false);
     }
@@ -52,7 +52,7 @@ export default function InvoiceListPage() {
       const response = await api.get(`/invoices/search?query=${searchQuery}`);
       setInvoices(response.data.content || []);
     } catch (error) {
-      showToast('Search failed', 'error');
+      showToast('error', 'Search failed');
     }
   };
 
@@ -61,20 +61,20 @@ export default function InvoiceListPage() {
 
     try {
       await api.delete(`/invoices/${id}`);
-      showToast('Invoice deleted successfully', 'success');
+      showToast('success', 'Invoice deleted successfully');
       fetchInvoices();
     } catch (error: any) {
-      showToast(error.response?.data?.message || 'Failed to delete invoice', 'error');
+      showToast('error', error.response?.data?.message || 'Failed to delete invoice');
     }
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'success' | 'warning' | 'error'> = {
+    const variants: Record<string, 'default' | 'success' | 'warning' | 'danger'> = {
       DRAFT: 'default',
       SENT: 'warning',
       PAID: 'success',
-      OVERDUE: 'error',
-      CANCELLED: 'error',
+      OVERDUE: 'danger',
+      CANCELLED: 'danger',
     };
     return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
   };
@@ -89,7 +89,7 @@ export default function InvoiceListPage() {
     { key: 'balanceDue', header: 'Balance', render: (row: Invoice) => `$${row.balanceDue.toFixed(2)}` },
     {
       key: 'actions',
-      label: 'Actions',
+      header: 'Actions',
       render: (row: Invoice) => (
         <div className="flex gap-2">
           <Link to={`/invoices/${row.id}`}>
@@ -117,14 +117,20 @@ export default function InvoiceListPage() {
   return (
     <Layout>
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Invoices</h1>
-        <Link to="/invoices/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            New Invoice
-          </Button>
-        </Link>
+      {/* Gradient Banner Header */}
+      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl shadow-lg p-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Invoices</h1>
+            <p className="text-indigo-100">Create and manage customer invoices</p>
+          </div>
+          <Link to="/invoices/new">
+            <Button className="bg-white/20 hover:bg-white/30 text-white border-white/30">
+              <Plus className="h-4 w-4 mr-2" />
+              New Invoice
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="flex gap-4">

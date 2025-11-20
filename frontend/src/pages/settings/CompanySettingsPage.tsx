@@ -45,7 +45,7 @@ export default function CompanySettingsPage() {
         setValue('currency', company.currency);
       }
     } catch (error) {
-      showToast('Failed to fetch company settings', 'error');
+      showToast('error', 'Failed to fetch company settings');
     }
   };
 
@@ -54,11 +54,11 @@ export default function CompanySettingsPage() {
       setLoading(true);
       if (companyId) {
         await api.put(`/companies/${companyId}`, data);
-        showToast('Company settings updated successfully', 'success');
+        showToast('success', 'Company settings updated successfully');
       } else {
         const response = await api.post('/companies', data);
         setCompanyId(response.data.id);
-        showToast('Company settings created successfully', 'success');
+        showToast('success', 'Company settings created successfully');
       }
     } catch (error: any) {
       showToast(error.response?.data?.message || 'Failed to save company settings', 'error');

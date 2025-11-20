@@ -95,14 +95,20 @@ export default function UserListPage() {
   return (
     <Layout>
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Users</h1>
-        <Link to="/users/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            New User
-          </Button>
-        </Link>
+      {/* Gradient Banner Header */}
+      <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 rounded-xl shadow-lg p-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Users</h1>
+            <p className="text-violet-100">Manage user accounts and permissions</p>
+          </div>
+          <Link to="/users/new">
+            <Button className="bg-white/20 hover:bg-white/30 text-white border-white/30">
+              <Plus className="h-4 w-4 mr-2" />
+              New User
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <DataTable

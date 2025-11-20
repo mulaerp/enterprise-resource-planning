@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import api from '../lib/api';
 
 interface User {
@@ -33,16 +33,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  const fetchUser = async () => {
-    try {
-      const response = await api.get('/auth/me');
-      setUser(response.data);
-    } catch (error) {
-      localStorage.removeItem('token');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Unused for now - using mock user in development
+  // const fetchUser = async () => {
+  //   try {
+  //     const response = await api.get('/auth/me');
+  //     setUser(response.data);
+  //   } catch (error) {
+  //     localStorage.removeItem('token');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const login = async (email: string, password: string) => {
     const response = await api.post('/auth/login', { email, password });

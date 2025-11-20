@@ -40,11 +40,12 @@ export default function ReportsPage() {
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
-            Reports & Analytics
-          </h1>
-          <p className="text-gray-600 mt-2">Generate insights from your business data</p>
+        {/* Header Banner */}
+        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl shadow-xl p-8 text-white">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Reports & Analytics</h1>
+            <p className="text-lg text-purple-100">Generate insights from your business data</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

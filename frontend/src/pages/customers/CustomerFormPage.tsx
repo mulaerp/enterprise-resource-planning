@@ -89,20 +89,22 @@ export default function CustomerFormPage() {
 
   return (
     <Layout>
-      <div className="p-6">
-        <button
-          onClick={() => navigate('/customers')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6"
-        >
-          <ArrowLeft size={20} />
-          Back to Customers
-        </button>
+      <div className="p-6 space-y-6">
+        {/* Header Banner */}
+        <div className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 rounded-2xl shadow-xl p-8 text-white">
+          <button
+            onClick={() => navigate('/customers')}
+            className="flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back to Customers
+          </button>
+          <h1 className="text-4xl font-bold">
+            {isEdit ? 'Edit Customer' : 'Add New Customer'}
+          </h1>
+        </div>
 
-        <h1 className="text-2xl font-bold mb-6">
-          {isEdit ? 'Edit Customer' : 'Add New Customer'}
-        </h1>
-
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 max-w-2xl">
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 max-w-2xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">

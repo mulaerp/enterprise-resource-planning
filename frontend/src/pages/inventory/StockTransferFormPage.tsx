@@ -21,6 +21,7 @@ interface TransferForm {
 
 export default function StockTransferFormPage() {
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
@@ -30,7 +31,7 @@ export default function StockTransferFormPage() {
   ]);
   const isEdit = !!id;
 
-  const { register, control, handleSubmit, formState: { errors }, reset, watch } = useForm<TransferForm>({
+  const { register, control, handleSubmit, formState: { errors }, reset } = useForm<TransferForm>({
     defaultValues: {
       transferDate: new Date().toISOString().split('T')[0],
       items: [{ productId: '', quantity: 1 }],
@@ -53,8 +54,8 @@ export default function StockTransferFormPage() {
     try {
       const response = await api.get('/products');
       setProducts(response.data.content || response.data);
-    } catch (error) {
-      error('Failed to fetch products');
+    } catch (err) {
+      showError('Failed to fetch products');
     }
   };
 
@@ -72,8 +73,8 @@ export default function StockTransferFormPage() {
           quantity: item.quantity,
         })),
       });
-    } catch (error) {
-      error('Failed to fetch transfer');
+    } catch (err) {
+      showError('Failed to fetch transfer');
     }
   };
 
@@ -88,8 +89,8 @@ export default function StockTransferFormPage() {
         success('Transfer created successfully');
       }
       navigate('/inventory/transfers');
-    } catch (error: any) {
-      error(error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} transfer`);
+    } catch (err: any) {
+      showError(err.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} transfer`);
     } finally {
       setLoading(false);
     }

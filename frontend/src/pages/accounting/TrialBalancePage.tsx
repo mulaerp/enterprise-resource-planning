@@ -17,6 +17,7 @@ interface TrialBalance {
 }
 
 export default function TrialBalancePage() {
+  const { error: showError } = useToast();
   const [trialBalance, setTrialBalance] = useState<TrialBalance | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -28,8 +29,8 @@ export default function TrialBalancePage() {
     try {
       const response = await api.get('/accounting/reports/trial-balance');
       setTrialBalance(response.data);
-    } catch (error) {
-      error('Failed to fetch trial balance');
+    } catch (err) {
+      showError('Failed to fetch trial balance');
     } finally {
       setLoading(false);
     }
@@ -45,9 +46,12 @@ export default function TrialBalancePage() {
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Trial Balance</h1>
-        <p className="text-gray-600">As of {new Date().toLocaleDateString()}</p>
+      {/* Gradient Banner Header */}
+      <div className="bg-gradient-to-r from-slate-600 via-gray-600 to-zinc-600 rounded-xl shadow-lg p-8 mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Trial Balance</h1>
+          <p className="text-slate-100">As of {new Date().toLocaleDateString()}</p>
+        </div>
       </div>
 
       {!trialBalance.balanced && (

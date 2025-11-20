@@ -26,7 +26,7 @@ interface SalesOrder {
 
 export default function SalesOrderListPage() {
   const navigate = useNavigate();
-  const toast = useToast();
+  const { success, error: showError } = useToast();
   const [orders, setOrders] = useState<SalesOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -62,9 +62,9 @@ export default function SalesOrderListPage() {
       const response = await api.get(`/sales-orders?${params}`);
       setOrders(response.data.content);
       setTotalPages(response.data.totalPages);
-    } catch (error) {
-      console.error('Failed to fetch sales orders:', error);
-      error('Failed to load sales orders');
+    } catch (err) {
+      console.error('Failed to fetch sales orders:', err);
+      showError('Failed to load sales orders');
     } finally {
       setLoading(false);
     }
@@ -78,9 +78,9 @@ export default function SalesOrderListPage() {
       success(`Sales order "${deleteModal.orderNumber}" deleted successfully`);
       closeDeleteModal();
       fetchOrders();
-    } catch (error) {
-      console.error('Failed to delete sales order:', error);
-      error('Failed to delete sales order');
+    } catch (err) {
+      console.error('Failed to delete sales order:', err);
+      showError('Failed to delete sales order');
     }
   };
 

@@ -19,6 +19,7 @@ interface StockTransfer {
 
 export default function StockTransferListPage() {
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const [transfers, setTransfers] = useState<StockTransfer[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,8 +31,8 @@ export default function StockTransferListPage() {
     try {
       const response = await api.get('/stock-transfers');
       setTransfers(response.data);
-    } catch (error) {
-      error('Failed to fetch stock transfers');
+    } catch (err) {
+      showError('Failed to fetch stock transfers');
     } finally {
       setLoading(false);
     }
@@ -44,8 +45,8 @@ export default function StockTransferListPage() {
       await api.delete(`/stock-transfers/${id}`);
       success('Transfer deleted successfully');
       fetchTransfers();
-    } catch (error: any) {
-      error(error.response?.data?.message || 'Failed to delete transfer');
+    } catch (err: any) {
+      showError(err.response?.data?.message || 'Failed to delete transfer');
     }
   };
 
@@ -69,22 +70,22 @@ export default function StockTransferListPage() {
     { key: 'toWarehouseName', header: 'To Warehouse' },
     {
       key: 'transferDate',
-      label: 'Transfer Date',
+      header: 'Transfer Date',
       render: (transfer: StockTransfer) => new Date(transfer.transferDate).toLocaleDateString(),
     },
     {
       key: 'items',
-      label: 'Items',
+      header: 'Items',
       render: (transfer: StockTransfer) => transfer.items?.length || 0,
     },
     {
       key: 'status',
-      label: 'Status',
+      header: 'Status',
       render: (transfer: StockTransfer) => getStatusBadge(transfer.status),
     },
     {
       key: 'actions',
-      label: 'Actions',
+      header: 'Actions',
       render: (transfer: StockTransfer) => (
         <div className="flex gap-2">
           <button
@@ -116,15 +117,25 @@ export default function StockTransferListPage() {
   return (
     <Layout>
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Stock Transfers</h1>
-          <Button onClick={() => navigate('/inventory/transfers/new')}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Transfer
-          </Button>
+        {/* Gradient Banner Header */}
+        <div className="bg-gradient-to-r from-rose-600 via-pink-600 to-fuchsia-600 rounded-xl shadow-lg p-8 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">Stock Transfers</h1>
+              <p className="text-rose-100">Manage inventory transfers between warehouses</p>
+            </div>
+            <Button 
+              onClick={() => navigate('/inventory/transfers/new')}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Transfer
+            </Button>
+          </div>
         </div>
 
-        <DataTable columns={columns} data={transfers} />
+        <DataTable columns={columns} data={transfers}
+        keyExtractor={(transfer) => transfer.id} />
       </div>
     </Layout>
   );

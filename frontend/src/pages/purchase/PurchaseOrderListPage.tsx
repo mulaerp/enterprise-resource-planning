@@ -35,7 +35,7 @@ export default function PurchaseOrderListPage() {
       const response = await api.get('/purchase-orders');
       setPurchaseOrders(response.data.content || []);
     } catch (error) {
-      showToast('Failed to fetch purchase orders', 'error');
+      showToast('error', 'Failed to fetch purchase orders');
     } finally {
       setLoading(false);
     }
@@ -51,7 +51,7 @@ export default function PurchaseOrderListPage() {
       const response = await api.get(`/purchase-orders/search?query=${searchQuery}`);
       setPurchaseOrders(response.data.content || []);
     } catch (error) {
-      showToast('Search failed', 'error');
+      showToast('error', 'Search failed');
     }
   };
 
@@ -60,19 +60,19 @@ export default function PurchaseOrderListPage() {
 
     try {
       await api.delete(`/purchase-orders/${id}`);
-      showToast('Purchase order deleted successfully', 'success');
+      showToast('success', 'Purchase order deleted successfully');
       fetchPurchaseOrders();
     } catch (error: any) {
-      showToast(error.response?.data?.message || 'Failed to delete purchase order', 'error');
+      showToast('error', error.response?.data?.message || 'Failed to delete purchase order');
     }
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'success' | 'warning' | 'error'> = {
+    const variants: Record<string, 'default' | 'success' | 'warning' | 'danger'> = {
       DRAFT: 'default',
       SENT: 'warning',
       RECEIVED: 'success',
-      CANCELLED: 'error',
+      CANCELLED: 'danger',
     };
     return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
   };
@@ -86,7 +86,7 @@ export default function PurchaseOrderListPage() {
     { key: 'total', header: 'Total', render: (row: PurchaseOrder) => `$${row.total.toFixed(2)}` },
     {
       key: 'actions',
-      label: 'Actions',
+      header: 'Actions',
       render: (row: PurchaseOrder) => (
         <div className="flex gap-2">
           <Link to={`/purchase-orders/${row.id}`}>
