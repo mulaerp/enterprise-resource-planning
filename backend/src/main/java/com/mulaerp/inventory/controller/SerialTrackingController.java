@@ -1,5 +1,6 @@
 package com.mulaerp.inventory.controller;
 
+import com.mulaerp.auth.security.RoleRules;
 import com.mulaerp.inventory.dto.CreateSerialRequest;
 import com.mulaerp.inventory.dto.ProductSerialDTO;
 import com.mulaerp.inventory.entity.ProductSerial;
@@ -10,11 +11,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+// CRITICAL FIX 1 (post-overhaul audit) role matrix: create/update/status-change/delete are ADMIN
+// or MANAGER (a plain USER account previously had no restriction at all); every GET stays open to
+// any authenticated user.
 @RestController
 @RequestMapping("/api/v1/serials")
 @RequiredArgsConstructor
@@ -67,6 +72,7 @@ public class SerialTrackingController {
     }
 
     @PostMapping
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Create new serial number")
     public ResponseEntity<ProductSerialDTO> createSerial(@Valid @RequestBody CreateSerialRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -74,6 +80,7 @@ public class SerialTrackingController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Update serial number")
     public ResponseEntity<ProductSerialDTO> updateSerial(
             @PathVariable UUID id,
@@ -82,6 +89,7 @@ public class SerialTrackingController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Update serial status")
     public ResponseEntity<Void> updateSerialStatus(
             @PathVariable UUID id,
@@ -91,6 +99,7 @@ public class SerialTrackingController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Delete serial number")
     public ResponseEntity<Void> deleteSerial(@PathVariable UUID id) {
         serialTrackingService.deleteSerial(id);

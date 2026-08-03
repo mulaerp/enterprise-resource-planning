@@ -26,14 +26,16 @@ public class User extends BaseEntity {
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserRole role = UserRole.USER;
-    
+    private UserRole role = UserRole.CASHIER;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
-    
+
+    // WP: five-role model. USER was renamed/repurposed to CASHIER (data-migrated in V27); ACCOUNTANT
+    // and INVENTORY are new. See RoleRules for the full @PreAuthorize matrix these map to.
     public enum UserRole {
-        ADMIN, MANAGER, USER
+        ADMIN, MANAGER, ACCOUNTANT, INVENTORY, CASHIER
     }
     
     public enum UserStatus {

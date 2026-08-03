@@ -39,13 +39,14 @@ test.describe('User Management', () => {
     await page.getByLabel(/email/i).fill(email);
     await page.getByLabel(/password/i).fill('password123');
     await page.getByLabel(/full name/i).fill(`Test User ${timestamp}`);
-    await page.getByLabel(/role/i).selectOption('USER');
+    await page.getByLabel(/role/i).selectOption('CASHIER');
     
     // Submit
     await page.getByRole('button', { name: /create user/i }).click();
     
-    // Verify success
-    await expect(page.getByText(/success|created/i)).toBeVisible({ timeout: 10000 });
+    // Verify success. .first(): "Created" also matches the users list's date column
+    // header (once redirected back there), in addition to the success toast.
+    await expect(page.getByText(/success|created/i).first()).toBeVisible({ timeout: 10000 });
     await expect(page).toHaveURL(/\/users$/);
   });
 
@@ -171,10 +172,11 @@ test.describe('User Management', () => {
     await page.getByLabel(/email/i).fill(`deleteuser${timestamp}@test.com`);
     await page.getByLabel(/password/i).fill('password123');
     await page.getByLabel(/full name/i).fill(`Delete User ${timestamp}`);
-    await page.getByLabel(/role/i).selectOption('USER');
+    await page.getByLabel(/role/i).selectOption('CASHIER');
     
     await page.getByRole('button', { name: /create user/i }).click();
-    await expect(page.getByText(/success|created/i)).toBeVisible({ timeout: 10000 });
+    // .first(): "Created" also matches the users list's date column header.
+    await expect(page.getByText(/success|created/i).first()).toBeVisible({ timeout: 10000 });
     
     // Now delete it
     await page.goto('/users');

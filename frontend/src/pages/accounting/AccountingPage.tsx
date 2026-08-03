@@ -1,9 +1,19 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, FileText, BarChart3 } from 'lucide-react';
+import { BookOpen, FileText, BarChart3, TrendingUp, Scale, Landmark } from 'lucide-react';
 import Layout from '../../components/Layout';
+import api from '../../lib/api';
 
 export default function AccountingPage() {
   const navigate = useNavigate();
+  const [unreconciledCount, setUnreconciledCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    api
+      .get('/bank/summary')
+      .then((response) => setUnreconciledCount(response.data.unreconciledCount))
+      .catch(() => setUnreconciledCount(null));
+  }, []);
 
   const modules = [
     {
@@ -18,24 +28,48 @@ export default function AccountingPage() {
       description: 'Create and manage journal entries',
       icon: FileText,
       path: '/accounting/journal-entries',
-      color: 'from-purple-500 to-purple-600',
+      color: 'bg-blue-600',
     },
     {
       title: 'Trial Balance',
       description: 'View trial balance report',
       icon: BarChart3,
       path: '/accounting/trial-balance',
-      color: 'from-green-500 to-green-600',
+      color: 'bg-green-600',
+    },
+    {
+      title: 'Profit & Loss',
+      description: 'View revenue, expenses, and net income',
+      icon: TrendingUp,
+      path: '/accounting/profit-loss',
+      color: 'bg-blue-600',
+    },
+    {
+      title: 'Balance Sheet',
+      description: 'View assets, liabilities, and equity',
+      icon: Scale,
+      path: '/accounting/balance-sheet',
+      color: 'bg-slate-600',
+    },
+    {
+      title: 'Bank Reconciliation',
+      description:
+        unreconciledCount !== null
+          ? `${unreconciledCount} transaction(s) awaiting reconciliation`
+          : 'Import bank statements and match against payments',
+      icon: Landmark,
+      path: '/accounting/bank',
+      color: 'bg-blue-600',
     },
   ];
 
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        {/* Header Banner */}
-        <div className="bg-gradient-to-r from-slate-600 via-gray-600 to-zinc-600 rounded-2xl shadow-xl p-8 text-white">
-          <h1 className="text-4xl font-bold mb-2">Accounting</h1>
-          <p className="text-lg text-gray-100">Manage your financial records and reports</p>
+        {/* Page Header */}
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-900">Accounting</h1>
+          <p className="text-sm text-slate-500 mt-1">Manage your financial records and reports</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -45,13 +79,13 @@ export default function AccountingPage() {
               <button
                 key={module.path}
                 onClick={() => navigate(module.path)}
-                className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all duration-200 hover:scale-105 text-left"
+                className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow text-left"
               >
-                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${module.color} flex items-center justify-center mb-4`}>
+                <div className={`w-12 h-12 rounded-lg ${module.color} flex items-center justify-center mb-4`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <h2 className="text-xl font-semibold mb-2">{module.title}</h2>
-                <p className="text-gray-600">{module.description}</p>
+                <p className="text-slate-600">{module.description}</p>
               </button>
             );
           })}

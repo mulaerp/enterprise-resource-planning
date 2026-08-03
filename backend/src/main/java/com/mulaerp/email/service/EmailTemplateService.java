@@ -2,6 +2,7 @@ package com.mulaerp.email.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,10 +17,16 @@ public class EmailTemplateService {
     private final EmailService emailService;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
+    @Value("${mulaerp.mail.admin-recipient:admin@mulaerp.com}")
+    private String adminRecipient;
+
+    @Value("${mulaerp.brand.name:Mula ERP}")
+    private String brandName;
+
     public void sendLowStockAlert(String productName, String sku, int currentStock, int reorderLevel) {
         String subject = "⚠️ Low Stock Alert: " + productName;
         String body = buildLowStockTemplate(productName, sku, currentStock, reorderLevel);
-        emailService.sendEmail("admin@mulaerp.com", subject, body);
+        emailService.sendEmail(adminRecipient, subject, body);
         log.info("Sent low stock alert for product: {}", productName);
     }
 
@@ -48,7 +55,7 @@ public class EmailTemplateService {
     }
 
     public void sendUserRegistration(String userEmail, String fullName, String role, String tempPassword) {
-        String subject = "Welcome to Mula ERP";
+        String subject = "Welcome to " + brandName;
         String body = buildUserRegistrationTemplate(fullName, userEmail, role, tempPassword);
         emailService.sendEmail(userEmail, subject, body);
         log.info("Sent registration email to: {}", userEmail);
@@ -57,7 +64,7 @@ public class EmailTemplateService {
     public void sendBatchExpiryAlert(String batchNumber, String productName, LocalDate expiryDate, int daysRemaining) {
         String subject = "⚠️ Batch Expiry Alert: " + batchNumber;
         String body = buildBatchExpiryTemplate(batchNumber, productName, expiryDate, daysRemaining);
-        emailService.sendEmail("admin@mulaerp.com", subject, body);
+        emailService.sendEmail(adminRecipient, subject, body);
         log.info("Sent batch expiry alert for: {}", batchNumber);
     }
 
@@ -65,7 +72,7 @@ public class EmailTemplateService {
                                        LocalDate expiryDate, int daysRemaining) {
         String subject = "⚠️ Warranty Expiry Alert: " + serialNumber;
         String body = buildWarrantyExpiryTemplate(serialNumber, productName, customerName, expiryDate, daysRemaining);
-        emailService.sendEmail("admin@mulaerp.com", subject, body);
+        emailService.sendEmail(adminRecipient, subject, body);
         log.info("Sent warranty expiry alert for: {}", serialNumber);
     }
 
@@ -81,10 +88,10 @@ public class EmailTemplateService {
             Reorder Level: %d units
             
             Action Required: Please reorder this product to maintain adequate inventory levels.
-            
+
             ---
-            Mula ERP System
-            """, productName, sku, currentStock, reorderLevel);
+            %s System
+            """, productName, sku, currentStock, reorderLevel, brandName);
     }
 
     private String buildOrderConfirmationTemplate(String customerName, String orderNumber, 
@@ -104,8 +111,8 @@ public class EmailTemplateService {
             If you have any questions, please don't hesitate to contact us.
             
             Best regards,
-            Mula ERP Team
-            """, customerName, orderNumber, orderDate.format(DATE_FORMATTER), totalAmount);
+            %s Team
+            """, customerName, orderNumber, orderDate.format(DATE_FORMATTER), totalAmount, brandName);
     }
 
     private String buildInvoiceTemplate(String customerName, String invoiceNumber, 
@@ -127,8 +134,8 @@ public class EmailTemplateService {
             Thank you for your business.
             
             Best regards,
-            Mula ERP Team
-            """, customerName, invoiceNumber, totalAmount, dueDate.format(DATE_FORMATTER));
+            %s Team
+            """, customerName, invoiceNumber, totalAmount, dueDate.format(DATE_FORMATTER), brandName);
     }
 
     private String buildPaymentReceiptTemplate(String customerName, String paymentNumber, 
@@ -149,32 +156,32 @@ public class EmailTemplateService {
             If you have any questions about this payment, please contact us.
             
             Best regards,
-            Mula ERP Team
-            """, customerName, paymentNumber, amount, paymentDate.format(DATE_FORMATTER), paymentMethod);
+            %s Team
+            """, customerName, paymentNumber, amount, paymentDate.format(DATE_FORMATTER), paymentMethod, brandName);
     }
 
     private String buildUserRegistrationTemplate(String fullName, String email, String role, String tempPassword) {
         return String.format("""
-            Welcome to Mula ERP!
-            
+            Welcome to %s!
+
             Dear %s,
-            
+
             Your account has been created successfully.
-            
+
             Login Credentials:
             Email: %s
             Temporary Password: %s
             Role: %s
-            
+
             For security reasons, please change your password after your first login.
-            
+
             You can access the system at: [Your ERP URL]
-            
+
             If you have any questions, please contact your system administrator.
-            
+
             Best regards,
-            Mula ERP Team
-            """, fullName, email, tempPassword, role);
+            %s Team
+            """, brandName, fullName, email, tempPassword, role, brandName);
     }
 
     private String buildBatchExpiryTemplate(String batchNumber, String productName, 
@@ -188,10 +195,10 @@ public class EmailTemplateService {
             Days Remaining: %d
             
             Action Required: Please review this batch and take appropriate action before expiry.
-            
+
             ---
-            Mula ERP System
-            """, batchNumber, productName, expiryDate.format(DATE_FORMATTER), daysRemaining);
+            %s System
+            """, batchNumber, productName, expiryDate.format(DATE_FORMATTER), daysRemaining, brandName);
     }
 
     private String buildWarrantyExpiryTemplate(String serialNumber, String productName, String customerName,
@@ -206,9 +213,9 @@ public class EmailTemplateService {
             Days Remaining: %d
             
             Action Required: Consider contacting the customer about warranty renewal or extended coverage.
-            
+
             ---
-            Mula ERP System
-            """, serialNumber, productName, customerName, expiryDate.format(DATE_FORMATTER), daysRemaining);
+            %s System
+            """, serialNumber, productName, customerName, expiryDate.format(DATE_FORMATTER), daysRemaining, brandName);
     }
 }

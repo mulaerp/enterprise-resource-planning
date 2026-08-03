@@ -21,8 +21,10 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
 
+    // NOTE: intentionally not @Cacheable - RedisCacheManager's Jackson serializer (see
+    // CacheConfig) cannot deserialize org.springframework.data.domain.PageImpl (no default
+    // constructor/Creator), so caching a Page<> here 500s on every read.
     @Transactional(readOnly = true)
-    @Cacheable(value = "companies", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     public Page<CompanyDTO> getAllCompanies(Pageable pageable) {
         return companyRepository.findAll(pageable).map(this::convertToDTO);
     }

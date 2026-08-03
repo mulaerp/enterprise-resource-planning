@@ -1,0 +1,501 @@
+sku,name,category,costPrice,unitPrice,stockQuantity,condition,tags,acquisitionCost,buyPrice
+GH-CONSOLE-nintendo-switch-2-001,NINTENDO SWITCH 2,Consoles,1505.00,1690.00,0,GOOD,console,1505.00,1505.00
+GH-CONSOLE-nintendo-switch-lite-002,NINTENDO SWITCH LITE,Consoles,320.00,430.00,0,GOOD,console,320.00,320.00
+GH-CONSOLE-nintendo-switch-oled-neon-mario-red-003,NINTENDO SWITCH OLED (NEON & MARIO RED),Consoles,575.00,775.00,0,GOOD,console,575.00,575.00
+GH-CONSOLE-nintendo-switch-oled-special-edition-004,NINTENDO SWITCH OLED (SPECIAL EDITION),Consoles,625.00,845.00,0,GOOD,console,625.00,625.00
+GH-CONSOLE-nintendo-switch-oled-white-assorted-005,NINTENDO SWITCH OLED (WHITE & ASSORTED),Consoles,575.00,775.00,0,GOOD,console,575.00,575.00
+GH-CONSOLE-nintendo-switch-v1-006,NINTENDO SWITCH V1,Consoles,335.00,450.00,0,GOOD,console,335.00,335.00
+GH-CONSOLE-nintendo-switch-v2-007,NINTENDO SWITCH V2,Consoles,350.00,475.00,0,GOOD,console,350.00,350.00
+GH-CONSOLE-ps4-fat-1tb-008,PS4 FAT 1TB,Consoles,245.00,330.00,0,GOOD,console,245.00,245.00
+GH-CONSOLE-ps4-fat-500gb-009,PS4 FAT 500GB,Consoles,205.00,275.00,0,GOOD,console,205.00,205.00
+GH-CONSOLE-ps4-pro-1tb-010,PS4 PRO 1TB,Consoles,270.00,365.00,0,GOOD,console,270.00,270.00
+GH-CONSOLE-ps4-pro-2tb-011,PS4 PRO 2TB,Consoles,355.00,480.00,0,GOOD,console,355.00,355.00
+GH-CONSOLE-ps4-slim-1tb-012,PS4 SLIM 1TB,Consoles,260.00,350.00,0,GOOD,console,260.00,260.00
+GH-CONSOLE-ps4-slim-500gb-013,PS4 SLIM 500GB,Consoles,220.00,300.00,0,GOOD,console,220.00,220.00
+GH-CONSOLE-ps5-fat-digital-014,PS5 FAT DIGITAL,Consoles,1080.00,1460.00,0,GOOD,console,1080.00,1080.00
+GH-CONSOLE-ps5-fat-disc-015,PS5 FAT DISC,Consoles,1230.00,1660.00,0,GOOD,console,1230.00,1230.00
+GH-CONSOLE-ps5-pro-digital-016,PS5 PRO DIGITAL,Consoles,2270.00,2610.00,0,GOOD,console,2270.00,2270.00
+GH-CONSOLE-ps5-pro-disc-017,PS5 PRO DISC,Consoles,2570.00,2890.00,0,GOOD,console,2570.00,2570.00
+GH-CONSOLE-ps5-slim-digital-018,PS5 SLIM DIGITAL,Consoles,1205.00,1625.00,0,GOOD,console,1205.00,1205.00
+GH-CONSOLE-ps5-slim-disc-019,PS5 SLIM DISC,Consoles,1505.00,2030.00,0,GOOD,console,1505.00,1505.00
+GH-ACC-pre-owned-nintendo-switch-joy-con-left-001,PRE-OWNED NINTENDO SWITCH JOY-CON (LEFT),Accessories,45.00,60.00,0,GOOD,accessory,45.00,45.00
+GH-ACC-pre-owned-nintendo-switch-joy-con-right-002,PRE-OWNED NINTENDO SWITCH JOY-CON (RIGHT),Accessories,45.00,60.00,0,GOOD,accessory,45.00,45.00
+GH-ACC-pre-owned-nintendo-switch-pro-controller-003,PRE-OWNED NINTENDO SWITCH PRO CONTROLLER,Accessories,75.00,100.00,0,GOOD,accessory,75.00,75.00
+GH-ACC-pre-owned-ps4-dualshock-controller-004,PRE-OWNED PS4 DUALSHOCK CONTROLLER,Accessories,30.00,40.00,0,GOOD,accessory,30.00,30.00
+GH-ACC-pre-owned-ps5-dualsense-controller-005,PRE-OWNED PS5 DUALSENSE CONTROLLER,Accessories,145.00,195.00,0,GOOD,accessory,145.00,145.00
+GH-ACC-pre-owned-xbox-series-controller-006,PRE-OWNED XBOX SERIES CONTROLLER,Accessories,50.00,70.00,0,GOOD,accessory,50.00,50.00
+GH-HANDHELD-playstation-portal-black-001,Playstation Portal Black,Handhelds,415.00,560.00,0,GOOD,handheld,415.00,415.00
+GH-HANDHELD-playstation-portal-white-002,Playstation Portal White,Handhelds,380.00,515.00,0,GOOD,handheld,380.00,380.00
+GH-HANDHELD-steam-deck-lcd-256gb-003,Steam Deck LCD 256GB,Handhelds,1125.00,1270.00,0,GOOD,handheld,1125.00,1125.00
+GH-HANDHELD-steam-deck-lcd-512gb-004,Steam Deck LCD 512GB,Handhelds,1300.00,1470.00,0,GOOD,handheld,1300.00,1300.00
+GH-HANDHELD-steam-deck-lcd-64gb-005,Steam Deck LCD 64GB,Handhelds,1005.00,1135.00,0,GOOD,handheld,1005.00,1005.00
+GH-HANDHELD-steam-deck-oled-1tb-006,Steam Deck OLED 1TB,Handhelds,2135.00,2405.00,0,GOOD,handheld,2135.00,2135.00
+GH-HANDHELD-steam-deck-oled-512gb-007,Steam Deck OLED 512GB,Handhelds,1935.00,2180.00,0,GOOD,handheld,1935.00,1935.00
+GH-PS4-a-way-out-001,A WAY OUT,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-ace-attorney-investigations-collections-002,ACE ATTORNEY INVESTIGATIONS COLLECTIONS,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-ace-combat-7-skies-unknown-003,ACE COMBAT 7 SKIES UNKNOWN,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-alan-wake-004,ALAN WAKE,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-ark-survival-evolved-ultimate-survivor-005,ARK : SURVIVAL EVOLVED ULTIMATE SURVIVOR,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-ark-ultimate-survivor-edition-006,ARK ULTIMATE SURVIVOR EDITION,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-armored-core-vi-fires-of-rubicon-007,ARMORED CORE VI: FIRES OF RUBICON,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-assassin-s-creed-3-remastered-008,ASSASSIN'S CREED 3 REMASTERED,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-assassin-s-creed-iv-black-flag-009,ASSASSIN'S CREED IV BLACK FLAG,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-assassin-s-creed-mirage-010,ASSASSIN'S CREED MIRAGE,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-assassin-s-creed-odyssey-011,ASSASSIN'S CREED ODYSSEY,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-assassin-s-creed-odyssey-assassin-s-cree-012,ASSASSIN'S CREED ODYSSEY + ASSASSIN'S CREED ORIGINS DOUBLE PACK,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-assassin-s-creed-origins-013,ASSASSIN'S CREED ORIGINS,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-assassin-s-creed-the-ezio-collection-014,ASSASSIN'S CREED THE EZIO COLLECTION,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-atelier-firis-the-alchemist-and-the-myst-015,ATELIER FIRIS THE ALCHEMIST AND THE MYSTERIOUS JOURNEY,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-atelier-lulua-the-scion-of-arland-016,ATELIER LULUA THE SCION OF ARLAND,PS4 Games,40.00,60.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-atelier-marie-remake-the-alchemist-of-sa-017,ATELIER MARIE REMAKE: THE ALCHEMIST OF SALBURG,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-atelier-ryza-2-lost-legends-018,ATELIER RYZA 2: LOST LEGENDS,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-atelier-ryza-3-alchemist-of-the-end-the-019,ATELIER RYZA 3: ALCHEMIST OF THE END & THE SECRET KEY,PS4 Games,40.00,60.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-atelier-ryza-ever-darkness-the-secret-hi-020,ATELIER RYZA EVER DARKNESS & THE SECRET HIDEOUT,PS4 Games,40.00,60.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-atelier-sophie-021,ATELIER SOPHIE,PS4 Games,35.00,50.00,0,GOOD,ps4,35.00,35.00
+GH-PS4-atelier-sophie-2-022,ATELIER SOPHIE 2,PS4 Games,40.00,60.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-atomic-heart-023,ATOMIC HEART,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-call-of-duty-black-ops-3-024,CALL OF DUTY BLACK OPS 3,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-call-of-duty-black-ops-4-025,CALL OF DUTY BLACK OPS 4,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-call-of-duty-black-ops-6-026,CALL OF DUTY BLACK OPS 6,PS4 Games,60.00,80.00,0,GOOD,ps4,60.00,60.00
+GH-PS4-call-of-duty-modern-warfare-2-027,CALL OF DUTY MODERN WARFARE 2,PS4 Games,45.00,60.00,0,GOOD,ps4,45.00,45.00
+GH-PS4-call-of-duty-modern-warfare-3-028,CALL OF DUTY MODERN WARFARE 3,PS4 Games,60.00,80.00,0,GOOD,ps4,60.00,60.00
+GH-PS4-call-of-duty-wwii-029,CALL OF DUTY WWII,PS4 Games,35.00,50.00,0,GOOD,ps4,35.00,35.00
+GH-PS4-capcom-fighting-collection-2-030,CAPCOM FIGHTING COLLECTION 2,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-crash-bandicoot-4-it-s-about-time-031,CRASH BANDICOOT 4: IT'S ABOUT TIME,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-crash-bandicoot-n-sane-trilogy-032,CRASH BANDICOOT N-SANE TRILOGY,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-crash-team-racing-nitro-fueled-crash-ban-033,CRASH TEAM RACING NITRO FUELED + CRASH BANDICOOT N-SANE TRILOGY,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-crash-team-rumble-034,CRASH TEAM RUMBLE,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-crisis-core-final-fantasy-7-vii-reunion-035,CRISIS CORE FINAL FANTASY 7 VII REUNION,PS4 Games,35.00,50.00,0,GOOD,ps4,35.00,35.00
+GH-PS4-crysis-trilogy-036,CRYSIS TRILOGY,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-cyberdimension-neptunia-4-goddesses-onli-037,CYBERDIMENSION NEPTUNIA 4 GODDESSES ONLINE,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-cyberpunk-2077-038,CYBERPUNK 2077,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-danganronpa-1-2-reload-039,DANGANRONPA 1.2 RELOAD,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-danganronpa-another-episode-ultra-despai-040,DANGANRONPA ANOTHER EPISODE ULTRA DESPAIR GIRLS,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-danganronpa-trilogy-041,DANGANRONPA TRILOGY,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-dark-souls-trilogy-042,DARK SOULS TRILOGY,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-dayz-043,DAYZ,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-dead-by-daylight-nightmare-044,DEAD BY DAYLIGHT NIGHTMARE,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-deadpool-045,DEADPOOL,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-destiny-2-forsaken-legendary-collection-046,DESTINY 2: FORSAKEN LEGENDARY COLLECTION,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-diablo-4-047,DIABLO 4,PS4 Games,65.00,90.00,0,GOOD,ps4,65.00,65.00
+GH-PS4-dirt-5-048,DIRT 5,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-disgaea-6-complete-049,DISGAEA 6 : COMPLETE,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-dnf-duel-050,DNF DUEL,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-dying-light-2-051,DYING LIGHT 2,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-ea-sports-fc-25-052,EA SPORTS FC 25,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-ea-sports-fc-26-053,EA SPORTS FC 26,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-ea-sports-ufc-4-054,EA SPORTS UFC 4,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-earth-defense-force-6-055,EARTH DEFENSE FORCE 6,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-elden-ring-056,ELDEN RING,PS4 Games,30.00,45.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-endless-dungeon-057,ENDLESS DUNGEON,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-evil-west-058,EVIL WEST,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-f1-2022-059,F1 2022,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-f1-2024-060,F1 2024,PS4 Games,60.00,80.00,0,GOOD,ps4,60.00,60.00
+GH-PS4-f1-23-061,F1 23,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-fairy-tail-062,FAIRY TAIL,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-farming-simulator-22-063,FARMING SIMULATOR 22,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-fatal-frame-maiden-of-black-water-064,FATAL FRAME: MAIDEN OF BLACK WATER,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-fate-samurai-remnant-065,FATE/SAMURAI REMNANT,PS4 Games,60.00,80.00,0,GOOD,ps4,60.00,60.00
+GH-PS4-five-nights-at-freddy-s-core-collection-066,FIVE NIGHTS AT FREDDY'S : CORE COLLECTION,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-five-nights-at-freddy-s-security-breach-067,FIVE NIGHTS AT FREDDY'S : SECURITY BREACH,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-ghost-of-tshushima-068,GHOST OF TSHUSHIMA,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-ghost-of-tshushima-director-s-cut-069,GHOST OF TSHUSHIMA DIRECTOR'S CUT,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-god-of-war-070,GOD OF WAR,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-god-of-war-ragnarok-071,GOD OF WAR RAGNAROK,PS4 Games,60.00,80.00,0,GOOD,ps4,60.00,60.00
+GH-PS4-godzilla-072,GODZILLA,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-gran-turismo-7-073,GRAN TURISMO 7,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-granblue-fantasy-relink-074,GRANBLUE FANTASY RELINK,PS4 Games,70.00,95.00,0,GOOD,ps4,70.00,70.00
+GH-PS4-grand-theft-auto-trilogy-075,GRAND THEFT AUTO : TRILOGY,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-grand-theft-auto-v-standard-edition-076,GRAND THEFT AUTO V : STANDARD EDITION,PS4 Games,45.00,60.00,0,GOOD,ps4,45.00,45.00
+GH-PS4-grand-turismo-sport-horizon-zero-dawn-co-077,GRAND TURISMO SPORT /HORIZON ZERO DAWN COMPLETE ED (MEGA PACK ),PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-guilty-gear-strive-078,GUILTY GEAR STRIVE,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-gunvolt-chronicles-luminous-avenger-ix-079,GUNVOLT CHRONICLES: LUMINOUS AVENGER IX,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-hogwarts-legacy-080,HOGWARTS LEGACY,PS4 Games,65.00,90.00,0,GOOD,ps4,65.00,65.00
+GH-PS4-hollow-knight-081,HOLLOW KNIGHT,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-horizon-forbidden-west-082,HORIZON FORBIDDEN WEST,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-hot-wheels-unleashed-083,HOT WHEELS UNLEASHED,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-hot-wheels-unleashed-2-turbocharged-084,HOT WHEELS UNLEASHED 2: TURBOCHARGED,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-human-fall-flat-dream-collection-085,HUMAN : FALL FLAT DREAM COLLECTION,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-huntdown-086,HUNTDOWN,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-infamous-second-son-087,INFAMOUS SECOND SON,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-it-takes-two-088,IT TAKES TWO,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-jujutsu-kaisen-cursed-clash-089,JUJUTSU KAISEN: CURSED CLASH,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-jurassic-world-evolution-2-090,JURASSIC WORLD EVOLUTION 2,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-king-of-fighters-98-ultimate-match-final-091,KING OF FIGHTERS '98 ULTIMATE MATCH FINAL EDITION,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-kukoos-lost-pets-092,KUKOOS: LOST PETS,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-langrisser-1-and-2-093,LANGRISSER 1 AND 2,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-lego-2k-drive-094,LEGO 2K DRIVE,PS4 Games,60.00,80.00,0,GOOD,ps4,60.00,60.00
+GH-PS4-lego-star-wars-the-skywalker-saga-095,LEGO STAR WARS THE SKYWALKER SAGA,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-lies-of-p-096,LIES OF P,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-like-a-dragon-ishin-097,LIKE A DRAGON : ISHIN!,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-like-a-dragon-gaiden-the-man-who-erased-098,LIKE A DRAGON GAIDEN : THE MAN WHO ERASED HIS NAME,PS4 Games,45.00,60.00,0,GOOD,ps4,45.00,45.00
+GH-PS4-like-a-dragon-infinite-wealth-099,LIKE A DRAGON: INFINITE WEALTH,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-little-nightmares-1-2-100,LITTLE NIGHTMARES 1 + 2,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-lost-sphear-101,LOST SPHEAR,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-madden-nfl-23-102,MADDEN NFL 23,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-maid-of-sker-103,MAID OF SKER,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-marvel-spider-man-104,MARVEL SPIDER-MAN,PS4 Games,45.00,60.00,0,GOOD,ps4,45.00,45.00
+GH-PS4-marvel-s-spider-man-miles-morales-105,MARVEL'S SPIDER-MAN: MILES MORALES,PS4 Games,45.00,60.00,0,GOOD,ps4,45.00,45.00
+GH-PS4-megaman-x-legacy-collection-1-2-106,MEGAMAN X LEGACY COLLECTION 1+2,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-metaphor-refantazio-107,METAPHOR : REFANTAZIO,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-minecraft-dungeons-ultimate-108,MINECRAFT DUNGEONS ULTIMATE,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-minecraft-favourites-pack-109,MINECRAFT FAVOURITES PACK,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-minecraft-starter-collection-110,MINECRAFT STARTER COLLECTION,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-mlb-the-show-23-111,MLB THE SHOW 23,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-monster-boy-and-the-cursed-kingdom-112,MONSTER BOY AND THE CURSED KINGDOM,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-monster-energy-supercross-the-official-v-113,MONSTER ENERGY SUPERCROSS - THE OFFICIAL VIDEOGAME 6,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-mortal-kombat-11-ultimate-114,MORTAL KOMBAT 11 ULTIMATE,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-mount-and-blade-2-bannerlord-115,MOUNT AND BLADE 2 : BANNERLORD,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-moving-out-2-116,MOVING OUT 2,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-mx-vs-atv-legends-117,MX VS ATV LEGENDS,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-naruto-shippuden-ultimate-ninja-storm-le-118,NARUTO SHIPPUDEN ULTIMATE NINJA STORM LEGACY,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-naruto-x-boruto-ultimate-ninja-storm-con-119,NARUTO X BORUTO ULTIMATE NINJA STORM CONNECTIONS,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-nba-2k25-120,NBA 2K25,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-nba-2k26-121,NBA 2K26,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-nelke-and-the-legendary-alchemists-ateli-122,NELKE AND THE LEGENDARY ALCHEMISTS: ATELIERS OF THE NEW WORLD,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-nhl-23-123,NHL 23,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-nhra-championship-drag-racing-speed-for-124,NHRA CHAMPIONSHIP DRAG RACING : SPEED FOR ALL,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-nickelodeon-kart-racers-3-slime-speedway-125,NICKELODEON KART RACERS 3 : SLIME SPEEDWAY,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-nights-of-azure-126,NIGHTS OF AZURE,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-no-man-s-sky-beyond-127,NO MAN'S SKY : BEYOND,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-one-piece-odyssey-128,ONE PIECE ODYSSEY,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-one-piece-unlimited-world-red-deluxe-edi-129,ONE PIECE UNLIMITED WORLD RED DELUXE EDITION,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-outlast-trinity-130,OUTLAST TRINITY,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-overcooked-all-you-can-eat-131,OVERCOOKED ALL YOU CAN EAT,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-override-2-super-mech-league-ultraman-de-132,OVERRIDE 2: SUPER MECH LEAGUE - ULTRAMAN DELUXE EDITION,PS4 Games,60.00,80.00,0,GOOD,ps4,60.00,60.00
+GH-PS4-persona-3-reload-standard-edition-chines-133,PERSONA 3 RELOAD STANDARD EDITION (CHINESE),PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-persona-3-reload-standard-edition-englis-134,PERSONA 3 RELOAD STANDARD EDITION (ENGLISH),PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-pga-tour-2k23-135,PGA TOUR 2K23,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-planet-coaster-136,PLANET COASTER,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-port-royale-4-137,PORT ROYALE 4,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-prince-of-persia-the-lost-crown-138,PRINCE OF PERSIA THE LOST CROWN,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-psychonauts-2-motherlobe-139,PSYCHONAUTS 2 MOTHERLOBE,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-red-dead-redemption-2-140,RED DEAD REDEMPTION 2,PS4 Games,45.00,60.00,0,GOOD,ps4,45.00,45.00
+GH-PS4-resident-evil-village-gold-141,RESIDENT EVIL VILLAGE GOLD,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-ride-4-142,RIDE 4,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-river-city-saga-three-kingdoms-143,RIVER CITY SAGA: THREE KINGDOMS,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-sackboy-a-big-adventure-144,SACKBOY : A BIG ADVENTURE,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-saga-scarlet-grace-ambitions-145,SAGA SCARLET GRACE: AMBITIONS,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-saints-row-criminal-custom-146,SAINTS ROW CRIMINAL CUSTOM,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-samurai-maiden-147,SAMURAI MAIDEN,PS4 Games,45.00,60.00,0,GOOD,ps4,45.00,45.00
+GH-PS4-sd-gundam-battle-alliance-148,SD GUNDAM BATTLE ALLIANCE,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-sea-of-stars-149,SEA OF STARS,PS4 Games,20.00,30.00,0,GOOD,ps4,20.00,20.00
+GH-PS4-sega-genesis-collections-150,SEGA GENESIS COLLECTIONS,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-sekiro-shadows-die-twice-151,SEKIRO SHADOWS DIE TWICE,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-sniper-ghost-warrior-contracts-2-152,SNIPER GHOST WARRIOR CONTRACTS 2,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-sonic-frontiers-153,SONIC FRONTIERS,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-sonic-origins-plus-154,SONIC ORIGINS PLUS,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-sonic-shadow-generations-155,SONIC SHADOW GENERATIONS,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-soul-hackers-2-156,SOUL HACKERS 2,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-spellforce-iii-reforced-157,SPELLFORCE III REFORCED,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-stray-158,STRAY,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-street-fighter-6-159,STREET FIGHTER 6,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-super-bomberman-r-2-160,SUPER BOMBERMAN R 2,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-sword-and-fairy-togerther-forever-161,SWORD AND FAIRY TOGERTHER FOREVER,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-tales-of-symphonia-162,TALES OF SYMPHONIA,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-teenage-mutant-ninja-turtles-the-cowabun-163,TEENAGE MUTANT NINJA TURTLES : THE COWABUNGA COLLECTION,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-teenage-mutant-ninja-turtles-mutants-in-164,TEENAGE MUTANT NINJA TURTLES MUTANTS IN MANHATTAN,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-tekken-7-165,TEKKEN 7,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-tekken-7-soulcalibur-vi-166,TEKKEN 7 + SOULCALIBUR VI,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-the-amazing-spider-man-2-167,THE AMAZING SPIDER-MAN 2,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-the-centennial-case-a-shijima-story-168,THE CENTENNIAL CASE: A SHIJIMA STORY,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-the-crew-motorfest-169,THE CREW MOTORFEST,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-the-great-ace-attorney-chronicles-170,THE GREAT ACE ATTORNEY CHRONICLES,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-the-last-of-us-2-171,THE LAST OF US 2,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-the-last-of-us-remastered-172,THE LAST OF US REMASTERED,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-the-legend-of-heroes-zero-no-kiseki-173,THE LEGEND OF HEROES : ZERO NO KISEKI,PS4 Games,30.00,40.00,0,GOOD,ps4,30.00,30.00
+GH-PS4-the-legend-of-heroes-trails-from-zero-174,THE LEGEND OF HEROES TRAILS FROM ZERO,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-the-legend-of-heroes-trails-into-reverie-175,THE LEGEND OF HEROES TRAILS INTO REVERIE DELUXE EDITION,PS4 Games,60.00,80.00,0,GOOD,ps4,60.00,60.00
+GH-PS4-the-legend-of-heroes-trails-of-cold-stee-176,THE LEGEND OF HEROES TRAILS OF COLD STEEL AZURE,PS4 Games,50.00,70.00,0,GOOD,ps4,50.00,50.00
+GH-PS4-the-legend-of-heroes-kuro-no-kiseki-2-cr-177,THE LEGEND OF HEROES: KURO NO KISEKI 2 CRIMSON SIN,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS4-the-legend-of-heroes-trails-through-dayb-178,THE LEGEND OF HEROES: TRAILS THROUGH DAYBREAK,PS4 Games,60.00,80.00,0,GOOD,ps4,60.00,60.00
+GH-PS4-uncharted-the-nathan-drake-collection-179,UNCHARTED THE NATHAN DRAKE COLLECTION,PS4 Games,35.00,50.00,0,GOOD,ps4,35.00,35.00
+GH-PS4-venus-vacation-prism-dead-or-alive-xtrem-180,VENUS VACATION PRISM - DEAD OR ALIVE XTREME,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-wwe-2k24-181,WWE 2K24,PS4 Games,25.00,35.00,0,GOOD,ps4,25.00,25.00
+GH-PS4-wwe-2k25-182,WWE 2K25,PS4 Games,40.00,55.00,0,GOOD,ps4,40.00,40.00
+GH-PS5-007-first-light-001,007 FIRST LIGHT,PS5 Games,180.00,200.00,0,GOOD,ps5,180.00,180.00
+GH-PS5-ai-limit-002,AI LIMIT,PS5 Games,80.00,110.00,0,GOOD,ps5,80.00,80.00
+GH-PS5-alan-wake-ii-003,ALAN WAKE II,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-assassin-s-creed-black-flag-resynced-004,ASSASSIN'S CREED BLACK FLAG RESYNCED,PS5 Games,150.00,180.00,0,GOOD,ps5,150.00,150.00
+GH-PS5-assassin-s-creed-shadows-005,ASSASSIN'S CREED SHADOWS,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-astro-bot-006,ASTRO BOT,PS5 Games,130.00,175.00,0,GOOD,ps5,130.00,130.00
+GH-PS5-atelier-resleriana-the-red-alchemist-the-007,ATELIER RESLERIANA: THE RED ALCHEMIST & THE WHITE GUARDIAN,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-battlefield-6-008,BATTLEFIELD 6,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-black-myth-wu-kong-009,BLACK MYTH: WU KONG,PS5 Games,125.00,170.00,0,GOOD,ps5,125.00,125.00
+GH-PS5-bleach-rebirth-of-souls-010,BLEACH REBIRTH OF SOULS,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-borderlands-4-011,BORDERLANDS 4,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-clair-obscur-expedition-33-012,CLAIR OBSCUR : EXPEDITION 33,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-code-vein-ii-013,CODE VEIN II,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-crimson-desert-014,CRIMSON DESERT,PS5 Games,150.00,200.00,0,GOOD,ps5,150.00,150.00
+GH-PS5-demon-slayer-the-hinokami-chronicles-2-015,DEMON SLAYER: THE HINOKAMI CHRONICLES 2,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-dragon-quest-1-2-hd-remake-016,DRAGON QUEST 1 & 2 HD REMAKE,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-dragon-quest-vii-reimagined-017,DRAGON QUEST VII REIMAGINED,PS5 Games,90.00,120.00,0,GOOD,ps5,90.00,90.00
+GH-PS5-dynasty-warriors-origins-018,DYNASTY WARRIORS ORIGINS,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-edge-of-eternity-019,EDGE OF ETERNITY,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-final-fantasy-tactics-the-ivalice-chroni-020,FINAL FANTASY TACTICS: THE IVALICE CHRONICLES,PS5 Games,90.00,120.00,0,GOOD,ps5,90.00,90.00
+GH-PS5-final-fantasy-vii-rebirth-021,FINAL FANTASY VII REBIRTH,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-five-nights-at-freddy-s-security-breach-022,FIVE NIGHTS AT FREDDY'S SECURITY BREACH,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-ghost-of-tsushima-023,GHOST OF TSUSHIMA,PS5 Games,95.00,130.00,0,GOOD,ps5,95.00,95.00
+GH-PS5-ghost-of-yotei-024,GHOST OF YOTEI,PS5 Games,150.00,200.00,0,GOOD,ps5,150.00,150.00
+GH-PS5-gran-turismo-7-025,GRAN TURISMO 7,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-horizon-forbidden-west-complete-edition-026,HORIZON FORBIDDEN WEST COMPLETE EDITION,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-horizon-zero-dawn-remastered-027,HORIZON ZERO DAWN REMASTERED,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-hot-wheels-unleashed-2-turbocharged-028,HOT WHEELS UNLEASHED 2: TURBOCHARGED,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-kingdom-come-deliverance-ii-029,KINGDOM COME: DELIVERANCE II,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-lego-batman-legacy-of-the-dark-knight-030,LEGO BATMAN: LEGACY OF THE DARK KNIGHT,PS5 Games,180.00,210.00,0,GOOD,ps5,180.00,180.00
+GH-PS5-lego-horizon-adventures-031,LEGO HORIZON ADVENTURES,PS5 Games,90.00,120.00,0,GOOD,ps5,90.00,90.00
+GH-PS5-life-is-strange-reunion-032,LIFE IS STRANGE: REUNION,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-mafia-the-old-country-033,MAFIA THE OLD COUNTRY,PS5 Games,90.00,120.00,0,GOOD,ps5,90.00,90.00
+GH-PS5-marvel-s-spider-man-2-034,MARVEL'S SPIDER-MAN 2,PS5 Games,95.00,130.00,0,GOOD,ps5,95.00,95.00
+GH-PS5-monster-hunter-stories-3-twisted-reflect-035,MONSTER HUNTER STORIES 3: TWISTED REFLECTION,PS5 Games,150.00,200.00,0,GOOD,ps5,150.00,150.00
+GH-PS5-neptunia-reverse-036,NEPTUNIA REVERSE,PS5 Games,95.00,130.00,0,GOOD,ps5,95.00,95.00
+GH-PS5-ninja-gaiden-4-037,NINJA GAIDEN 4,PS5 Games,110.00,150.00,0,GOOD,ps5,110.00,110.00
+GH-PS5-nioh-3-038,NIOH 3,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-octopath-traveler-0-039,OCTOPATH TRAVELER 0,PS5 Games,90.00,120.00,0,GOOD,ps5,90.00,90.00
+GH-PS5-resident-evil-requiem-040,RESIDENT EVIL REQUIEM,PS5 Games,120.00,165.00,0,GOOD,ps5,120.00,120.00
+GH-PS5-saros-041,SAROS,PS5 Games,150.00,200.00,0,GOOD,ps5,150.00,150.00
+GH-PS5-silent-hill-f-042,SILENT HILL F,PS5 Games,120.00,160.00,0,GOOD,ps5,120.00,120.00
+GH-PS5-slitter-head-043,SLITTER HEAD,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-sonic-racing-crossworlds-044,SONIC RACING: CROSSWORLDS,PS5 Games,110.00,150.00,0,GOOD,ps5,110.00,110.00
+GH-PS5-split-fiction-045,SPLIT FICTION,PS5 Games,110.00,150.00,0,GOOD,ps5,110.00,110.00
+GH-PS5-spy-x-anya-operation-memories-046,SPY X ANYA: OPERATION MEMORIES,PS5 Games,95.00,130.00,0,GOOD,ps5,95.00,95.00
+GH-PS5-starfield-047,STARFIELD,PS5 Games,90.00,120.00,0,GOOD,ps5,90.00,90.00
+GH-PS5-stellar-blade-048,STELLAR BLADE,PS5 Games,90.00,120.00,0,GOOD,ps5,90.00,90.00
+GH-PS5-street-fighter-6-years-1-2-fighter-editi-049,STREET FIGHTER 6 YEARS 1-2 FIGHTER EDITION,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-tekken-8-050,TEKKEN 8,PS5 Games,90.00,120.00,0,GOOD,ps5,90.00,90.00
+GH-PS5-the-last-of-us-part-1-051,THE LAST OF US PART 1,PS5 Games,90.00,120.00,0,GOOD,ps5,90.00,90.00
+GH-PS5-the-legend-of-heroes-trails-beyond-the-h-052,THE LEGEND OF HEROES: TRAILS BEYOND THE HORIZON,PS5 Games,115.00,155.00,0,GOOD,ps5,115.00,115.00
+GH-PS5-the-legend-of-heroes-trails-through-dayb-053,THE LEGEND OF HEROES: TRAILS THROUGH DAYBREAK II,PS5 Games,85.00,115.00,0,GOOD,ps5,85.00,85.00
+GH-PS5-the-outer-worlds-2-054,THE OUTER WORLDS 2,PS5 Games,130.00,175.00,0,GOOD,ps5,130.00,130.00
+GH-PS5-trails-in-the-sky-1st-chapter-055,TRAILS IN THE SKY 1ST CHAPTER,PS5 Games,120.00,160.00,0,GOOD,ps5,120.00,120.00
+GH-PS5-ufc-6-056,UFC 6,PS5 Games,130.00,175.00,0,GOOD,ps5,130.00,130.00
+GH-PS5-warhammer-4000-space-marine-2-057,WARHAMMER 4000: SPACE MARINE 2,PS5 Games,90.00,120.00,0,GOOD,ps5,90.00,90.00
+GH-PS5-wwe-2k26-058,WWE 2K26,PS5 Games,130.00,175.00,0,GOOD,ps5,130.00,130.00
+GH-PS5-yakuza-kiwami-3-dark-ties-059,YAKUZA KIWAMI 3 & DARK TIES,PS5 Games,100.00,135.00,0,GOOD,ps5,100.00,100.00
+GH-PS5-ys-x-proud-nordics-060,YS X PROUD: NORDICS,PS5 Games,95.00,130.00,0,GOOD,ps5,95.00,95.00
+GH-NSW-1-2-switch-001,1-2 SWITCH,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-animal-crossing-new-horizons-002,ANIMAL CROSSING NEW HORIZONS,Nintendo Switch Games,100.00,135.00,0,GOOD,switch,100.00,100.00
+GH-NSW-astral-chain-003,ASTRAL CHAIN,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-atelier-dusk-trilogy-004,ATELIER DUSK TRILOGY,Nintendo Switch Games,100.00,135.00,0,GOOD,switch,100.00,100.00
+GH-NSW-atelier-mysterious-trilogy-005,ATELIER MYSTERIOUS TRILOGY,Nintendo Switch Games,105.00,140.00,0,GOOD,switch,105.00,105.00
+GH-NSW-atelier-yumia-006,ATELIER YUMIA,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-attack-on-titan-2-final-battle-007,ATTACK ON TITAN 2 FINAL BATTLE,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-batman-the-telltale-series-008,BATMAN THE TELLTALE SERIES,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-bayonetta-origins-cereza-and-the-last-de-009,BAYONETTA ORIGINS: CEREZA AND THE LAST DEMON,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-capcom-fighting-collection-2-010,CAPCOM FIGHTING COLLECTION 2,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-cooking-mama-cookstar-011,COOKING MAMA: COOKSTAR,Nintendo Switch Games,95.00,130.00,0,GOOD,switch,95.00,95.00
+GH-NSW-crayon-shin-chan-me-and-the-professor-on-012,CRAYON SHIN CHAN : Me and The Professor on Summer Vacation & Shiro of Coal Town,Nintendo Switch Games,140.00,190.00,0,GOOD,switch,140.00,140.00
+GH-NSW-crayon-shin-chan-shiro-of-coal-town-013,CRAYON SHIN CHAN: SHIRO OF COAL TOWN,Nintendo Switch Games,100.00,135.00,0,GOOD,switch,100.00,100.00
+GH-NSW-demon-slayer-kimetsu-no-yaiba-the-hinoka-014,DEMON SLAYER: KIMETSU NO YAIBA - THE HINOKAMI CHRONICLES 2,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-digimon-story-time-stranger-015,DIGIMON STORY TIME STRANGER,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-digimon-world-next-order-016,DIGIMON WORLD : NEXT ORDER,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-donkey-kong-country-returns-hd-017,DONKEY KONG COUNTRY RETURNS HD,Nintendo Switch Games,105.00,140.00,0,GOOD,switch,105.00,105.00
+GH-NSW-donkey-kong-country-tropical-freeze-018,DONKEY KONG COUNTRY TROPICAL FREEZE,Nintendo Switch Games,95.00,130.00,0,GOOD,switch,95.00,95.00
+GH-NSW-doraemon-story-of-seasons-friends-of-the-019,DORAEMON STORY OF SEASONS : FRIENDS OF THE GREAT KINGDOM,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-dragon-quest-vii-reimagined-020,DRAGON QUEST VII REIMAGINED,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-ea-sports-fc-26-021,EA SPORTS FC 26,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-final-fantasy-i-vi-pixel-remaster-collec-022,FINAL FANTASY I-VI PIXEL REMASTER COLLECTION,Nintendo Switch Games,85.00,115.00,0,GOOD,switch,85.00,85.00
+GH-NSW-final-fantasy-ix-023,FINAL FANTASY IX,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-final-fantasy-tactic-the-ivalive-chronic-024,FINAL FANTASY TACTIC THE IVALIVE CHRONICLES,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-final-fantasy-x-x2-025,FINAL FANTASY X/X2,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-grand-theft-auto-trilogy-026,GRAND THEFT AUTO TRILOGY,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-hogwarts-legacy-027,HOGWARTS LEGACY,Nintendo Switch Games,75.00,110.00,0,GOOD,switch,75.00,75.00
+GH-NSW-hollow-knight-028,HOLLOW KNIGHT,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-hyrule-warriors-definitive-edition-029,HYRULE WARRIORS DEFINITIVE EDITION,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-it-takes-two-030,IT TAKES TWO,Nintendo Switch Games,100.00,135.00,0,GOOD,switch,100.00,100.00
+GH-NSW-jump-force-deluxe-edition-us-031,JUMP FORCE DELUXE EDITION (US),Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-kirby-and-the-forgotten-land-032,KIRBY AND THE FORGOTTEN LAND,Nintendo Switch Games,100.00,135.00,0,GOOD,switch,100.00,100.00
+GH-NSW-kirby-star-allies-033,KIRBY STAR ALLIES,Nintendo Switch Games,85.00,115.00,0,GOOD,switch,85.00,85.00
+GH-NSW-kirby-s-return-to-dream-land-deluxe-034,KIRBY'S RETURN TO DREAM LAND DELUXE,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-labyrinth-of-galleria-the-moon-society-035,LABYRINTH OF GALLERIA: THE MOON SOCIETY,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-lego-horizon-adventures-036,LEGO HORIZON ADVENTURES,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-little-nightmare-2-037,LITTLE NIGHTMARE 2,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-little-nightmares-complete-edition-038,LITTLE NIGHTMARES COMPLETE EDITION,Nintendo Switch Games,100.00,135.00,0,GOOD,switch,100.00,100.00
+GH-NSW-luigi-s-mansion-2-039,LUIGI'S MANSION 2,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-luigi-s-mansion-3-040,LUIGI'S MANSION 3,Nintendo Switch Games,100.00,135.00,0,GOOD,switch,100.00,100.00
+GH-NSW-made-in-abyss-binary-star-falling-into-d-041,MADE IN ABYSS : BINARY STAR FALLING INTO DARKNESS,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-mario-luigi-brothership-042,MARIO & LUIGI: BROTHERSHIP,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-mario-sonic-at-the-olympic-games-tokyo-2-043,MARIO & SONIC AT THE OLYMPIC GAMES: TOKYO 2020,Nintendo Switch Games,115.00,155.00,0,GOOD,switch,115.00,115.00
+GH-NSW-mario-rabbids-kingdom-battle-044,MARIO + RABBIDS KINGDOM BATTLE,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-mario-rabbids-sparks-of-hope-045,MARIO + RABBIDS SPARKS OF HOPE,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-mario-golf-super-rush-046,MARIO GOLF SUPER RUSH,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-mario-kart-8-deluxe-047,MARIO KART 8 DELUXE,Nintendo Switch Games,120.00,160.00,0,GOOD,switch,120.00,120.00
+GH-NSW-mario-kart-8-deluxe-booster-course-pass-048,MARIO KART 8 DELUXE + BOOSTER COURSE PASS,Nintendo Switch Games,150.00,200.00,0,GOOD,switch,150.00,150.00
+GH-NSW-mario-party-superstars-049,MARIO PARTY SUPERSTARS,Nintendo Switch Games,140.00,160.00,0,GOOD,switch,140.00,140.00
+GH-NSW-mario-strikers-battle-league-050,MARIO STRIKERS: BATTLE LEAGUE,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-mario-tennis-aces-051,MARIO TENNIS ACES,Nintendo Switch Games,90.00,110.00,0,GOOD,switch,90.00,90.00
+GH-NSW-mario-vs-donkey-kong-052,MARIO VS DONKEY KONG,Nintendo Switch Games,105.00,140.00,0,GOOD,switch,105.00,105.00
+GH-NSW-marvel-ultimate-alliance-3-the-black-ord-053,MARVEL ULTIMATE ALLIANCE 3 THE BLACK ORDER,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-marvel-vs-capcom-fighting-collection-054,MARVEL VS CAPCOM FIGHTING COLLECTION,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-mega-man-battle-network-legacy-collectio-055,MEGA MAN BATTLE NETWORK LEGACY COLLECTION,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-minecraft-056,MINECRAFT,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-minecraft-dungeons-hero-057,MINECRAFT DUNGEONS HERO,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-minecraft-dungeons-ultimate-058,MINECRAFT DUNGEONS ULTIMATE,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-minecraft-legends-059,MINECRAFT LEGENDS,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-minecraft-story-mode-the-complete-advent-060,MINECRAFT STORY MODE - THE COMPLETE ADVENTURE,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-minecraft-story-mode-season-2-061,MINECRAFT STORY MODE SEASON 2,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-monopoly-monopoly-madness-062,MONOPOLY + MONOPOLY MADNESS,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-monster-menu-the-scavenger-s-cookbook-063,MONSTER MENU: THE SCAVENGER'S COOKBOOK,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-mortal-kombat-11-064,MORTAL KOMBAT 11,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-motogp-25-065,MOTOGP 25,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-moving-out-2-066,MOVING OUT 2,Nintendo Switch Games,85.00,115.00,0,GOOD,switch,85.00,85.00
+GH-NSW-naruto-shippuden-ultimate-ninja-storm-tr-067,NARUTO SHIPPUDEN ULTIMATE NINJA STORM TRILOGY (JPN),Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-naruto-x-boruto-ultimate-ninja-storm-con-068,NARUTO X BORUTO ULTIMATE NINJA STORM CONNECTIONS,Nintendo Switch Games,85.00,115.00,0,GOOD,switch,85.00,85.00
+GH-NSW-need-for-speed-hot-pursuit-069,NEED FOR SPEED HOT PURSUIT,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-neptunia-x-senran-kagura-ninja-wars-070,NEPTUNIA X SENRAN KAGURA : NINJA WARS,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-new-pokemon-snap-071,NEW POKEMON SNAP,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-nine-sols-072,NINE SOLS,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-ninja-gaiden-master-collection-073,NINJA GAIDEN MASTER COLLECTION,Nintendo Switch Games,100.00,135.00,0,GOOD,switch,100.00,100.00
+GH-NSW-nintendo-switch-sports-074,NINTENDO SWITCH SPORTS,Nintendo Switch Games,135.00,155.00,0,GOOD,switch,135.00,135.00
+GH-NSW-octopath-traveler-0-075,OCTOPATH TRAVELER 0,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-one-piece-odyssey-076,ONE PIECE ODYSSEY,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-overcooked-all-you-can-eat-077,OVERCOOKED! ALL YOU CAN EAT,Nintendo Switch Games,95.00,125.00,0,GOOD,switch,95.00,95.00
+GH-NSW-overcooked-special-edition-overcooked-2-078,OVERCOOKED! SPECIAL EDITION + OVERCOOKED! 2,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-paper-mario-the-origami-king-079,PAPER MARIO THE ORIGAMI KING,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-paper-mario-the-thousand-year-door-hd-080,PAPER MARIO: THE THOUSAND-YEAR DOOR HD,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-persona-5-royal-081,PERSONA 5 ROYAL,Nintendo Switch Games,60.00,80.00,0,GOOD,switch,60.00,60.00
+GH-NSW-pikmin-3-deluxe-082,PIKMIN 3 DELUXE,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-pokemon-brilliant-diamond-083,POKEMON BRILLIANT DIAMOND,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-pokemon-legend-z-a-084,POKEMON LEGEND Z-A,Nintendo Switch Games,130.00,150.00,0,GOOD,switch,130.00,130.00
+GH-NSW-pokemon-legends-arceus-085,POKEMON LEGENDS ARCEUS,Nintendo Switch Games,95.00,130.00,0,GOOD,switch,95.00,95.00
+GH-NSW-pokemon-let-s-go-eevee-086,POKEMON LET'S GO EEVEE,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-pokemon-let-s-go-pikachu-087,POKEMON LET'S GO PIKACHU,Nintendo Switch Games,85.00,115.00,0,GOOD,switch,85.00,85.00
+GH-NSW-pokemon-mystery-dungeon-dx-088,POKEMON MYSTERY DUNGEON DX,Nintendo Switch Games,85.00,115.00,0,GOOD,switch,85.00,85.00
+GH-NSW-pokemon-scarlet-089,POKEMON SCARLET,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-pokemon-scarlet-hidden-treasure-of-zero-090,POKEMON SCARLET + HIDDEN TREASURE OF ZERO AREA DLC BUNDLE PACKS,Nintendo Switch Games,145.00,195.00,0,GOOD,switch,145.00,145.00
+GH-NSW-pokemon-shield-091,POKEMON SHIELD,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-pokemon-shield-expansion-pack-092,POKEMON SHIELD + EXPANSION PACK,Nintendo Switch Games,125.00,170.00,0,GOOD,switch,125.00,125.00
+GH-NSW-pokemon-shining-pearl-093,POKEMON SHINING PEARL,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-pokemon-snap-094,POKEMON SNAP,Nintendo Switch Games,85.00,115.00,0,GOOD,switch,85.00,85.00
+GH-NSW-pokemon-sword-095,POKEMON SWORD,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-pokemon-sword-expansion-pack-096,POKEMON SWORD + EXPANSION PACK,Nintendo Switch Games,125.00,170.00,0,GOOD,switch,125.00,125.00
+GH-NSW-pokemon-violet-097,POKEMON VIOLET,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-pokemon-violet-hidden-treasure-of-zero-a-098,POKEMON VIOLET + HIDDEN TREASURE OF ZERO AREA DLC BUNDLE PACKS,Nintendo Switch Games,155.00,205.00,0,GOOD,switch,155.00,155.00
+GH-NSW-pokken-tournament-dx-099,POKKEN TOURNAMENT DX,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-princess-peach-showtime-100,PRINCESS PEACH: SHOWTIME!,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-red-dead-redemption-undead-nightmare-101,RED DEAD REDEMPTION: UNDEAD NIGHTMARE,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-resident-evil-triple-pack-102,RESIDENT EVIL TRIPLE PACK,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-rhythm-heaven-groove-103,RHYTHM HEAVEN GROOVE,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-rockman-x-anniversary-collection-104,ROCKMAN X ANNIVERSARY COLLECTION,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-salt-and-sanctuary-drowned-tome-edition-105,SALT AND SANCTUARY : DROWNED TOME EDITION,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-snoopy-the-great-mystery-club-106,SNOOPY & THE GREAT MYSTERY CLUB,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-splatoon-3-107,SPLATOON 3,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-story-of-seasons-grand-bazaar-108,STORY OF SEASONS GRAND BAZAAR,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-street-fighter-30th-anniversary-collecti-109,STREET FIGHTER 30TH ANNIVERSARY COLLECTION,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-super-bomberman-r-2-110,SUPER BOMBERMAN R 2,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-super-mario-3d-all-star-111,SUPER MARIO 3D ALL STAR,Nintendo Switch Games,145.00,195.00,0,GOOD,switch,145.00,145.00
+GH-NSW-super-mario-3d-world-bowser-s-fury-112,SUPER MARIO 3D WORLD + BOWSER'S FURY,Nintendo Switch Games,105.00,140.00,0,GOOD,switch,105.00,105.00
+GH-NSW-super-mario-bros-u-deluxe-113,SUPER MARIO BROS U DELUXE,Nintendo Switch Games,105.00,140.00,0,GOOD,switch,105.00,105.00
+GH-NSW-super-mario-bros-wonder-114,SUPER MARIO BROS WONDER,Nintendo Switch Games,130.00,150.00,0,GOOD,switch,130.00,130.00
+GH-NSW-super-mario-galaxy-1-2-115,SUPER MARIO GALAXY 1 + 2,Nintendo Switch Games,155.00,175.00,0,GOOD,switch,155.00,155.00
+GH-NSW-super-mario-maker-2-116,SUPER MARIO MAKER 2,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-super-mario-odyssey-117,SUPER MARIO ODYSSEY,Nintendo Switch Games,105.00,140.00,0,GOOD,switch,105.00,105.00
+GH-NSW-super-mario-party-118,SUPER MARIO PARTY,Nintendo Switch Games,105.00,140.00,0,GOOD,switch,105.00,105.00
+GH-NSW-super-mario-party-jamboree-119,SUPER MARIO PARTY JAMBOREE,Nintendo Switch Games,150.00,170.00,0,GOOD,switch,150.00,150.00
+GH-NSW-super-mario-rpg-120,SUPER MARIO RPG,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-super-robot-wars-y-121,SUPER ROBOT WARS Y,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-super-smash-bros-ultimate-122,SUPER SMASH BROS ULTIMATE,Nintendo Switch Games,105.00,135.00,0,GOOD,switch,105.00,105.00
+GH-NSW-taiko-no-tatsujin-rhythm-festival-123,TAIKO NO TATSUJIN RHYTHM FESTIVAL,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-that-time-i-got-reincarnated-as-a-slime-124,THAT TIME I GOT REINCARNATED AS A SLIME,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-the-bridge-curse-2-the-extrication-125,THE BRIDGE CURSE 2: THE EXTRICATION,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-the-house-of-the-dead-2-remake-126,THE HOUSE OF THE DEAD 2 REMAKE,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-the-hundred-line-last-defence-academy-127,THE HUNDRED LINE - LAST DEFENCE ACADEMY,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-the-knight-witch-128,THE KNIGHT WITCH,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-the-legend-of-heroes-ao-no-kiseki-kai-129,THE LEGEND OF HEROES : AO NO KISEKI KAI,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-the-legend-of-heroes-sen-no-kiseki-iii-130,THE LEGEND OF HEROES : SEN NO KISEKI III,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-the-legend-of-heroes-trails-into-reverie-131,THE LEGEND OF HEROES : TRAILS INTO REVERIE,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-the-legend-of-heroes-trails-through-dayb-132,THE LEGEND OF HEROES: TRAILS THROUGH DAYBREAK,Nintendo Switch Games,85.00,115.00,0,GOOD,switch,85.00,85.00
+GH-NSW-the-legend-of-zelda-tears-of-the-kingdom-133,THE LEGEND OF ZELDA : TEARS OF THE KINGDOM,Nintendo Switch Games,100.00,135.00,0,GOOD,switch,100.00,100.00
+GH-NSW-the-legend-of-zelda-tears-of-the-kingdom-134,THE LEGEND OF ZELDA : TEARS OF THE KINGDOM (COLLECTOR EDITION),Nintendo Switch Games,190.00,250.00,0,GOOD,switch,190.00,190.00
+GH-NSW-the-legend-of-zelda-breath-of-the-wild-e-135,THE LEGEND OF ZELDA BREATH OF THE WILD + EXPANSION PASS,Nintendo Switch Games,85.00,115.00,0,GOOD,switch,85.00,85.00
+GH-NSW-the-legend-of-zelda-link-s-awakening-136,THE LEGEND OF ZELDA LINK'S AWAKENING,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-the-legend-of-zelda-echoes-of-wisdom-137,THE LEGEND OF ZELDA: ECHOES OF WISDOM,Nintendo Switch Games,80.00,110.00,0,GOOD,switch,80.00,80.00
+GH-NSW-the-walking-dead-destinies-138,THE WALKING DEAD: DESTINIES,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-the-witcher-3-wild-hunt-complete-edition-139,THE WITCHER 3 WILD HUNT COMPLETE EDITION,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-tomodachi-life-living-the-dream-140,TOMODACHI LIFE: LIVING THE DREAM,Nintendo Switch Games,150.00,200.00,0,GOOD,switch,150.00,150.00
+GH-NSW-trine-5-a-clockwork-conspiracy-141,TRINE 5: A CLOCKWORK CONSPIRACY,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-trinity-trigger-142,TRINITY TRIGGER,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-the-legend-of-zelda-breath-of-the-wild-143,The LEGEND OF ZELDA BREATH OF THE WILD,Nintendo Switch Games,75.00,100.00,0,GOOD,switch,75.00,75.00
+GH-NSW-ultra-age-144,ULTRA  AGE,Nintendo Switch Games,70.00,95.00,0,GOOD,switch,70.00,70.00
+GH-NSW-unicorn-overload-145,UNICORN OVERLOAD,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-virche-evermore-error-salvation-146,VIRCHE EVERMORE ERROR SALVATION,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-witch-on-the-holy-night-147,WITCH ON THE HOLY NIGHT,Nintendo Switch Games,100.00,135.00,0,GOOD,switch,100.00,100.00
+GH-NSW-world-end-syndrome-148,WORLD END SYNDROME,Nintendo Switch Games,95.00,130.00,0,GOOD,switch,95.00,95.00
+GH-NSW-xenoblade-chronicles-3-149,XENOBLADE CHRONICLES 3,Nintendo Switch Games,65.00,90.00,0,GOOD,switch,65.00,65.00
+GH-NSW-xenoblade-chronicles-x-definitive-editio-150,XENOBLADE CHRONICLES X: DEFINITIVE EDITION,Nintendo Switch Games,85.00,115.00,0,GOOD,switch,85.00,85.00
+GH-NSW-xuan-yuan-sword-7-151,XUAN YUAN SWORD 7,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-yoshi-s-crafted-world-152,YOSHI'S CRAFTED WORLD,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW-ys-x-nordics-153,YS X NORDICS,Nintendo Switch Games,90.00,120.00,0,GOOD,switch,90.00,90.00
+GH-NSW2-animal-crossing-new-horizons-001,ANIMAL CROSSING NEW HORIZONS,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-assassin-s-creed-shadows-002,Assassin's Creed Shadows,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-bravely-default-flying-fair-hd-remsater-003,Bravely Default Flying Fair HD Remsater,Nintendo Switch 2 Games,60.00,80.00,0,GOOD,switch2,60.00,60.00
+GH-NSW2-cronos-the-new-dawn-004,Cronos: The New Dawn,Nintendo Switch 2 Games,95.00,130.00,0,GOOD,switch2,95.00,95.00
+GH-NSW2-cyberpunk-2077-005,Cyberpunk 2077,Nintendo Switch 2 Games,125.00,170.00,0,GOOD,switch2,125.00,125.00
+GH-NSW2-daemon-x-machina-titanic-scion-006,Daemon X Machina : Titanic Scion,Nintendo Switch 2 Games,110.00,150.00,0,GOOD,switch2,110.00,110.00
+GH-NSW2-donkey-kong-bananza-007,Donkey Kong Bananza,Nintendo Switch 2 Games,190.00,215.00,0,GOOD,switch2,190.00,190.00
+GH-NSW2-dragon-ball-sparking-zero-008,Dragon Ball: Sparking! Zero,Nintendo Switch 2 Games,110.00,150.00,0,GOOD,switch2,110.00,110.00
+GH-NSW2-dragon-quest-1-2-hd-remake-009,Dragon Quest 1 & 2 HD remake,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-dragon-quest-vii-reimagined-010,Dragon Quest VII Reimagined,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-dynasty-warriors-origins-011,Dynasty Warriors Origins,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-ea-sports-fc-26-012,EA SPORTS FC 26,Nintendo Switch 2 Games,65.00,90.00,0,GOOD,switch2,65.00,65.00
+GH-NSW2-fantasy-life-i-the-girl-who-steals-time-013,FANTASY LIFE i: The Girl Who Steals Time,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-final-fantasy-vii-remake-intergrade-014,FINAL FANTASY VII REMAKE INTERGRADE,Nintendo Switch 2 Games,90.00,120.00,0,GOOD,switch2,90.00,90.00
+GH-NSW2-fatal-frame-ii-crimson-butterfly-remake-015,Fatal Frame II: Crimson Butterfly Remake,Nintendo Switch 2 Games,90.00,120.00,0,GOOD,switch2,90.00,90.00
+GH-NSW2-final-fantasy-vii-rebirth-016,Final Fantasy VII Rebirth,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-gear-club-unlimited-3-017,Gear Club Unlimited 3,Nintendo Switch 2 Games,95.00,130.00,0,GOOD,switch2,95.00,95.00
+GH-NSW2-hades-2-018,Hades 2,Nintendo Switch 2 Games,90.00,120.00,0,GOOD,switch2,90.00,90.00
+GH-NSW2-hitman-world-of-assassination-019,Hitman World Of Assassination,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-hogwarts-legacy-020,Hogwarts Legacy,Nintendo Switch 2 Games,95.00,130.00,0,GOOD,switch2,95.00,95.00
+GH-NSW2-hyrule-warriors-age-of-imprisonment-021,Hyrule Warriors : Age Of Imprisonment,Nintendo Switch 2 Games,140.00,190.00,0,GOOD,switch2,140.00,140.00
+GH-NSW2-indiana-jones-and-the-great-circle-022,Indiana Jones and the Great Circle,Nintendo Switch 2 Games,120.00,160.00,0,GOOD,switch2,120.00,120.00
+GH-NSW2-kirby-air-riders-023,Kirby Air Riders,Nintendo Switch 2 Games,180.00,200.00,0,GOOD,switch2,180.00,180.00
+GH-NSW2-kirby-and-the-forgotten-land-024,Kirby And The Forgotten Land,Nintendo Switch 2 Games,135.00,180.00,0,GOOD,switch2,135.00,135.00
+GH-NSW2-kunitsu-gami-path-of-the-goddess-025,Kunitsu-Gami: Path of the Goddess,Nintendo Switch 2 Games,65.00,90.00,0,GOOD,switch2,65.00,65.00
+GH-NSW2-little-nightmare-iii-026,LITTLE NIGHTMARE III,Nintendo Switch 2 Games,80.00,110.00,0,GOOD,switch2,80.00,80.00
+GH-NSW2-metroid-prime-4-beyond-027,METROID PRIME 4: BEYOND,Nintendo Switch 2 Games,105.00,140.00,0,GOOD,switch2,105.00,105.00
+GH-NSW2-madden-nfl-26-028,Madden NFL 26,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-mario-kart-world-029,Mario Kart World,Nintendo Switch 2 Games,125.00,170.00,0,GOOD,switch2,125.00,125.00
+GH-NSW2-mario-tennis-fever-030,Mario Tennis Fever,Nintendo Switch 2 Games,130.00,175.00,0,GOOD,switch2,130.00,130.00
+GH-NSW2-marvel-cosmic-invasion-031,Marvel Cosmic Invasion,Nintendo Switch 2 Games,75.00,100.00,0,GOOD,switch2,75.00,75.00
+GH-NSW2-monster-hunter-stories-3-twisted-reflect-032,Monster Hunter Stories 3: Twisted Reflection,Nintendo Switch 2 Games,135.00,180.00,0,GOOD,switch2,135.00,135.00
+GH-NSW2-nba-2k26-033,NBA 2K26,Nintendo Switch 2 Games,60.00,80.00,0,GOOD,switch2,60.00,60.00
+GH-NSW2-octopath-traveler-0-034,Octopath Traveler 0,Nintendo Switch 2 Games,95.00,130.00,0,GOOD,switch2,95.00,95.00
+GH-NSW2-pokemon-legends-z-a-035,POKEMON LEGENDS Z-A,Nintendo Switch 2 Games,105.00,140.00,0,GOOD,switch2,105.00,105.00
+GH-NSW2-persona-3-reload-036,Persona 3 Reload,Nintendo Switch 2 Games,70.00,95.00,0,GOOD,switch2,70.00,70.00
+GH-NSW2-pokemon-pokopia-037,Pokemon Pokopia,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-pragmata-038,Pragmata,Nintendo Switch 2 Games,130.00,175.00,0,GOOD,switch2,130.00,130.00
+GH-NSW2-puyopuyo-tetris-2s-039,PuyoPuyo Tetris 2S,Nintendo Switch 2 Games,50.00,70.00,0,GOOD,switch2,50.00,50.00
+GH-NSW2-raidou-remastered-the-mystery-of-the-sou-040,RAIDOU Remastered: The Mystery of the Soulless Army,Nintendo Switch 2 Games,80.00,110.00,0,GOOD,switch2,80.00,80.00
+GH-NSW2-reanimal-041,Reanimal,Nintendo Switch 2 Games,75.00,100.00,0,GOOD,switch2,75.00,75.00
+GH-NSW2-resident-evil-biohazard-gold-edition-042,Resident Evil Biohazard Gold Edition,Nintendo Switch 2 Games,65.00,90.00,0,GOOD,switch2,65.00,65.00
+GH-NSW2-resident-evil-requiem-043,Resident Evil Requiem,Nintendo Switch 2 Games,140.00,190.00,0,GOOD,switch2,140.00,140.00
+GH-NSW2-resident-evil-village-044,Resident Evil Village,Nintendo Switch 2 Games,75.00,100.00,0,GOOD,switch2,75.00,75.00
+GH-NSW2-ripple-island-kyle-and-cal-s-restaurant-045,Ripple Island: Kyle and Cal's Restaurant,Nintendo Switch 2 Games,55.00,75.00,0,GOOD,switch2,55.00,55.00
+GH-NSW2-runefactory-guardian-of-azuma-046,Runefactory Guardian of Azuma,Nintendo Switch 2 Games,95.00,130.00,0,GOOD,switch2,95.00,95.00
+GH-NSW2-sonic-racing-crossworlds-047,SONIC RACING: CROSSWORLDS,Nintendo Switch 2 Games,110.00,150.00,0,GOOD,switch2,110.00,110.00
+GH-NSW2-star-wars-outlaws-048,STAR WARS OUTLAWS,Nintendo Switch 2 Games,110.00,150.00,0,GOOD,switch2,110.00,110.00
+GH-NSW2-super-mario-party-jamboree-049,SUPER MARIO PARTY JAMBOREE,Nintendo Switch 2 Games,170.00,195.00,0,GOOD,switch2,170.00,170.00
+GH-NSW2-sid-meier-s-civilization-vii-050,Sid Meier's Civilization VII,Nintendo Switch 2 Games,70.00,95.00,0,GOOD,switch2,70.00,70.00
+GH-NSW2-sonic-x-shadow-generations-051,Sonic X Shadow Generations,Nintendo Switch 2 Games,80.00,110.00,0,GOOD,switch2,80.00,80.00
+GH-NSW2-splatoon-raiders-052,Splatoon Raiders,Nintendo Switch 2 Games,105.00,140.00,0,GOOD,switch2,105.00,105.00
+GH-NSW2-spongebob-squarepants-titans-of-the-tide-053,Spongebob Squarepants: Titans of the Tide,Nintendo Switch 2 Games,75.00,100.00,0,GOOD,switch2,75.00,75.00
+GH-NSW2-star-fox-054,Star Fox,Nintendo Switch 2 Games,80.00,110.00,0,GOOD,switch2,80.00,80.00
+GH-NSW2-story-of-seasons-grand-bazaar-055,Story of Seasons Grand Bazaar,Nintendo Switch 2 Games,120.00,160.00,0,GOOD,switch2,120.00,120.00
+GH-NSW2-street-fighter-6-1-2-fighter-edition-056,Street Fighter 6 1 - 2 Fighter Edition,Nintendo Switch 2 Games,115.00,155.00,0,GOOD,switch2,115.00,115.00
+GH-NSW2-suikoden-1-2-hd-remaster-057,Suikoden 1 - 2 HD Remaster,Nintendo Switch 2 Games,90.00,120.00,0,GOOD,switch2,90.00,90.00
+GH-NSW2-super-mario-bros-wonder-meetup-in-bellab-058,Super Mario Bros. Wonder + Meetup in Bellabel Park,Nintendo Switch 2 Games,115.00,155.00,0,GOOD,switch2,115.00,115.00
+GH-NSW2-survival-kids-059,Survival Kids,Nintendo Switch 2 Games,75.00,100.00,0,GOOD,switch2,75.00,75.00
+GH-NSW2-tales-of-arise-beyond-the-dawn-edition-060,Tales of Arise Beyond The Dawn Edition,Nintendo Switch 2 Games,75.00,100.00,0,GOOD,switch2,75.00,75.00
+GH-NSW2-tamagotchi-plaza-061,Tamagotchi Plaza,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-the-legend-of-zelda-breath-of-the-wild-062,The Legend Of Zelda : Breath Of the Wild,Nintendo Switch 2 Games,160.00,180.00,0,GOOD,switch2,160.00,160.00
+GH-NSW2-the-legend-of-zelda-tears-of-the-kingdom-063,The Legend Of Zelda : Tears Of The Kingdom,Nintendo Switch 2 Games,170.00,195.00,0,GOOD,switch2,170.00,170.00
+GH-NSW2-the-legend-of-heroes-trails-beyond-the-h-064,The Legend of Heroes: Trails Beyond the Horizon,Nintendo Switch 2 Games,130.00,175.00,0,GOOD,switch2,130.00,130.00
+GH-NSW2-two-point-museum-065,Two Point Museum,Nintendo Switch 2 Games,75.00,100.00,0,GOOD,switch2,75.00,75.00
+GH-NSW2-wwe-2k26-066,WWE 2K26,Nintendo Switch 2 Games,120.00,160.00,0,GOOD,switch2,120.00,120.00
+GH-NSW2-wild-hearts-s-067,Wild Hearts S,Nintendo Switch 2 Games,75.00,110.00,0,GOOD,switch2,75.00,75.00
+GH-NSW2-xenoblade-chronicles-x-definitive-editio-068,Xenoblade Chronicles X: Definitive Edition,Nintendo Switch 2 Games,90.00,120.00,0,GOOD,switch2,90.00,90.00
+GH-NSW2-yakuza-kiwami-069,YAKUZA KIWAMI,Nintendo Switch 2 Games,45.00,60.00,0,GOOD,switch2,45.00,45.00
+GH-NSW2-yakuza-kiwami-2-070,YAKUZA KIWAMI 2,Nintendo Switch 2 Games,50.00,70.00,0,GOOD,switch2,50.00,50.00
+GH-NSW2-yakuza-kiwami-3-dark-ties-071,YAKUZA KIWAMI 3 & DARK TIES,Nintendo Switch 2 Games,100.00,135.00,0,GOOD,switch2,100.00,100.00
+GH-NSW2-yakuza-0-072,Yakuza 0,Nintendo Switch 2 Games,95.00,125.00,0,GOOD,switch2,95.00,95.00
+GH-NSW2-yoshi-and-the-mysterious-book-073,Yoshi and the Mysterious Book,Nintendo Switch 2 Games,130.00,175.00,0,GOOD,switch2,130.00,130.00

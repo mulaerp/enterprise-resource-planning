@@ -5,7 +5,7 @@ import Stomp from 'stompjs';
 interface WebSocketMessage {
   type: string;
   message: string;
-  data: any;
+  data: unknown;
   timestamp: string;
 }
 
@@ -19,6 +19,7 @@ const WebSocketContext = createContext<WebSocketContextType>({
   lastMessage: null,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components -- context+provider+hook colocated by design
 export const useWebSocket = () => useContext(WebSocketContext);
 
 interface WebSocketProviderProps {
@@ -31,7 +32,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
 
   useEffect(() => {
     // Create WebSocket connection
-    const socket = new SockJS('http://localhost:8080/ws');
+    const socket = new SockJS(`${window.location.origin}/ws`);
     const stompClient = Stomp.over(socket);
     
     // Disable debug logging
@@ -49,7 +50,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
           console.log('Received message:', wsMessage);
         });
       },
-      (error: any) => {
+      (error: unknown) => {
         console.error('WebSocket error:', error);
         setConnected(false);
       }

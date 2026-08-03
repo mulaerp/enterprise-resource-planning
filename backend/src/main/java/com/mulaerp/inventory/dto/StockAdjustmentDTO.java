@@ -26,6 +26,16 @@ public class StockAdjustmentDTO {
     private LocalDate adjustmentDate;
     private String approvedBy;
 
+    /**
+     * PROBLEM 2 fix (negative-stock guard): request-only flag letting an adjustment push stock
+     * below zero instead of being rejected with 400. Gated to ADMIN server-side
+     * (InventoryService#createAdjustment checks the caller's authorities - RoleRules doesn't
+     * expose a per-flag SpEL hook, so the simplest correct gate is a role check in the service);
+     * a non-admin setting this to true is silently treated as false rather than surfacing a
+     * separate 403, so the guard still applies exactly as if the flag had never been sent.
+     */
+    private Boolean allowNegative;
+
     public static StockAdjustmentDTO fromEntity(StockAdjustment adjustment) {
         StockAdjustmentDTO dto = new StockAdjustmentDTO();
         dto.setId(adjustment.getId());

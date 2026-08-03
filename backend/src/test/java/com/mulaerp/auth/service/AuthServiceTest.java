@@ -52,7 +52,7 @@ class AuthServiceTest {
         testUser.setEmail("test@mulaerp.com");
         testUser.setPasswordHash("$2a$10$hashedpassword");
         testUser.setFullName("Test User");
-        testUser.setRole(User.UserRole.USER);
+        testUser.setRole(User.UserRole.CASHIER);
         testUser.setStatus(User.UserStatus.ACTIVE);
 
         loginRequest = new LoginRequest();

@@ -6,6 +6,7 @@ import com.mulaerp.auth.dto.UserDTO;
 import com.mulaerp.auth.entity.User;
 import com.mulaerp.auth.repository.UserRepository;
 import com.mulaerp.auth.security.JwtUtil;
+import com.mulaerp.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,7 +34,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         
         User user = userRepository.findByEmailAndDeletedFalse(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getRole().name());
         
@@ -46,7 +47,7 @@ public class AuthService {
         String email = authentication.getName();
         
         User user = userRepository.findByEmailAndDeletedFalse(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
         return UserDTO.fromEntity(user);
     }
@@ -54,7 +55,7 @@ public class AuthService {
     @Transactional
     public UserDTO createUser(String email, String password, String fullName, User.UserRole role) {
         if (userRepository.existsByEmail(email)) {
-            throw new RuntimeException("Email already exists");
+            throw new IllegalArgumentException("Email already exists");
         }
         
         User user = new User();

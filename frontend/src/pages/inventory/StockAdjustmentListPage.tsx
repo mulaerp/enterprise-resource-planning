@@ -5,7 +5,7 @@ import Layout from '../../components/Layout';
 import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
 
 interface StockAdjustment {
   id: string;
@@ -33,7 +33,7 @@ export default function StockAdjustmentListPage() {
     try {
       const response = await api.get('/inventory/adjustments');
       setAdjustments(response.data);
-    } catch (err) {
+    } catch {
       showError('Failed to fetch stock adjustments');
     } finally {
       setLoading(false);
@@ -47,8 +47,8 @@ export default function StockAdjustmentListPage() {
       await api.delete(`/inventory/adjustments/${id}`);
       success('Adjustment deleted successfully');
       fetchAdjustments();
-    } catch (err: any) {
-      showError(err.response?.data?.message || 'Failed to delete adjustment');
+    } catch (err) {
+      showError(getErrorMessage(err, 'Failed to delete adjustment'));
     }
   };
 
@@ -90,21 +90,18 @@ export default function StockAdjustmentListPage() {
   return (
     <Layout>
       <div className="p-6">
-        {/* Gradient Banner Header */}
-        <div className="bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 rounded-xl shadow-lg p-8 mb-6">
-          <div className="flex items-center justify-between">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">Stock Adjustments</h1>
-              <p className="text-orange-100">Track inventory quantity adjustments and corrections</p>
+              <h1 className="text-2xl font-semibold text-slate-900">Stock Adjustments</h1>
+              <p className="text-sm text-slate-500 mt-1">Track inventory quantity adjustments and corrections</p>
             </div>
-            <Button 
+            <Button
               onClick={() => navigate('/inventory/adjustments/new')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
             >
               <Plus className="w-4 h-4 mr-2" />
               New Adjustment
             </Button>
-          </div>
         </div>
 
         <DataTable columns={columns} data={adjustments}

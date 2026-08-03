@@ -28,9 +28,13 @@ export async function logout(page: Page) {
 }
 
 /**
- * Check if user is authenticated
+ * Check if user is authenticated.
+ *
+ * Auth is an httpOnly cookie (MULAERP_AUTH) - not readable from page.evaluate() - so this asks
+ * the server via GET /auth/me instead. page.request shares the browser context's cookie jar, so
+ * a cookie set during page.goto()/form login flows through automatically.
  */
 export async function isAuthenticated(page: Page): Promise<boolean> {
-  const token = await page.evaluate(() => localStorage.getItem('token'));
-  return !!token;
+  const response = await page.request.get('/api/v1/auth/me');
+  return response.ok();
 }

@@ -5,7 +5,9 @@ import Layout from '../../components/Layout';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import api from '../../lib/api';
+import { useToast } from '../../components/ui/Toast';
+import api, { downloadFile } from '../../lib/api';
+import { formatMoney } from '../../lib/money';
 
 interface InventoryReport {
   totalProducts: number;
@@ -31,15 +33,29 @@ interface InventoryReport {
   }>;
 }
 
-const COLORS = ['#8b5cf6', '#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+const COLORS = ['#2563eb', '#0d9488', '#f59e0b', '#94a3b8', '#16a34a', '#dc2626'];
 
 export default function InventoryReportPage() {
+  const { error: showError } = useToast();
   const [report, setReport] = useState<InventoryReport | null>(null);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     loadReport();
   }, []);
+
+  const handleExportPdf = async () => {
+    setExporting(true);
+    try {
+      await downloadFile('/reports/inventory/export', { format: 'pdf' }, 'inventory-report.pdf');
+    } catch (error) {
+      console.error('Failed to export inventory report:', error);
+      showError('Failed to export inventory report');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const loadReport = async () => {
     setLoading(true);
@@ -68,7 +84,7 @@ export default function InventoryReportPage() {
     return (
       <Layout>
         <div className="p-6 flex items-center justify-center h-64">
-          <p className="text-gray-500">Loading report...</p>
+          <p className="text-slate-500">Loading report...</p>
         </div>
       </Layout>
     );
@@ -79,12 +95,12 @@ export default function InventoryReportPage() {
       <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-semibold text-slate-900">
               Inventory Report
             </h1>
-            <p className="text-gray-600 mt-2">Current stock levels and valuations</p>
+            <p className="text-slate-600 mt-2">Current stock levels and valuations</p>
           </div>
-          <Button variant="secondary" icon={<Download size={16} />}>
+          <Button variant="secondary" icon={<Download size={16} />} loading={exporting} onClick={handleExportPdf}>
             Export PDF
           </Button>
         </div>
@@ -96,7 +112,7 @@ export default function InventoryReportPage() {
               <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Total Products</p>
+                    <p className="text-sm text-slate-600 mb-1">Total Products</p>
                     <p className="text-3xl font-bold text-blue-600">{report.totalProducts}</p>
                   </div>
                   <Package className="text-blue-600" size={32} />
@@ -106,21 +122,21 @@ export default function InventoryReportPage() {
               <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Inventory Value</p>
+                    <p className="text-sm text-slate-600 mb-1">Inventory Value</p>
                     <p className="text-3xl font-bold text-green-600">
-                      ${report.totalInventoryValue.toFixed(2)}
+                      {formatMoney(report.totalInventoryValue)}
                     </p>
                   </div>
                 </div>
               </Card>
 
-              <Card className="p-6 border-orange-200 bg-orange-50">
+              <Card className="p-6 border-amber-200 bg-amber-50">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-orange-800 mb-1">Low Stock</p>
-                    <p className="text-3xl font-bold text-orange-600">{report.lowStockProducts}</p>
+                    <p className="text-sm text-amber-800 mb-1">Low Stock</p>
+                    <p className="text-3xl font-bold text-amber-600">{report.lowStockProducts}</p>
                   </div>
-                  <AlertTriangle className="text-orange-600" size={32} />
+                  <AlertTriangle className="text-amber-600" size={32} />
                 </div>
               </Card>
 
@@ -147,7 +163,7 @@ export default function InventoryReportPage() {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="totalStock" fill="#8b5cf6" name="Total Stock" />
+                      <Bar dataKey="totalStock" fill="#2563eb" name="Total Stock" />
                     </BarChart>
                   </ResponsiveContainer>
                 </Card>
@@ -196,14 +212,14 @@ export default function InventoryReportPage() {
                   </thead>
                   <tbody>
                     {report.productStocks.map((product) => (
-                      <tr key={product.productId} className="border-b hover:bg-gray-50">
+                      <tr key={product.productId} className="border-b hover:bg-slate-50">
                         <td className="py-3 px-4 font-mono text-sm">{product.sku}</td>
                         <td className="py-3 px-4">{product.productName}</td>
                         <td className="py-3 px-4">{product.category || 'N/A'}</td>
                         <td className="text-right py-3 px-4">{product.stockQuantity}</td>
                         <td className="text-right py-3 px-4">{product.reorderLevel}</td>
-                        <td className="text-right py-3 px-4">${product.unitPrice.toFixed(2)}</td>
-                        <td className="text-right py-3 px-4">${product.stockValue.toFixed(2)}</td>
+                        <td className="text-right py-3 px-4">{formatMoney(product.unitPrice)}</td>
+                        <td className="text-right py-3 px-4">{formatMoney(product.stockValue)}</td>
                         <td className="text-center py-3 px-4">{getStatusBadge(product.status)}</td>
                       </tr>
                     ))}

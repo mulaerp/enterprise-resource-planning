@@ -5,7 +5,7 @@ import Layout from '../../components/Layout';
 import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
 
 interface ProductBatch {
   id: string;
@@ -32,7 +32,7 @@ export default function BatchListPage() {
     try {
       const response = await api.get('/batches');
       setBatches(response.data);
-    } catch (err) {
+    } catch {
       showError('Failed to fetch batches');
     } finally {
       setLoading(false);
@@ -46,8 +46,8 @@ export default function BatchListPage() {
       await api.delete(`/batches/${id}`);
       success('Batch deleted successfully');
       fetchBatches();
-    } catch (err: any) {
-      showError(err.response?.data?.message || 'Failed to delete batch');
+    } catch (err) {
+      showError(getErrorMessage(err, 'Failed to delete batch'));
     }
   };
 
@@ -55,7 +55,7 @@ export default function BatchListPage() {
     const colors = {
       ACTIVE: 'bg-green-100 text-green-800',
       EXPIRED: 'bg-red-100 text-red-800',
-      RECALLED: 'bg-yellow-100 text-yellow-800',
+      RECALLED: 'bg-amber-100 text-amber-800',
     };
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[status as keyof typeof colors]}`}>
@@ -89,7 +89,7 @@ export default function BatchListPage() {
         <div className="flex items-center gap-2">
           {batch.expiryDate ? new Date(batch.expiryDate).toLocaleDateString() : '-'}
           {isExpiringSoon(batch.expiryDate) && (
-            <AlertTriangle className="w-4 h-4 text-yellow-500" />
+            <AlertTriangle className="w-4 h-4 text-amber-500" />
           )}
         </div>
       ),
@@ -107,7 +107,7 @@ export default function BatchListPage() {
         <div className="flex gap-2">
           <button
             onClick={() => navigate(`/inventory/batches/${batch.id}/edit`)}
-            className="text-blue-600 hover:text-blue-800"
+            className="text-brand-600 hover:text-brand-800"
           >
             <Edit className="w-4 h-4" />
           </button>
@@ -133,21 +133,18 @@ export default function BatchListPage() {
   return (
     <Layout>
       <div className="p-6">
-        {/* Gradient Banner Header */}
-        <div className="bg-gradient-to-r from-lime-600 via-green-600 to-emerald-600 rounded-xl shadow-lg p-8 mb-6">
-          <div className="flex items-center justify-between">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">Batch/Lot Tracking</h1>
-              <p className="text-lime-100">Monitor product batches, lots, and expiry dates</p>
+              <h1 className="text-2xl font-semibold text-slate-900">Batch/Lot Tracking</h1>
+              <p className="text-sm text-slate-500 mt-1">Monitor product batches, lots, and expiry dates</p>
             </div>
-            <Button 
+            <Button
               onClick={() => navigate('/inventory/batches/new')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
             >
               <Plus className="w-4 h-4 mr-2" />
               New Batch
             </Button>
-          </div>
         </div>
 
         <DataTable columns={columns} data={batches}

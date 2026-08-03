@@ -5,7 +5,7 @@ import Layout from '../../components/Layout';
 import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { api } from '../../lib/api';
+import { api, getErrorMessage } from '../../lib/api';
 import { useToast } from '../../components/ui/Toast';
 
 interface User {
@@ -31,7 +31,7 @@ export default function UserListPage() {
       setLoading(true);
       const response = await api.get('/users');
       setUsers(response.data.content || []);
-    } catch (error) {
+    } catch {
       showToast('error', 'Failed to fetch users');
     } finally {
       setLoading(false);
@@ -45,8 +45,8 @@ export default function UserListPage() {
       await api.delete(`/users/${id}`);
       showToast('success', 'User deleted successfully');
       fetchUsers();
-    } catch (error: any) {
-      showToast('error', error.response?.data?.message || 'Failed to delete user');
+    } catch (error) {
+      showToast('error', getErrorMessage(error, 'Failed to delete user'));
     }
   };
 
@@ -54,7 +54,9 @@ export default function UserListPage() {
     const variants: Record<string, 'default' | 'success' | 'warning' | 'danger' | 'info'> = {
       ADMIN: 'danger',
       MANAGER: 'warning',
-      USER: 'default',
+      ACCOUNTANT: 'info',
+      INVENTORY: 'info',
+      CASHIER: 'success',
     };
     return <Badge variant={variants[role] || 'default'}>{role}</Badge>;
   };
@@ -95,20 +97,18 @@ export default function UserListPage() {
   return (
     <Layout>
     <div className="space-y-6">
-      {/* Gradient Banner Header */}
-      <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 rounded-xl shadow-lg p-8">
-        <div className="flex items-center justify-between">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Users</h1>
-            <p className="text-violet-100">Manage user accounts and permissions</p>
+            <h1 className="text-2xl font-semibold text-slate-900">Users</h1>
+            <p className="text-sm text-slate-500 mt-1">Manage user accounts and permissions</p>
           </div>
           <Link to="/users/new">
-            <Button className="bg-white/20 hover:bg-white/30 text-white border-white/30">
+            <Button>
               <Plus className="h-4 w-4 mr-2" />
               New User
             </Button>
           </Link>
-        </div>
       </div>
 
       <DataTable

@@ -1,5 +1,6 @@
 package com.mulaerp.inventory.controller;
 
+import com.mulaerp.auth.security.RoleRules;
 import com.mulaerp.inventory.dto.StockAdjustmentDTO;
 import com.mulaerp.inventory.service.InventoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -7,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,13 +41,17 @@ public class InventoryController {
     }
 
     @PostMapping("/adjustments")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Create stock adjustment")
     public ResponseEntity<StockAdjustmentDTO> createAdjustment(@RequestBody StockAdjustmentDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(inventoryService.createAdjustment(dto));
     }
 
+    // Gated the same as create (see WP12 spec's "stock adjustments/transfers create") - deleting
+    // an adjustment is the same class of stock-affecting mutation.
     @DeleteMapping("/adjustments/{id}")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Delete stock adjustment")
     public ResponseEntity<Void> deleteAdjustment(@PathVariable UUID id) {
         inventoryService.deleteAdjustment(id);

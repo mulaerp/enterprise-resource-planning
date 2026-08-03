@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Table(name = "sales_order_items")
@@ -40,6 +41,17 @@ public class SalesOrderItem extends BaseEntity {
 
     @Column(name = "total", precision = 15, scale = 2, nullable = false)
     private BigDecimal total = BigDecimal.ZERO;
+
+    // --- WP3: optional batch/serial tracking (V19) ------------------------------------------
+    // Both nullable - existing sales orders/items without any tracking selection are unaffected.
+
+    /** Batch this line will be fulfilled from; validated + decremented on delivery. */
+    @Column(name = "batch_id")
+    private UUID batchId;
+
+    /** Comma-separated ProductSerial ids sold on this line; see inventory.util.UuidCsv. */
+    @Column(name = "serial_ids", columnDefinition = "TEXT")
+    private String serialIds;
 
     public void calculateTotal() {
         BigDecimal itemTotal = unitPrice.multiply(BigDecimal.valueOf(quantity));

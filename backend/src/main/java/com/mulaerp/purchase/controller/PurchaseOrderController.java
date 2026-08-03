@@ -1,7 +1,9 @@
 package com.mulaerp.purchase.controller;
 
+import com.mulaerp.auth.security.RoleRules;
 import com.mulaerp.purchase.dto.CreatePurchaseOrderRequest;
 import com.mulaerp.purchase.dto.PurchaseOrderDTO;
+import com.mulaerp.purchase.dto.ReceivePurchaseOrderRequest;
 import com.mulaerp.purchase.entity.PurchaseOrder;
 import com.mulaerp.purchase.service.PurchaseOrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,10 +14,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+// CRITICAL FIX 1 (post-overhaul audit) role matrix: create/update/status-transition/delete are
+// ADMIN or MANAGER (a plain USER account previously had no restriction at all); GET/search stay
+// open to any authenticated user.
 @RestController
 @RequestMapping("/api/v1/purchase-orders")
 @RequiredArgsConstructor
@@ -45,6 +51,7 @@ public class PurchaseOrderController {
     }
 
     @PostMapping
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Create purchase order")
     public ResponseEntity<PurchaseOrderDTO> createPurchaseOrder(
             @Valid @RequestBody CreatePurchaseOrderRequest request) {
@@ -53,6 +60,7 @@ public class PurchaseOrderController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Update purchase order")
     public ResponseEntity<PurchaseOrderDTO> updatePurchaseOrder(
             @PathVariable UUID id,
@@ -61,14 +69,20 @@ public class PurchaseOrderController {
     }
 
     @PatchMapping("/{id}/status")
-    @Operation(summary = "Update purchase order status")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
+    @Operation(summary = "Update purchase order status",
+            description = "When transitioning to RECEIVED, an optional body may supply per-item " +
+                    "batch (batchNumber/manufactureDate/expiryDate) and/or serialNumbers to register " +
+                    "against inventory tracking (WP3). Omit the body for the original untracked behaviour.")
     public ResponseEntity<PurchaseOrderDTO> updateStatus(
             @PathVariable UUID id,
-            @RequestParam PurchaseOrder.PurchaseOrderStatus status) {
-        return ResponseEntity.ok(purchaseOrderService.updateStatus(id, status));
+            @RequestParam PurchaseOrder.PurchaseOrderStatus status,
+            @RequestBody(required = false) ReceivePurchaseOrderRequest request) {
+        return ResponseEntity.ok(purchaseOrderService.updateStatus(id, status, request));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Delete purchase order")
     public ResponseEntity<Void> deletePurchaseOrder(@PathVariable UUID id) {
         purchaseOrderService.deletePurchaseOrder(id);

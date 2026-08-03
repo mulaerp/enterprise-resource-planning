@@ -1,0 +1,22 @@
+services:
+  # Playwright E2E test runner (Linux container) — run against the stack
+  # started by compose.yaml. Not started by plain `docker compose up`.
+  #
+  # Usage: docker compose -f compose.yaml -f docker-compose.e2e.yml run --rm playwright
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.56.1-jammy
+    working_dir: /work
+    volumes:
+      - ./frontend:/work
+      - /work/node_modules
+    environment:
+      - PLAYWRIGHT_BASE_URL=http://frontend:5173
+      - CI=1
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - mulaerp-network
+    profiles:
+      - e2e
+    entrypoint: ["/bin/sh", "-c", "npm ci && npx playwright test --project=chromium"]

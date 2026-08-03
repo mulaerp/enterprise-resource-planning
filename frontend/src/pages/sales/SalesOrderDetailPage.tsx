@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Edit } from 'lucide-react';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
+import { formatMoney } from '../../lib/money';
+import Layout from '../../components/Layout';
 
 interface SalesOrder {
   id: string;
@@ -50,21 +52,21 @@ export default function SalesOrderDetailPage() {
     try {
       await api.patch(`/sales-orders/${id}/status`, { status: newStatus });
       fetchOrder();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to update status:', error);
-      alert(error.response?.data?.message || 'Failed to update status');
+      alert(getErrorMessage(error, 'Failed to update status'));
     }
   };
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      DRAFT: 'bg-gray-100 text-gray-800',
+      DRAFT: 'bg-slate-100 text-slate-800',
       CONFIRMED: 'bg-blue-100 text-blue-800',
       DELIVERED: 'bg-green-100 text-green-800',
-      INVOICED: 'bg-purple-100 text-purple-800',
+      INVOICED: 'bg-teal-100 text-teal-800',
       CANCELLED: 'bg-red-100 text-red-800',
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-slate-100 text-slate-800';
   };
 
   const getNextStatuses = (currentStatus: string) => {
@@ -79,33 +81,42 @@ export default function SalesOrderDetailPage() {
   };
 
   if (loading) {
-    return <div className="p-8 text-center">Loading...</div>;
+    return (
+      <Layout>
+        <div className="p-8 text-center">Loading...</div>
+      </Layout>
+    );
   }
 
   if (!order) {
-    return <div className="p-8 text-center">Order not found</div>;
+    return (
+      <Layout>
+        <div className="p-8 text-center">Order not found</div>
+      </Layout>
+    );
   }
 
   return (
+    <Layout>
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/sales-orders')}
-            className="p-2 hover:bg-gray-100 rounded-lg"
+            className="p-2 hover:bg-slate-100 rounded-lg"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{order.orderNumber}</h1>
-            <p className="text-sm text-gray-500">Sales Order Details</p>
+            <h1 className="text-2xl font-bold text-slate-900">{order.orderNumber}</h1>
+            <p className="text-sm text-slate-500">Sales Order Details</p>
           </div>
         </div>
         <div className="flex gap-2">
           {order.status === 'DRAFT' && (
             <button
               onClick={() => navigate(`/sales-orders/${id}/edit`)}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="inline-flex items-center px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700"
             >
               <Edit className="w-4 h-4 mr-2" />
               Edit
@@ -116,15 +127,15 @@ export default function SalesOrderDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Information</h2>
+          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Order Information</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-gray-500">Customer</p>
+                <p className="text-sm text-slate-500">Customer</p>
                 <p className="font-medium">{order.customerName}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Status</p>
+                <p className="text-sm text-slate-500">Status</p>
                 <span
                   className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
                     order.status
@@ -134,13 +145,13 @@ export default function SalesOrderDetailPage() {
                 </span>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Order Date</p>
+                <p className="text-sm text-slate-500">Order Date</p>
                 <p className="font-medium">
                   {new Date(order.orderDate).toLocaleDateString()}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Delivery Date</p>
+                <p className="text-sm text-slate-500">Delivery Date</p>
                 <p className="font-medium">
                   {order.deliveryDate
                     ? new Date(order.deliveryDate).toLocaleDateString()
@@ -150,49 +161,49 @@ export default function SalesOrderDetailPage() {
             </div>
             {order.notes && (
               <div className="mt-4">
-                <p className="text-sm text-gray-500">Notes</p>
+                <p className="text-sm text-slate-500">Notes</p>
                 <p className="mt-1">{order.notes}</p>
               </div>
             )}
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Items</h2>
+          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Order Items</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-slate-50">
                   <tr>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase">
                       Product
                     </th>
-                    <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-4 py-2 text-right text-xs font-medium text-slate-500 uppercase">
                       Quantity
                     </th>
-                    <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-4 py-2 text-right text-xs font-medium text-slate-500 uppercase">
                       Unit Price
                     </th>
-                    <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-4 py-2 text-right text-xs font-medium text-slate-500 uppercase">
                       Discount
                     </th>
-                    <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-4 py-2 text-right text-xs font-medium text-slate-500 uppercase">
                       Total
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-slate-200">
                   {order.items.map((item) => (
                     <tr key={item.id}>
                       <td className="px-4 py-3">
                         <div>
                           <p className="font-medium">{item.productName}</p>
-                          <p className="text-sm text-gray-500">{item.productSku}</p>
+                          <p className="text-sm text-slate-500">{item.productSku}</p>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-right">{item.quantity}</td>
-                      <td className="px-4 py-3 text-right">${item.unitPrice.toFixed(2)}</td>
-                      <td className="px-4 py-3 text-right">${item.discount.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-right">{formatMoney(item.unitPrice)}</td>
+                      <td className="px-4 py-3 text-right">{formatMoney(item.discount)}</td>
                       <td className="px-4 py-3 text-right font-medium">
-                        ${item.total.toFixed(2)}
+                        {formatMoney(item.total)}
                       </td>
                     </tr>
                   ))}
@@ -203,35 +214,35 @@ export default function SalesOrderDetailPage() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
+          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Order Summary</h2>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">${order.subtotal.toFixed(2)}</span>
+                <span className="text-slate-600">Subtotal</span>
+                <span className="font-medium">{formatMoney(order.subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Tax</span>
-                <span className="font-medium">${order.tax.toFixed(2)}</span>
+                <span className="text-slate-600">Tax</span>
+                <span className="font-medium">{formatMoney(order.tax)}</span>
               </div>
               <div className="border-t pt-3 flex justify-between">
                 <span className="font-semibold">Total</span>
-                <span className="text-xl font-bold text-blue-600">
-                  ${order.total.toFixed(2)}
+                <span className="text-xl font-bold text-brand-600">
+                  {formatMoney(order.total)}
                 </span>
               </div>
             </div>
           </div>
 
           {getNextStatuses(order.status).length > 0 && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Change Status</h2>
+            <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Change Status</h2>
               <div className="space-y-2">
                 {getNextStatuses(order.status).map((status) => (
                   <button
                     key={status}
                     onClick={() => handleStatusChange(status)}
-                    className="w-full px-4 py-2 text-left border rounded-lg hover:bg-gray-50"
+                    className="w-full px-4 py-2 text-left border rounded-lg hover:bg-slate-50"
                   >
                     Mark as {status}
                   </button>
@@ -242,5 +253,6 @@ export default function SalesOrderDetailPage() {
         </div>
       </div>
     </div>
+    </Layout>
   );
 }

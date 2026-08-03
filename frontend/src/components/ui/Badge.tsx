@@ -13,11 +13,11 @@ export function Badge({
   ...props 
 }: BadgeProps) {
   const variants = {
-    default: 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 border border-gray-300',
-    success: 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-300',
-    warning: 'bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 border border-yellow-300',
-    danger: 'bg-gradient-to-r from-red-100 to-pink-100 text-red-800 border border-red-300',
-    info: 'bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 border border-blue-300',
+    default: 'bg-slate-100 text-slate-700 border border-slate-200',
+    success: 'bg-green-50 text-green-700 border border-green-200',
+    warning: 'bg-amber-50 text-amber-700 border border-amber-200',
+    danger: 'bg-red-50 text-red-700 border border-red-200',
+    info: 'bg-blue-50 text-blue-700 border border-blue-200',
   };
   
   const sizes = {

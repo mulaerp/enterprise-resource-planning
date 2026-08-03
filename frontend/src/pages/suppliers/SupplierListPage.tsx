@@ -104,27 +104,27 @@ export default function SupplierListPage() {
       key: 'name',
       header: 'Name',
       sortable: true,
-      render: (supplier) => <span className="font-medium text-gray-900">{supplier.name}</span>,
+      render: (supplier) => <span className="font-medium text-slate-900">{supplier.name}</span>,
     },
     {
       key: 'email',
       header: 'Email',
       render: (supplier) => (
-        <span className="text-gray-500">{supplier.email || '-'}</span>
+        <span className="text-slate-500">{supplier.email || '-'}</span>
       ),
     },
     {
       key: 'phone',
       header: 'Phone',
       render: (supplier) => (
-        <span className="text-gray-500">{supplier.phone || '-'}</span>
+        <span className="text-slate-500">{supplier.phone || '-'}</span>
       ),
     },
     {
       key: 'paymentTerms',
       header: 'Payment Terms',
       render: (supplier) => (
-        <span className="text-gray-500">{supplier.paymentTerms || '-'}</span>
+        <span className="text-slate-500">{supplier.paymentTerms || '-'}</span>
       ),
     },
     {
@@ -147,7 +147,7 @@ export default function SupplierListPage() {
               e.stopPropagation();
               navigate(`/suppliers/${supplier.id}/edit`);
             }}
-            className="text-indigo-600 hover:text-indigo-900 p-1"
+            className="text-brand-600 hover:text-brand-900 p-1"
             title="Edit"
           >
             <Edit className="w-5 h-5" />
@@ -170,17 +170,15 @@ export default function SupplierListPage() {
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        {/* Page Header with Gradient */}
-        <div className="bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl shadow-xl p-8 text-white">
-          <div className="flex justify-between items-center">
+        {/* Page Header */}
+        <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Suppliers</h1>
-              <p className="text-orange-100">Manage your supplier network</p>
+              <h1 className="text-2xl font-semibold text-slate-900">Suppliers</h1>
+              <p className="text-sm text-slate-500 mt-1">Manage your supplier network</p>
             </div>
             <Button onClick={() => navigate('/suppliers/new')} icon={<Plus className="w-5 h-5" />}>
               Add Supplier
             </Button>
-          </div>
         </div>
 
         <div className="space-y-4">
@@ -217,7 +215,7 @@ export default function SupplierListPage() {
 
         {/* Delete Confirmation Modal */}
         <Modal isOpen={deleteModal.isOpen} onClose={closeDeleteModal} title="Delete Supplier" size="sm">
-          <p className="text-gray-600">
+          <p className="text-slate-600">
             Are you sure you want to delete <strong>{deleteModal.supplierName}</strong>? This action
             cannot be undone.
           </p>

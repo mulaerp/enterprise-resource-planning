@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form';
 import { Button } from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
-import { api } from '../../lib/api';
+import { api, getErrorMessage } from '../../lib/api';
 import { useToast } from '../../components/ui/Toast';
+import Layout from '../../components/Layout';
 
 interface UserForm {
   email: string;
@@ -23,7 +24,7 @@ export default function UserFormPage() {
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<UserForm>({
     defaultValues: {
-      role: 'USER',
+      role: 'CASHIER',
       status: 'ACTIVE',
     },
   });
@@ -40,7 +41,7 @@ export default function UserFormPage() {
       setValue('fullName', user.fullName);
       setValue('role', user.role);
       setValue('status', user.status);
-    } catch (error) {
+    } catch {
       showToast('error', 'Failed to fetch user');
     }
   };
@@ -56,23 +57,23 @@ export default function UserFormPage() {
         showToast('success', 'User created successfully');
       }
       navigate('/users');
-    } catch (error: any) {
-      showToast('error', error.response?.data?.message || 'Failed to save user');
+    } catch (error) {
+      showToast('error', getErrorMessage(error, 'Failed to save user'));
     } finally {
       setLoading(false);
     }
   };
 
   return (
+    <Layout>
     <div className="max-w-2xl mx-auto space-y-6">
-      {/* Gradient Banner Header */}
-      <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 rounded-xl shadow-lg p-8">
-        <div className="flex items-center justify-between">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">
+            <h1 className="text-2xl font-semibold text-slate-900">
               {id ? 'Edit User' : 'New User'}
             </h1>
-            <p className="text-violet-100">
+            <p className="text-sm text-slate-500 mt-1">
               {id ? 'Update user information and permissions' : 'Create a new user account'}
             </p>
           </div>
@@ -80,20 +81,19 @@ export default function UserFormPage() {
             type="button"
             variant="secondary"
             onClick={() => navigate('/users')}
-            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
           >
             Back to Users
           </Button>
-        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 space-y-4">
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 space-y-4">
           <h2 className="text-xl font-semibold">User Information</h2>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Email *</label>
+            <label htmlFor="user-email" className="block text-sm font-medium mb-1">Email *</label>
             <Input
+              id="user-email"
               type="email"
               {...register('email', { required: 'Email is required' })}
             />
@@ -104,10 +104,11 @@ export default function UserFormPage() {
 
           {!id && (
             <div>
-              <label className="block text-sm font-medium mb-1">Password *</label>
+              <label htmlFor="user-password" className="block text-sm font-medium mb-1">Password *</label>
               <Input
+                id="user-password"
                 type="password"
-                {...register('password', { 
+                {...register('password', {
                   required: !id ? 'Password is required' : false,
                   minLength: { value: 6, message: 'Password must be at least 6 characters' }
                 })}
@@ -119,8 +120,9 @@ export default function UserFormPage() {
           )}
 
           <div>
-            <label className="block text-sm font-medium mb-1">Full Name *</label>
+            <label htmlFor="user-full-name" className="block text-sm font-medium mb-1">Full Name *</label>
             <Input
+              id="user-full-name"
               {...register('fullName', { required: 'Full name is required' })}
             />
             {errors.fullName && (
@@ -130,9 +132,11 @@ export default function UserFormPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Role *</label>
-              <Select {...register('role', { required: 'Role is required' })}>
-                <option value="USER">User</option>
+              <label htmlFor="user-role" className="block text-sm font-medium mb-1">Role *</label>
+              <Select id="user-role" {...register('role', { required: 'Role is required' })}>
+                <option value="CASHIER">Cashier</option>
+                <option value="ACCOUNTANT">Accountant</option>
+                <option value="INVENTORY">Inventory</option>
                 <option value="MANAGER">Manager</option>
                 <option value="ADMIN">Admin</option>
               </Select>
@@ -140,8 +144,8 @@ export default function UserFormPage() {
 
             {id && (
               <div>
-                <label className="block text-sm font-medium mb-1">Status *</label>
-                <Select {...register('status')}>
+                <label htmlFor="user-status" className="block text-sm font-medium mb-1">Status *</label>
+                <Select id="user-status" {...register('status')}>
                   <option value="ACTIVE">Active</option>
                   <option value="INACTIVE">Inactive</option>
                   <option value="SUSPENDED">Suspended</option>
@@ -161,5 +165,6 @@ export default function UserFormPage() {
         </div>
       </form>
     </div>
+    </Layout>
   );
 }

@@ -1,5 +1,6 @@
 package com.mulaerp.payment.controller;
 
+import com.mulaerp.auth.security.RoleRules;
 import com.mulaerp.payment.dto.CreatePaymentRequest;
 import com.mulaerp.payment.dto.PaymentDTO;
 import com.mulaerp.payment.entity.Payment;
@@ -12,10 +13,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+// CRITICAL FIX 1 (post-overhaul audit) role matrix: create/status-transition/delete are ADMIN or
+// MANAGER (a plain USER account previously had no restriction at all); GET/search stay open to
+// any authenticated user.
 @RestController
 @RequestMapping("/api/v1/payments")
 @RequiredArgsConstructor
@@ -45,6 +50,7 @@ public class PaymentController {
     }
 
     @PostMapping
+    @PreAuthorize(RoleRules.ACCOUNTANT_WRITERS)
     @Operation(summary = "Create payment")
     public ResponseEntity<PaymentDTO> createPayment(
             @Valid @RequestBody CreatePaymentRequest request) {
@@ -53,6 +59,7 @@ public class PaymentController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize(RoleRules.ACCOUNTANT_WRITERS)
     @Operation(summary = "Update payment status")
     public ResponseEntity<PaymentDTO> updateStatus(
             @PathVariable UUID id,
@@ -61,6 +68,7 @@ public class PaymentController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize(RoleRules.ACCOUNTANT_WRITERS)
     @Operation(summary = "Delete payment")
     public ResponseEntity<Void> deletePayment(@PathVariable UUID id) {
         paymentService.deletePayment(id);

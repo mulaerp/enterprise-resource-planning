@@ -207,7 +207,9 @@ public class SerialTrackingService {
                     .ifPresent(customer -> dto.setCustomerName(customer.getName()));
         }
 
-        // Fetch sales order number if available
+        // Fetch sales order number if available. SalesOrderRepository's id type is UUID
+        // (matching SalesOrder's @Id) - previously called with .toString() here, which
+        // mismatched the entity's actual id type and would fail at query time (WP3 fix).
         if (serial.getSalesOrderId() != null) {
             salesOrderRepository.findById(serial.getSalesOrderId())
                     .ifPresent(order -> dto.setSalesOrderNumber(order.getOrderNumber()));

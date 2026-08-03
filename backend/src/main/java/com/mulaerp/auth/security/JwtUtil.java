@@ -17,10 +17,10 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
     
-    @Value("${spring.security.jwt.secret}")
+    @Value("${jwt.secret}")
     private String secret;
-    
-    @Value("${spring.security.jwt.expiration}")
+
+    @Value("${jwt.expiration}")
     private Long expiration;
     
     private SecretKey getSigningKey() {

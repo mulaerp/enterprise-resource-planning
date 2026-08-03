@@ -3,6 +3,7 @@ package com.mulaerp.supplier.service;
 import com.mulaerp.supplier.dto.*;
 import com.mulaerp.supplier.entity.Supplier;
 import com.mulaerp.supplier.repository.SupplierRepository;
+import com.mulaerp.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +34,7 @@ public class SupplierService {
     @Transactional(readOnly = true)
     public SupplierDto getSupplierById(UUID id) {
         Supplier supplier = supplierRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("Supplier not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
         return convertToDto(supplier);
     }
     
@@ -55,7 +56,7 @@ public class SupplierService {
     @Transactional
     public SupplierDto updateSupplier(UUID id, UpdateSupplierRequest request) {
         Supplier supplier = supplierRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("Supplier not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
         
         supplier.setName(request.getName());
         supplier.setEmail(request.getEmail());
@@ -72,7 +73,7 @@ public class SupplierService {
     @Transactional
     public void deleteSupplier(UUID id) {
         Supplier supplier = supplierRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("Supplier not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
         
         supplier.setDeleted(true);
         supplier.setDeletedAt(LocalDateTime.now());

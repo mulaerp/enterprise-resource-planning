@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '../../components/ui/Toast';
 import api from '../../lib/api';
+import { formatMoney } from '../../lib/money';
+import Layout from '../../components/Layout';
 
 interface TrialBalanceItem {
   accountCode: string;
@@ -29,7 +31,7 @@ export default function TrialBalancePage() {
     try {
       const response = await api.get('/accounting/reports/trial-balance');
       setTrialBalance(response.data);
-    } catch (err) {
+    } catch {
       showError('Failed to fetch trial balance');
     } finally {
       setLoading(false);
@@ -37,21 +39,28 @@ export default function TrialBalancePage() {
   };
 
   if (loading) {
-    return <div className="p-6">Loading...</div>;
+    return (
+      <Layout>
+        <div className="p-6">Loading...</div>
+      </Layout>
+    );
   }
 
   if (!trialBalance) {
-    return <div className="p-6">No data available</div>;
+    return (
+      <Layout>
+        <div className="p-6">No data available</div>
+      </Layout>
+    );
   }
 
   return (
+    <Layout>
     <div className="p-6">
-      {/* Gradient Banner Header */}
-      <div className="bg-gradient-to-r from-slate-600 via-gray-600 to-zinc-600 rounded-xl shadow-lg p-8 mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Trial Balance</h1>
-          <p className="text-slate-100">As of {new Date().toLocaleDateString()}</p>
-        </div>
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-slate-900">Trial Balance</h1>
+        <p className="text-sm text-slate-500 mt-1">As of {new Date().toLocaleDateString()}</p>
       </div>
 
       {!trialBalance.balanced && (
@@ -60,14 +69,14 @@ export default function TrialBalancePage() {
             ⚠️ Trial Balance is out of balance!
           </p>
           <p className="text-red-600 text-sm">
-            Difference: ${Math.abs(trialBalance.totalDebits - trialBalance.totalCredits).toFixed(2)}
+            Difference: {formatMoney(Math.abs(trialBalance.totalDebits - trialBalance.totalCredits))}
           </p>
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-slate-50">
             <tr>
               <th className="px-6 py-3 text-left text-sm font-semibold">Account Code</th>
               <th className="px-6 py-3 text-left text-sm font-semibold">Account Name</th>
@@ -77,26 +86,26 @@ export default function TrialBalancePage() {
           </thead>
           <tbody className="divide-y">
             {trialBalance.items.map((item, index) => (
-              <tr key={index} className="hover:bg-gray-50">
+              <tr key={index} className="hover:bg-slate-50">
                 <td className="px-6 py-4 text-sm">{item.accountCode}</td>
                 <td className="px-6 py-4 text-sm">{item.accountName}</td>
                 <td className="px-6 py-4 text-sm text-right">
-                  {item.debit > 0 ? `$${item.debit.toFixed(2)}` : '-'}
+                  {item.debit > 0 ? formatMoney(item.debit) : '-'}
                 </td>
                 <td className="px-6 py-4 text-sm text-right">
-                  {item.credit > 0 ? `$${item.credit.toFixed(2)}` : '-'}
+                  {item.credit > 0 ? formatMoney(item.credit) : '-'}
                 </td>
               </tr>
             ))}
           </tbody>
-          <tfoot className="bg-gray-50 border-t-2">
+          <tfoot className="bg-slate-50 border-t-2">
             <tr>
               <td colSpan={2} className="px-6 py-4 text-sm font-bold">Total</td>
               <td className="px-6 py-4 text-sm text-right font-bold">
-                ${trialBalance.totalDebits.toFixed(2)}
+                {formatMoney(trialBalance.totalDebits)}
               </td>
               <td className="px-6 py-4 text-sm text-right font-bold">
-                ${trialBalance.totalCredits.toFixed(2)}
+                {formatMoney(trialBalance.totalCredits)}
               </td>
             </tr>
           </tfoot>
@@ -111,5 +120,6 @@ export default function TrialBalancePage() {
         </div>
       )}
     </div>
+    </Layout>
   );
 }

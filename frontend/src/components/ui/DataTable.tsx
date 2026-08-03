@@ -54,9 +54,9 @@ export default function DataTable<T>({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-8 text-center text-gray-500">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+        <div className="p-8 text-center text-slate-500">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand-600"></div>
           <p className="mt-2">Loading...</p>
         </div>
       </div>
@@ -64,23 +64,24 @@ export default function DataTable<T>({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200">
+          <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
-                    column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''
+                  scope="col"
+                  className={`px-4 py-2.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider ${
+                    column.sortable ? 'cursor-pointer hover:bg-slate-100' : ''
                   } ${column.className || ''}`}
                   onClick={() => column.sortable && handleSort(column.key)}
                 >
                   <div className="flex items-center gap-2">
                     {column.header}
                     {column.sortable && sorting && sorting.sortBy === column.key && (
-                      <span className="text-blue-600">
+                      <span className="text-brand-600">
                         {sorting.sortDir === 'ASC' ? '↑' : '↓'}
                       </span>
                     )}
@@ -89,12 +90,12 @@ export default function DataTable<T>({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-slate-200">
             {data.length === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-6 py-8 text-center text-gray-500"
+                  className="px-4 py-8 text-center text-slate-500"
                 >
                   {emptyMessage}
                 </td>
@@ -104,20 +105,20 @@ export default function DataTable<T>({
                 <tr
                   key={keyExtractor(item)}
                   className={`${
-                    onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''
+                    onRowClick ? 'cursor-pointer hover:bg-slate-50' : ''
                   } transition-colors`}
                   onClick={() => onRowClick?.(item)}
                 >
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className={`px-6 py-4 whitespace-nowrap text-sm ${
+                      className={`px-4 py-2.5 whitespace-nowrap text-sm text-slate-700 tabular-nums ${
                         column.className || ''
                       }`}
                     >
                       {column.render
                         ? column.render(item)
-                        : String((item as any)[column.key] ?? '')}
+                        : String((item as Record<string, unknown>)[column.key] ?? '')}
                     </td>
                   ))}
                 </tr>
@@ -129,7 +130,7 @@ export default function DataTable<T>({
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="px-6 py-4 border-t flex items-center justify-between">
+        <div className="px-4 py-2.5 border-t border-slate-200 flex items-center justify-between">
           <Button
             variant="ghost"
             size="sm"
@@ -139,11 +140,11 @@ export default function DataTable<T>({
           >
             Previous
           </Button>
-          
-          <span className="text-sm text-gray-700">
+
+          <span className="text-sm text-slate-700">
             Page {pagination.currentPage + 1} of {pagination.totalPages}
           </span>
-          
+
           <Button
             variant="ghost"
             size="sm"

@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit, Trash2, AlertCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, AlertCircle, Upload } from 'lucide-react';
 import api from '../../lib/api';
+import { formatMoney } from '../../lib/money';
+import { getProductImage, getProductImagePlaceholder } from '../../lib/product-image';
 import Layout from '../../components/Layout';
 import {
   DataTable,
@@ -23,6 +25,19 @@ interface Product {
   stockQuantity: number;
   reorderLevel: number;
   status: string;
+  imageUrl?: string | null;
+}
+
+interface ImportRowError {
+  row: number;
+  message: string;
+}
+
+interface ProductImportResult {
+  imported: number;
+  skipped: number;
+  duplicates: number;
+  errors: ImportRowError[];
 }
 
 export default function ProductListPage() {
@@ -44,6 +59,12 @@ export default function ProductListPage() {
     productId: null,
     productName: null,
   });
+
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState<ProductImportResult | null>(null);
+  const importFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchProducts();
@@ -101,12 +122,66 @@ export default function ProductListPage() {
     });
   };
 
+  const openImportModal = () => {
+    setImportFile(null);
+    setImportResult(null);
+    setImportModalOpen(true);
+  };
+
+  const closeImportModal = () => {
+    setImportModalOpen(false);
+    setImportFile(null);
+    setImportResult(null);
+    if (importFileInputRef.current) importFileInputRef.current.value = '';
+  };
+
+  const handleImportSubmit = async () => {
+    if (!importFile) {
+      showError('Choose a CSV file first');
+      return;
+    }
+
+    try {
+      setImporting(true);
+      const formData = new FormData();
+      formData.append('file', importFile);
+      const response = await api.post<ProductImportResult>('/products/import', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setImportResult(response.data);
+      success(`Imported ${response.data.imported} product(s)`);
+      fetchProducts();
+    } catch (err) {
+      console.error('Failed to import products:', err);
+      showError('Failed to import products');
+    } finally {
+      setImporting(false);
+    }
+  };
+
   const columns: Column<Product>[] = [
+    {
+      key: 'imageUrl',
+      header: 'Photo',
+      render: (product) => (
+        <div className="w-10 h-10 rounded-md overflow-hidden bg-slate-100 shrink-0">
+          <img
+            src={getProductImage(product)}
+            alt=""
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = getProductImagePlaceholder(product);
+            }}
+          />
+        </div>
+      ),
+    },
     {
       key: 'sku',
       header: 'SKU',
       sortable: true,
-      render: (product) => <span className="font-medium text-gray-900">{product.sku}</span>,
+      render: (product) => <span className="font-medium text-slate-900">{product.sku}</span>,
     },
     {
       key: 'name',
@@ -117,14 +192,14 @@ export default function ProductListPage() {
       key: 'categoryName',
       header: 'Category',
       render: (product) => (
-        <span className="text-gray-500">{product.categoryName || '-'}</span>
+        <span className="text-slate-500">{product.categoryName || '-'}</span>
       ),
     },
     {
       key: 'unitPrice',
       header: 'Price',
       sortable: true,
-      render: (product) => `$${product.unitPrice.toFixed(2)}`,
+      render: (product) => formatMoney(product.unitPrice),
     },
     {
       key: 'stockQuantity',
@@ -163,7 +238,7 @@ export default function ProductListPage() {
               e.stopPropagation();
               navigate(`/products/${product.id}/edit`);
             }}
-            className="text-indigo-600 hover:text-indigo-900 p-1"
+            className="text-brand-600 hover:text-brand-900 p-1"
             title="Edit"
           >
             <Edit className="w-5 h-5" />
@@ -186,17 +261,25 @@ export default function ProductListPage() {
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        {/* Page Header with Gradient */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-8 text-white">
-          <div className="flex justify-between items-center">
+        {/* Page Header */}
+        <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Products</h1>
-              <p className="text-blue-100">Manage your product inventory</p>
+              <h1 className="text-2xl font-semibold text-slate-900">Products</h1>
+              <p className="text-sm text-slate-500 mt-1">Manage your product inventory</p>
             </div>
-            <Button onClick={() => navigate('/products/new')} icon={<Plus className="w-5 h-5" />}>
-              Add Product
-            </Button>
-          </div>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="secondary"
+                onClick={openImportModal}
+                icon={<Upload className="w-5 h-5" />}
+                data-testid="import-products-csv-button"
+              >
+                Import CSV
+              </Button>
+              <Button onClick={() => navigate('/products/new')} icon={<Plus className="w-5 h-5" />}>
+                New Product
+              </Button>
+            </div>
         </div>
 
         <div className="space-y-4">
@@ -233,7 +316,7 @@ export default function ProductListPage() {
 
         {/* Delete Confirmation Modal */}
         <Modal isOpen={deleteModal.isOpen} onClose={closeDeleteModal} title="Delete Product" size="sm">
-          <p className="text-gray-600">
+          <p className="text-slate-600">
             Are you sure you want to delete <strong>{deleteModal.productName}</strong>? This action
             cannot be undone.
           </p>
@@ -243,6 +326,62 @@ export default function ProductListPage() {
             </Button>
             <Button variant="danger" onClick={handleDelete}>
               Delete
+            </Button>
+          </ModalFooter>
+        </Modal>
+
+        {/* Import CSV Modal */}
+        <Modal isOpen={importModalOpen} onClose={closeImportModal} title="Import Products CSV" size="md">
+          <div className="space-y-4">
+            <p className="text-sm text-slate-600">
+              Columns: <code>sku, name, category, costPrice, unitPrice, stockQuantity</code>, plus
+              optional <code>condition, tags, acquisitionCost</code>. The first row must be a header.
+            </p>
+            <div>
+              <label htmlFor="product-import-file" className="block text-sm font-medium text-slate-700 mb-1">
+                CSV file
+              </label>
+              <input
+                id="product-import-file"
+                ref={importFileInputRef}
+                type="file"
+                accept=".csv,text/csv"
+                data-testid="import-products-csv-file-input"
+                onChange={(e) => setImportFile(e.target.files?.[0] ?? null)}
+                className="block w-full text-sm text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-brand-600 file:text-white hover:file:bg-brand-700"
+              />
+            </div>
+
+            {importResult && (
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm space-y-2">
+                <p className="text-slate-700">
+                  Imported <strong>{importResult.imported}</strong>, skipped{' '}
+                  <strong>{importResult.skipped}</strong>, duplicates{' '}
+                  <strong>{importResult.duplicates}</strong>.
+                </p>
+                {importResult.errors.length > 0 && (
+                  <ul className="list-disc list-inside text-red-600 space-y-1">
+                    {importResult.errors.map((err, idx) => (
+                      <li key={idx}>
+                        Row {err.row}: {err.message}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </div>
+          <ModalFooter>
+            <Button variant="ghost" onClick={closeImportModal}>
+              Close
+            </Button>
+            <Button
+              onClick={handleImportSubmit}
+              loading={importing}
+              icon={<Upload className="w-4 h-4" />}
+              data-testid="import-products-csv-submit"
+            >
+              Import
             </Button>
           </ModalFooter>
         </Modal>

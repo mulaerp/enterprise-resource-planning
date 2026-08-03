@@ -5,7 +5,8 @@ import { Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
-import { api } from '../../lib/api';
+import { api, getErrorMessage } from '../../lib/api';
+import { formatMoney } from '../../lib/money';
 import { useToast } from '../../components/ui/Toast';
 import Layout from '../../components/Layout';
 
@@ -24,11 +25,24 @@ interface InvoiceForm {
   }>;
 }
 
+interface CustomerOption {
+  id: string;
+  name: string;
+}
+
+interface InvoiceItemResponse {
+  productId?: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  taxRate: number;
+}
+
 export default function InvoiceFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const [customers, setCustomers] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<CustomerOption[]>([]);
   const [loading, setLoading] = useState(false);
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<InvoiceForm>({
@@ -49,9 +63,15 @@ export default function InvoiceFormPage() {
 
   const fetchCustomers = async () => {
     try {
-      const response = await api.get('/customers');
+      // BUG FIX: this used to call GET /customers with no params, defaulting to the backend's
+      // page size (10) - any environment with more than one page of customers (this dev DB alone
+      // has 200+) silently hid every customer past page 0 from this dropdown, with no search/
+      // pagination affordance to reach them. Same size=1000 pattern already used by
+      // ProductSelector/CustomerSelector/SupplierSelector for exactly this "load the full list
+      // for a select" case (see PageSizeCap's Javadoc).
+      const response = await api.get('/customers?size=1000&sortBy=name&sortDir=ASC');
       setCustomers(response.data.content || []);
-    } catch (error) {
+    } catch {
       showToast('error', 'Failed to fetch customers');
     }
   };
@@ -67,14 +87,14 @@ export default function InvoiceFormPage() {
       setValue('dueDate', invoice.dueDate);
       setValue('tax', invoice.tax);
       setValue('notes', invoice.notes);
-      setValue('items', invoice.items.map((item: any) => ({
+      setValue('items', invoice.items.map((item: InvoiceItemResponse) => ({
         productId: item.productId,
         description: item.description,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         taxRate: item.taxRate,
       })));
-    } catch (error) {
+    } catch {
       showToast('error', 'Failed to fetch invoice');
     }
   };
@@ -106,8 +126,8 @@ export default function InvoiceFormPage() {
         showToast('success', 'Invoice created successfully');
       }
       navigate('/invoices');
-    } catch (error: any) {
-      showToast('error', error.response?.data?.message || 'Failed to save invoice');
+    } catch (error) {
+      showToast('error', getErrorMessage(error, 'Failed to save invoice'));
     } finally {
       setLoading(false);
     }
@@ -116,28 +136,28 @@ export default function InvoiceFormPage() {
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        {/* Header Banner */}
-        <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 rounded-2xl shadow-xl p-8 text-white">
+        {/* Page Header */}
+        <div>
           <button
             onClick={() => navigate('/invoices')}
-            className="flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors"
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 mb-4 transition-colors"
           >
             <ArrowLeft size={20} />
             Back to Invoices
           </button>
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-2xl font-semibold text-slate-900">
             {id ? 'Edit Invoice' : 'New Invoice'}
           </h1>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 space-y-4">
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 space-y-4">
           <h2 className="text-xl font-semibold">Invoice Information</h2>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Customer *</label>
-              <Select {...register('customerId', { required: 'Customer is required' })}>
+              <label htmlFor="invoice-customer" className="block text-sm font-medium mb-1">Customer *</label>
+              <Select id="invoice-customer" {...register('customerId', { required: 'Customer is required' })}>
                 <option value="">Select customer</option>
                 {customers.map((customer) => (
                   <option key={customer.id} value={customer.id}>
@@ -151,24 +171,27 @@ export default function InvoiceFormPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Invoice Date *</label>
+              <label htmlFor="invoice-date" className="block text-sm font-medium mb-1">Invoice Date *</label>
               <Input
+                id="invoice-date"
                 type="date"
                 {...register('invoiceDate', { required: 'Invoice date is required' })}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Due Date *</label>
+              <label htmlFor="invoice-due-date" className="block text-sm font-medium mb-1">Due Date *</label>
               <Input
+                id="invoice-due-date"
                 type="date"
                 {...register('dueDate', { required: 'Due date is required' })}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Tax Amount</label>
+              <label htmlFor="invoice-tax" className="block text-sm font-medium mb-1">Tax Amount</label>
               <Input
+                id="invoice-tax"
                 type="number"
                 step="0.01"
                 {...register('tax', { valueAsNumber: true })}
@@ -177,8 +200,9 @@ export default function InvoiceFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Notes</label>
+            <label htmlFor="invoice-notes" className="block text-sm font-medium mb-1">Notes</label>
             <textarea
+              id="invoice-notes"
               {...register('notes')}
               className="w-full px-3 py-2 border rounded-md"
               rows={3}
@@ -186,7 +210,7 @@ export default function InvoiceFormPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Line Items</h2>
             <Button type="button" onClick={addItem} variant="ghost">
@@ -233,7 +257,7 @@ export default function InvoiceFormPage() {
 
                 <div className="col-span-1">
                   <p className="text-sm font-medium">
-                    ${((item.quantity * item.unitPrice) * (1 + (item.taxRate / 100))).toFixed(2)}
+                    {formatMoney((item.quantity * item.unitPrice) * (1 + (item.taxRate / 100)))}
                   </p>
                 </div>
 
@@ -257,7 +281,7 @@ export default function InvoiceFormPage() {
             <div className="flex justify-end">
               <div className="text-right">
                 <p className="text-lg font-semibold">
-                  Total: ${calculateTotal().toFixed(2)}
+                  Total: {formatMoney(calculateTotal())}
                 </p>
               </div>
             </div>

@@ -10,29 +10,28 @@ export default function ReportsPage() {
       description: 'Analyze sales performance by product, customer, and time period',
       icon: DollarSign,
       path: '/reports/sales',
-      gradient: 'from-green-500 to-emerald-500',
+      iconBg: 'bg-green-600',
     },
     {
       title: 'Inventory Report',
       description: 'View stock levels, valuations, and inventory status',
       icon: Package,
       path: '/reports/inventory',
-      gradient: 'from-blue-500 to-cyan-500',
+      iconBg: 'bg-blue-600',
     },
     {
       title: 'Financial Report',
-      description: 'Coming soon - P&L, balance sheet, and financial metrics',
+      description: 'Profit & loss, balance sheet, and financial metrics',
       icon: BarChart3,
-      path: '#',
-      gradient: 'from-purple-500 to-pink-500',
-      disabled: true,
+      path: '/accounting/profit-loss',
+      iconBg: 'bg-slate-600',
     },
     {
       title: 'Custom Reports',
       description: 'Coming soon - Build your own custom reports',
       icon: FileText,
       path: '#',
-      gradient: 'from-orange-500 to-red-500',
+      iconBg: 'bg-amber-500',
       disabled: true,
     },
   ];
@@ -40,12 +39,10 @@ export default function ReportsPage() {
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        {/* Header Banner */}
-        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl shadow-xl p-8 text-white">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Reports & Analytics</h1>
-            <p className="text-lg text-purple-100">Generate insights from your business data</p>
-          </div>
+        {/* Page Header */}
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-900">Reports & Analytics</h1>
+          <p className="text-sm text-slate-500 mt-1">Generate insights from your business data</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -54,12 +51,12 @@ export default function ReportsPage() {
             const content = (
               <Card className={`p-6 h-full ${report.disabled ? 'opacity-60' : 'hover:shadow-xl transition-all duration-200 hover:-translate-y-1 cursor-pointer'}`}>
                 <div className="flex items-start gap-4">
-                  <div className={`bg-gradient-to-br ${report.gradient} p-4 rounded-xl shadow-lg`}>
+                  <div className={`${report.iconBg} p-4 rounded-lg`}>
                     <Icon className="text-white" size={32} />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-bold mb-2">{report.title}</h3>
-                    <p className="text-gray-600 text-sm">{report.description}</p>
+                    <p className="text-slate-600 text-sm">{report.description}</p>
                   </div>
                 </div>
               </Card>

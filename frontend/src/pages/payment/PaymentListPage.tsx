@@ -7,6 +7,7 @@ import { Button } from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
 import { api } from '../../lib/api';
+import { formatMoney } from '../../lib/money';
 import { useToast } from '../../components/ui/Toast';
 
 interface Payment {
@@ -34,7 +35,7 @@ export default function PaymentListPage() {
       setLoading(true);
       const response = await api.get('/payments');
       setPayments(response.data.content || []);
-    } catch (error) {
+    } catch {
       showToast('error', 'Failed to fetch payments');
     } finally {
       setLoading(false);
@@ -50,7 +51,7 @@ export default function PaymentListPage() {
     try {
       const response = await api.get(`/payments/search?query=${searchQuery}`);
       setPayments(response.data.content || []);
-    } catch (error) {
+    } catch {
       showToast('error', 'Search failed');
     }
   };
@@ -69,7 +70,7 @@ export default function PaymentListPage() {
     { key: 'paymentNumber', header: 'Payment #' },
     { key: 'invoiceNumber', header: 'Invoice #' },
     { key: 'paymentDate', header: 'Date', render: (row: Payment) => new Date(row.paymentDate).toLocaleDateString() },
-    { key: 'amount', header: 'Amount', render: (row: Payment) => `$${row.amount.toFixed(2)}` },
+    { key: 'amount', header: 'Amount', render: (row: Payment) => formatMoney(row.amount) },
     { key: 'method', header: 'Method' },
     { key: 'status', header: 'Status', render: (row: Payment) => getStatusBadge(row.status) },
   ];
@@ -77,20 +78,18 @@ export default function PaymentListPage() {
   return (
     <Layout>
     <div className="space-y-6">
-      {/* Gradient Banner Header */}
-      <div className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 rounded-xl shadow-lg p-8">
-        <div className="flex items-center justify-between">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Payments</h1>
-            <p className="text-green-100">Record and track customer payments</p>
+            <h1 className="text-2xl font-semibold text-slate-900">Payments</h1>
+            <p className="text-sm text-slate-500 mt-1">Record and track customer payments</p>
           </div>
           <Link to="/payments/new">
-            <Button className="bg-white/20 hover:bg-white/30 text-white border-white/30">
+            <Button>
               <Plus className="h-4 w-4 mr-2" />
               Record Payment
             </Button>
           </Link>
-        </div>
       </div>
 
       <div className="flex gap-4">

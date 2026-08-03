@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="No product photo - game">
+  <rect width="400" height="300" fill="#f1f5f9"/>
+  <!-- Abstract disc-in-case silhouette (case rectangle + disc circle + centre hole) - a plain
+       geometric shape drawn from scratch, not a copy of any real game's cover art or logo. -->
+  <g transform="translate(200 150)">
+    <rect x="-70" y="-58" width="95" height="116" rx="8" fill="none" stroke="#94a3b8" stroke-width="4"/>
+    <circle cx="35" cy="0" r="52" fill="none" stroke="#2563eb" stroke-width="4"/>
+    <circle cx="35" cy="0" r="14" fill="none" stroke="#93c5fd" stroke-width="4"/>
+  </g>
+</svg>

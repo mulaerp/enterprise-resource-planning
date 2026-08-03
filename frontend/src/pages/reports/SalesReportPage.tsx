@@ -4,7 +4,9 @@ import { Calendar, Download, TrendingUp } from 'lucide-react';
 import Layout from '../../components/Layout';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import api from '../../lib/api';
+import { useToast } from '../../components/ui/Toast';
+import api, { downloadFile } from '../../lib/api';
+import { formatMoney } from '../../lib/money';
 
 interface SalesReport {
   startDate: string;
@@ -31,11 +33,13 @@ interface SalesReport {
   }>;
 }
 
-const COLORS = ['#8b5cf6', '#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+const COLORS = ['#2563eb', '#0d9488', '#f59e0b', '#94a3b8', '#16a34a', '#dc2626'];
 
 export default function SalesReportPage() {
+  const { error: showError } = useToast();
   const [report, setReport] = useState<SalesReport | null>(null);
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [startDate, setStartDate] = useState(() => {
     const date = new Date();
     date.setMonth(date.getMonth() - 1);
@@ -63,17 +67,35 @@ export default function SalesReportPage() {
     loadReport();
   }, []);
 
+  const handleExportPdf = async () => {
+    setExporting(true);
+    try {
+      const start = new Date(startDate).toISOString();
+      const end = new Date(endDate).toISOString();
+      await downloadFile(
+        '/reports/sales/export',
+        { startDate: start, endDate: end, format: 'pdf' },
+        `sales-report-${startDate}_${endDate}.pdf`
+      );
+    } catch (error) {
+      console.error('Failed to export sales report:', error);
+      showError('Failed to export sales report');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <Layout>
       <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-semibold text-slate-900">
               Sales Report
             </h1>
-            <p className="text-gray-600 mt-2">Analyze your sales performance</p>
+            <p className="text-slate-600 mt-2">Analyze your sales performance</p>
           </div>
-          <Button variant="secondary" icon={<Download size={16} />}>
+          <Button variant="secondary" icon={<Download size={16} />} loading={exporting} onClick={handleExportPdf}>
             Export PDF
           </Button>
         </div>
@@ -82,25 +104,27 @@ export default function SalesReportPage() {
         <Card className="p-6">
           <div className="flex items-end gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="sales-report-start-date" className="block text-sm font-medium text-slate-700 mb-2">
                 Start Date
               </label>
               <input
+                id="sales-report-start-date"
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
               />
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="sales-report-end-date" className="block text-sm font-medium text-slate-700 mb-2">
                 End Date
               </label>
               <input
+                id="sales-report-end-date"
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
               />
             </div>
             <Button onClick={loadReport} loading={loading} icon={<Calendar size={16} />}>
@@ -116,9 +140,9 @@ export default function SalesReportPage() {
               <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
+                    <p className="text-sm text-slate-600 mb-1">Total Revenue</p>
                     <p className="text-3xl font-bold text-green-600">
-                      ${report.totalRevenue.toFixed(2)}
+                      {formatMoney(report.totalRevenue)}
                     </p>
                   </div>
                   <TrendingUp className="text-green-600" size={32} />
@@ -128,7 +152,7 @@ export default function SalesReportPage() {
               <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Total Orders</p>
+                    <p className="text-sm text-slate-600 mb-1">Total Orders</p>
                     <p className="text-3xl font-bold text-blue-600">{report.totalOrders}</p>
                   </div>
                 </div>
@@ -137,9 +161,9 @@ export default function SalesReportPage() {
               <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Average Order Value</p>
-                    <p className="text-3xl font-bold text-purple-600">
-                      ${report.averageOrderValue.toFixed(2)}
+                    <p className="text-sm text-slate-600 mb-1">Average Order Value</p>
+                    <p className="text-3xl font-bold text-slate-900 tabular-nums">
+                      {formatMoney(report.averageOrderValue)}
                     </p>
                   </div>
                 </div>
@@ -157,8 +181,8 @@ export default function SalesReportPage() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="revenue" stroke="#8b5cf6" strokeWidth={2} name="Revenue ($)" />
-                    <Line type="monotone" dataKey="orderCount" stroke="#3b82f6" strokeWidth={2} name="Orders" />
+                    <Line type="monotone" dataKey="revenue" stroke="#2563eb" strokeWidth={2} name="Revenue (RM)" />
+                    <Line type="monotone" dataKey="orderCount" stroke="#0d9488" strokeWidth={2} name="Orders" />
                   </LineChart>
                 </ResponsiveContainer>
               </Card>
@@ -175,7 +199,7 @@ export default function SalesReportPage() {
                       <XAxis dataKey="productName" />
                       <YAxis />
                       <Tooltip />
-                      <Bar dataKey="revenue" fill="#8b5cf6" />
+                      <Bar dataKey="revenue" fill="#2563eb" />
                     </BarChart>
                   </ResponsiveContainer>
                 </Card>
@@ -221,10 +245,10 @@ export default function SalesReportPage() {
                     </thead>
                     <tbody>
                       {report.salesByCustomer.slice(0, 10).map((customer, index) => (
-                        <tr key={index} className="border-b hover:bg-gray-50">
+                        <tr key={index} className="border-b hover:bg-slate-50">
                           <td className="py-3 px-4">{customer.customerName}</td>
                           <td className="text-right py-3 px-4">{customer.orderCount}</td>
-                          <td className="text-right py-3 px-4">${customer.totalSpent.toFixed(2)}</td>
+                          <td className="text-right py-3 px-4">{formatMoney(customer.totalSpent)}</td>
                           <td className="text-right py-3 px-4">{customer.percentage.toFixed(1)}%</td>
                         </tr>
                       ))}
@@ -238,7 +262,7 @@ export default function SalesReportPage() {
 
         {!report && !loading && (
           <Card className="p-12 text-center">
-            <p className="text-gray-500">Select a date range and click Generate Report</p>
+            <p className="text-slate-500">Select a date range and click Generate Report</p>
           </Card>
         )}
       </div>

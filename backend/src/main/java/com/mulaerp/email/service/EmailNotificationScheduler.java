@@ -1,5 +1,7 @@
 package com.mulaerp.email.service;
 
+import com.mulaerp.customer.entity.Customer;
+import com.mulaerp.customer.repository.CustomerRepository;
 import com.mulaerp.inventory.entity.ProductBatch;
 import com.mulaerp.inventory.entity.ProductSerial;
 import com.mulaerp.inventory.repository.ProductBatchRepository;
@@ -8,21 +10,26 @@ import com.mulaerp.product.entity.Product;
 import com.mulaerp.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class EmailNotificationScheduler {
 
+    private static final String UNKNOWN_CUSTOMER = "Unknown Customer";
+
     private final ProductRepository productRepository;
     private final ProductBatchRepository batchRepository;
     private final ProductSerialRepository serialRepository;
+    private final CustomerRepository customerRepository;
     private final EmailTemplateService emailTemplateService;
 
     // Run daily at 9 AM
@@ -30,7 +37,7 @@ public class EmailNotificationScheduler {
     public void checkLowStockProducts() {
         log.info("Checking for low stock products...");
         
-        List<Product> lowStockProducts = productRepository.findLowStockProducts();
+        List<Product> lowStockProducts = productRepository.findLowStockProducts(Pageable.unpaged()).getContent();
         
         for (Product product : lowStockProducts) {
             if (product.getStockQuantity() <= product.getReorderLevel()) {
@@ -85,8 +92,8 @@ public class EmailNotificationScheduler {
                 long daysRemaining = ChronoUnit.DAYS.between(LocalDate.now(), serial.getWarrantyExpiryDate());
                 
                 if (daysRemaining <= 30 && daysRemaining >= 0) {
-                    String customerName = "Unknown Customer"; // Would fetch from customer repository
-                    
+                    String customerName = lookupCustomerName(serial.getCustomerId());
+
                     emailTemplateService.sendWarrantyExpiryAlert(
                         serial.getSerialNumber(),
                         serial.getProduct().getName(),
@@ -99,5 +106,14 @@ public class EmailNotificationScheduler {
         }
         
         log.info("Warranty expiry check completed. Found {} expiring warranties", expiringWarranties.size());
+    }
+
+    private String lookupCustomerName(UUID customerId) {
+        if (customerId == null) {
+            return UNKNOWN_CUSTOMER;
+        }
+        return customerRepository.findByIdAndDeletedFalse(customerId)
+                .map(Customer::getName)
+                .orElse(UNKNOWN_CUSTOMER);
     }
 }

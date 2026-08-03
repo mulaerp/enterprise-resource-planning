@@ -21,12 +21,34 @@ spring:
     enabled: true
     baseline-on-migrate: true
     locations: classpath:db/migration
+    # Two agents can legitimately write migrations in parallel against the same shared dev
+    # database without knowing in advance which one's file will physically apply first (e.g.
+    # V43__close_legacy_guest_quotes.sql applied here before V42__shop_order_warranty_and_void.sql
+    # even existed on disk, since Flyway numbers are assigned by inspecting `ls db/migration` at
+    # write time, not by commit/apply order) - out-of-order lets a lower-numbered migration that
+    # arrives later still apply cleanly instead of failing strict-order validation. Every
+    # migration in this repo is still additive/backward-compatible by convention (never edits an
+    # already-applied one - see the backend-dev skill), so applying V42 after V43 changes nothing
+    # about what either actually does.
+    # Safe by default (production must fail loudly on out-of-sequence migrations); the dev
+    # compose stack sets FLYWAY_OUT_OF_ORDER=true because migrations here are authored in
+    # parallel and can land out of sequence on a long-lived dev database.
+    out-of-order: ${FLYWAY_OUT_OF_ORDER:false}
   
   data:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
+
+  # WP: product images - Spring Boot's own multipart defaults (1MB/10MB) are too small for a
+  # ~5MB product photo. Set headroom above ProductImageService's own ~5MB cap so an oversized
+  # file is always rejected by our validation (400, with a clear message) rather than by the
+  # multipart parser itself (which throws before the controller runs, mapped to a generic 500).
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   
   cache:
     type: redis
@@ -56,6 +78,183 @@ jwt:
   secret: ${JWT_SECRET:your-secret-key-min-32-characters-long-please-change-in-production}
   expiration: 86400000 # 24 hours
 
+# Mula ERP application-specific settings
+mulaerp:
+  auth:
+    # Secure flag for the httpOnly MULAERP_AUTH cookie set by POST /auth/login (see
+    # AuthController/JwtAuthenticationFilter). Must stay false for local/plain-HTTP dev -
+    # browsers silently drop Secure cookies over http://, which would break login. Any
+    # environment served over HTTPS (test/prod, behind a reverse proxy) MUST set
+    # AUTH_COOKIE_SECURE=true - see README "Deploying beyond localhost" checklist.
+    cookie-secure: ${AUTH_COOKIE_SECURE:false}
+  cors:
+    # Comma-separated allowed CORS origins (SecurityConfig#corsConfigurationSource). Defaults to
+    # the local dev list plus http://frontend:5173 (the e2e container's origin). Set
+    # CORS_ALLOWED_ORIGINS to your deployment's real origin(s) instead - see README "Deploying
+    # beyond localhost".
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,http://localhost,http://frontend:5173}
+  rate-limit:
+    # Comma-separated CIDR ranges of reverse proxies trusted to supply a client IP via
+    # X-Forwarded-For (RateLimitConfig#isTrustedProxy). Empty by default - no proxy is trusted,
+    # so rate limiting always keys on the direct socket address (safe for local/no-proxy setups).
+    # Only set this to the actual reverse proxy's container/subnet CIDR (e.g. the nginx service
+    # in compose.yaml) in a deployment that puts one in front of the backend.
+    trusted-proxies: ${RATE_LIMIT_TRUSTED_PROXIES:}
+  brand:
+    # White-label product name used in outbound email subjects/bodies
+    # (com.mulaerp.email.service.EmailTemplateService). Defaults to the
+    # current Mula ERP branding, so leaving BRAND_NAME unset is a no-op.
+    name: ${BRAND_NAME:Mula ERP}
+  mail:
+    admin-recipient: ${MAIL_ADMIN_RECIPIENT:admin@mulaerp.com}
+  accounting:
+    # WP: "books report zero by default" fix (AccountingService#createSystemEntry). When true
+    # (default), journal entries created by the SYSTEM auto-journal hooks (PoS sale revenue/COGS,
+    # trade-in, invoice, payment, repair collection/parts/deposit) are POSTED immediately in the
+    # same hook transaction, so P&L/balance sheet/trial balance reflect them right away instead of
+    # sitting as DRAFT until someone runs the bulk post-batch endpoint. Manual journal entries
+    # (POST /accounting/journal-entries, AccountingService#createJournalEntry) are NEVER affected
+    # by this flag - they always require an explicit human post. Set AUTO_POST_SYSTEM_ENTRIES=false
+    # to restore the old draft-everything behaviour (e.g. for an environment that wants a human
+    # review step on every system entry too).
+    auto-post-system-entries: ${AUTO_POST_SYSTEM_ENTRIES:true}
+  seed:
+    # WP10: enables DemoDataSeeder, which seeds a small synthetic thrift-store demo dataset
+    # (categories, products, customers, suppliers, members, vouchers, sales/purchase orders,
+    # invoices, PoS sales) through the normal service layer on startup - never raw SQL, so the
+    # audit listener / stock movement ledger / auto-journals all stay consistent. Idempotent:
+    # skips entirely if demo product SKU 'DEMO-0001' already exists. Local/demo use only -
+    # leave unset (defaults to false) in any shared or production environment.
+    demo-data: ${SEED_DEMO_DATA:false}
+  uploads:
+    # WP: product images - local filesystem directory used by ProductImageService to store
+    # uploaded product photos. Defaults to a relative path so `mvn spring-boot:run` from
+    # `backend/` works without Docker; the Docker image runs with WORKDIR=/app, and
+    # compose.yaml maps `./uploads:/app/uploads` on the backend service so uploads survive
+    # container restarts/rebuilds.
+    product-images-dir: ${PRODUCT_IMAGES_DIR:./uploads/product-images}
+  pos:
+    # CRITICAL FIX 2 (post-overhaul audit): PoS line pricing floor when a product has neither
+    # costPrice nor acquisitionCost set (see PosSaleService#priceFloor) - the floor is this
+    # percentage below the product's current unitPrice, e.g. 50 means a cashier may discount down
+    # to 50% of list price but no further. Thrift-store staff DO negotiate prices down - this only
+    # bounds how far - never blocks a genuine markdown, only abuse (e.g. selling for RM0.01).
+    max-discount-percent: ${POS_MAX_DISCOUNT_PERCENT:50}
+    # V34: how many days after a sale it may still be voided (PosSaleService#voidSale) - a sale
+    # older than this window is rejected with 409 rather than silently reversed long after the
+    # till/stock/books have moved on. RoleRules.MANAGER_UP backs the void endpoint itself.
+    void-window-days: ${POS_VOID_WINDOW_DAYS:7}
+  tradein:
+    # V38: deterministic (no LLM/model) trade-in pricing suggestions - GET /pos/trade-ins/suggest,
+    # TradeInSuggestionService. suggestedCashOffer = listedBuyPrice x conditionMultiplier x
+    # (1 + boxBonus if hasBox), 2dp. suggestedCreditOffer = suggestedCashOffer x creditPremium,
+    # clamped so it never exceeds the product's own unitPrice. An unrecognised/absent condition is
+    # treated as NEW-equivalent (see TradeInSuggestionService#conditionMultiplier).
+    condition-multiplier-new: ${TRADEIN_CONDITION_MULTIPLIER_NEW:1.00}
+    condition-multiplier-like-new: ${TRADEIN_CONDITION_MULTIPLIER_LIKE_NEW:0.95}
+    condition-multiplier-good: ${TRADEIN_CONDITION_MULTIPLIER_GOOD:0.85}
+    condition-multiplier-fair: ${TRADEIN_CONDITION_MULTIPLIER_FAIR:0.70}
+    condition-multiplier-poor: ${TRADEIN_CONDITION_MULTIPLIER_POOR:0.50}
+    # Multiplicative bonus applied when the item has its original box, e.g. 0.05 = +5%.
+    box-bonus: ${TRADEIN_BOX_BONUS:0.05}
+    # suggestedCreditOffer = suggestedCashOffer x creditPremium (before the unitPrice clamp above).
+    credit-premium: ${TRADEIN_CREDIT_PREMIUM:1.20}
+    # How many ranked candidates GET /pos/trade-ins/suggest returns at most.
+    suggest-max-results: ${TRADEIN_SUGGEST_MAX_RESULTS:8}
+    # How many of a product's most recent trade-in acquisitions feed the recentAcquisitions
+    # count/min/median/max band - sourced from pos_trade_in_lines.payout_amount (see
+    # TradeInSuggestionService's javadoc for why, not stock_movements).
+    suggest-recent-acquisitions-count: ${TRADEIN_SUGGEST_RECENT_COUNT:5}
+    # Minimum pg_trgm similarity (0..1) for a candidate to be considered a match at all, when the
+    # extension is available (V38) - below this, an unrelated query returns no candidates rather
+    # than a padded-out top-N of noise. Ignored entirely under the ILIKE/word-overlap fallback.
+    suggest-min-trigram-similarity: ${TRADEIN_SUGGEST_MIN_SIMILARITY:0.05}
+    ai-match:
+      # OPTIONAL local LLM reranker for trade-in PRODUCT MATCHING ONLY - never price
+      # (com.mulaerp.ai.OllamaTradeInMatcher / TradeInSuggestionService#applyAiRerank). Talks to a
+      # local Ollama instance started via `docker compose --profile ai up -d ollama` (see
+      # compose.yaml) over OLLAMA_BASE_URL. DISABLED BY DEFAULT: when false, no HTTP client is even
+      # constructed and GET /pos/trade-ins/suggest behaves exactly as it always has - the
+      # deterministic trigram search + pricing above is the source of truth for price and is
+      # completely unaffected by this flag either way. See the pos/run-stack skills for how to
+      # bring the ai profile up and pull a model.
+      enabled: ${TRADEIN_AI_MATCH_ENABLED:false}
+      base-url: ${OLLAMA_BASE_URL:http://ollama:11434}
+      model: ${TRADEIN_AI_MATCH_MODEL:qwen2.5:0.5b}
+      # Hard cap (ms) on one match attempt (connect + model response). Exceeding it, any connection
+      # error, or a malformed/off-list response all fall back to the deterministic result unchanged
+      # - see OllamaTradeInMatcher's javadoc.
+      timeout-ms: ${TRADEIN_AI_MATCH_TIMEOUT_MS:2000}
+  shop:
+    quote:
+      # WEBSHOP owner decision 3: postal/drop-off trade-in quotes are an INDICATIVE RANGE, valid
+      # this many days from quotedAt (com.mulaerp.shop.quote.service.ShopTradeInQuoteService /
+      # ShopTradeInQuoteExpiryScheduler). A QUOTED row past its own expiresAt flips to EXPIRED and
+      # can no longer be received/inspected - see the scheduler's javadoc for the documented
+      # "no re-quote endpoint, submit a fresh request" rule.
+      valid-days: ${SHOP_QUOTE_VALID_DAYS:7}
+      # quotedMin = quotedMax x this factor (quotedMax mirrors TradeInSuggestionService's own
+      # deterministic formula - see ShopTradeInQuoteService's class javadoc "Pricing" section for
+      # why this is a mirror rather than a direct call). 0.7 = quotedMin is 70% of quotedMax, i.e.
+      # a configurable "how much worse could inspection find this" floor.
+      min-factor: ${SHOP_QUOTE_MIN_FACTOR:0.7}
+      # Cron for ShopTradeInQuoteExpiryScheduler's sweep - every 15 minutes by default.
+      expiry-schedule-cron: ${SHOP_QUOTE_EXPIRY_SCHEDULE_CRON:0 */15 * * * *}
+    order:
+      # WEBSHOP owner decision 2: placing an order reserves stock immediately; this many hours
+      # later an unpaid/uncollected reservation is released back to available stock (see
+      # ShopOrderService#releaseExpiredReservations / ShopOrderReservationScheduler). Most thrift
+      # stock is quantity 1, so this is what stands in for a real "hold expiry" without a payment
+      # having actually happened yet.
+      reservation-hours: ${SHOP_ORDER_RESERVATION_HOURS:48}
+      # Flat delivery fee added to the order total when fulfilmentType = POST; 0 for COLLECT.
+      delivery-fee: ${SHOP_ORDER_DELIVERY_FEE:0.00}
+      # Cron for ShopOrderReservationScheduler's sweep - every 15 minutes by default.
+      reservation-release-cron: ${SHOP_ORDER_RESERVATION_RELEASE_CRON:0 */15 * * * *}
+      # Set false to disable the scheduled release job bean entirely (e.g. a test profile that
+      # wants to invoke ShopOrderService#releaseExpiredReservations directly/deterministically
+      # instead of racing a background schedule) - mirrors mulaerp.fx.enabled's pattern.
+      reservation-release-enabled: ${SHOP_ORDER_RESERVATION_RELEASE_ENABLED:true}
+    # V42 (Gap C): how many days after FULFILMENT a web order may still be voided (measured from
+    # ShopOrder#fulfilledAt, not createdAt - see that column's javadoc) - mirrors
+    # mulaerp.pos.void-window-days exactly. ShopOrderService#voidOrder.
+    void-window-days: ${SHOP_ORDER_VOID_WINDOW_DAYS:7}
+  repair:
+    # WP: months of workmanship warranty auto-issued when a repair job reaches COLLECTED (see
+    # RepairJobService#issueWorkmanshipWarranty / WarrantyService#issueWorkmanshipWarranty). 0
+    # disables auto-issue entirely.
+    warranty-months: ${REPAIR_WARRANTY_MONTHS:1}
+  fx:
+    # V31: automatic FX rate refresh (com.mulaerp.currency.scheduler.FxRateRefreshScheduler /
+    # FxRateRefreshService / FxRateProviderClient). xe.com has no free public API and scraping it
+    # is brittle/ToS-hostile, so this pulls from free keyless endpoints instead - primary
+    # open.er-api.com, fallback frankfurter.app, both MYR-based. Set to false to disable the
+    # scheduler bean entirely (see application-test.yml, which does this for the integration
+    # suite so it never makes a real network call).
+    enabled: ${MULAERP_FX_ENABLED:true}
+    # Comma-separated provider URLs, tried in order with fallback on any failure (network error,
+    # timeout, non-2xx, unparseable body, or empty rates map) - see FxRateProviderClient.
+    providers: ${MULAERP_FX_PROVIDERS:https://open.er-api.com/v6/latest/MYR,https://api.frankfurter.app/latest?from=MYR}
+    # Cron expression for the daily refresh; timezone is fixed to Asia/Kuala_Lumpur in the
+    # @Scheduled annotation itself (FxRateRefreshScheduler), not configurable separately here.
+    # Default: 06:00 daily.
+    schedule-cron: ${MULAERP_FX_SCHEDULE_CRON:0 0 6 * * *}
+
+# WEBSHOP owner decision 1: online orders are PAY AT COLLECTION / ON DELIVERY today - this whole
+# block is a DORMANT, provider-agnostic scaffold (com.mulaerp.shop.payment) for a real gateway
+# (Stripe/Fiuu/Billplz) to be wired in later. enabled=false (default) means NoopGateway is the
+# only PaymentGateway bean, GatewayWebhookController's stub always returns 501, and no HTTP client
+# is even constructed - see PaymentGateway's class javadoc for the full future-integrator
+# checklist. api-key/webhook-secret are placeholders only - per org policy, a real deployment must
+# supply them via 1Password-backed env vars, never commit real values here.
+payment:
+  gateway:
+    enabled: ${PAYMENT_GATEWAY_ENABLED:false}
+    provider: ${PAYMENT_GATEWAY_PROVIDER:none}
+    api-key: ${PAYMENT_GATEWAY_API_KEY:}
+    webhook-secret: ${PAYMENT_GATEWAY_WEBHOOK_SECRET:}
+    return-url: ${PAYMENT_GATEWAY_RETURN_URL:http://localhost:5173/shop/checkout/return}
+
 # Actuator Configuration (Phase 5.4)
 management:
   endpoints:
@@ -65,6 +264,9 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+  health:
+    mail:
+      enabled: false
   metrics:
     export:
       prometheus:

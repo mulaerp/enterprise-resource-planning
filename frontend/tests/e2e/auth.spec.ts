@@ -25,18 +25,16 @@ test.describe('Authentication', () => {
     // This is the expected behavior - browser handles validation
   });
 
-  // SKIPPED: Backend login endpoint has errors - needs to be fixed first
-  test.skip('should show error for invalid credentials', async ({ page }) => {
+  test('should show error for invalid credentials', async ({ page }) => {
     await page.getByLabel(/email/i).fill('invalid@example.com');
     await page.getByLabel(/password/i).fill('wrongpassword');
     await page.getByRole('button', { name: /sign in/i }).click();
     
     // Wait for error message
-    await expect(page.getByText(/invalid credentials/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/invalid (credentials|email or password)/i)).toBeVisible({ timeout: 10000 });
   });
 
-  // SKIPPED: Backend login endpoint has errors - needs to be fixed first
-  test.skip('should login successfully with valid credentials', async ({ page }) => {
+  test('should login successfully with valid credentials', async ({ page }) => {
     await page.getByLabel(/email/i).fill('admin@mulaerp.com');
     await page.getByLabel(/password/i).fill('admin123');
     await page.getByRole('button', { name: /sign in/i }).click();
@@ -46,8 +44,7 @@ test.describe('Authentication', () => {
     await expect(page.getByText(/dashboard/i)).toBeVisible();
   });
 
-  // SKIPPED: Backend login endpoint has errors - needs to be fixed first
-  test.skip('should redirect to dashboard if already logged in', async ({ page }) => {
+  test('should redirect to dashboard if already logged in', async ({ page }) => {
     // Login first
     await page.getByLabel(/email/i).fill('admin@mulaerp.com');
     await page.getByLabel(/password/i).fill('admin123');

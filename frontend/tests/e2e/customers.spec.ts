@@ -35,8 +35,14 @@ test.describe('Customer Management', () => {
     await page.getByLabel(/credit limit/i).fill('10000');
     
     await page.getByRole('button', { name: /save|create/i }).click();
-    
-    await expect(page.getByText(/success|created/i)).toBeVisible({ timeout: 10000 });
+
+    // Don't wait on the success toast: it auto-dismisses after 5s
+    // (components/ui/Toast.tsx default duration), and under load Playwright's
+    // assertion retry can land after it's already gone, flaking a create that
+    // actually succeeded. CustomerFormPage.tsx shows the toast and navigates
+    // back to /customers back-to-back, so the URL change is a durable
+    // post-create signal that can't disappear out from under the poll.
+    await expect(page).toHaveURL(/\/customers$/, { timeout: 10000 });
   });
 
   test('should search customers', async ({ page }) => {

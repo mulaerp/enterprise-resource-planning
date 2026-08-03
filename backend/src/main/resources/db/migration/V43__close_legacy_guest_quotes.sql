@@ -1,0 +1,45 @@
+-- V43: OWNER DECISION - online postal/drop-off trade-in quotes are now MEMBERS-ONLY.
+--
+-- Verified immediately before writing this migration: `ls db/migration` shows V41
+-- (shop_trade_in_quotes) as the latest file actually on disk; V42 is reserved for the PARALLEL
+-- agent's order/checkout work (not present at the time of writing, per that agent's own task
+-- boundary) - so V43 is the correct next free number for this task.
+--
+-- CONTEXT: guests could previously request a postal/drop-off trade-in quote via the now-DELETED
+-- `POST /api/v1/public/shop/quotes` (PublicShopQuoteController). That path is gone - staff need to
+-- be able to contact the seller and pay them, which requires a real account, and a guest quote
+-- that reached OFFER_MADE had NO WAY AT ALL to ever be accepted or declined (no public
+-- accept/decline endpoint ever existed - see the disclosed gap this exact migration resolves,
+-- previously documented in `shop-trade-in-declined.spec.ts` and the webshop skill). Going forward,
+-- `ShopTradeInQuoteService#requestQuote` requires a non-null shop_customer_id - see
+-- ShopTradeInQuote's class javadoc "Members-only" for the full rationale, including why the
+-- identity CHECK constraint below is deliberately left AS-IS (not tightened to a hard NOT NULL):
+-- a Postgres CHECK re-validates the WHOLE row on every UPDATE, not just INSERT, so hardening it
+-- would also break staff's routine receive/inspect/complete/return calls against any pre-existing
+-- null-customer row still sitting in the table - exactly the "must not crash on legacy rows"
+-- requirement this migration has to honour. Mandatory linkage for NEW rows is therefore an
+-- application-layer rule only, not a schema change.
+--
+-- LEGACY ROW POLICY (the actual decision this migration makes - one of two honest options,
+-- see the task instructions): pre-existing guest rows (shop_customer_id IS NULL, mostly test data
+-- from earlier verification passes - 27 such rows existed at the time of writing, none ever
+-- reached ACCEPTED/DECLINED/COMPLETED/RETURNED because a guest had no way to reach any of those
+-- statuses) are NEVER deleted and NEVER retrofitted with a shop_customer_id (there is no reliable
+-- way to attribute a historic guest submission to a real account after the fact - fabricating a
+-- link would misattribute real customer data to a request they may never have made). Instead, any
+-- guest row still sitting in an OPEN/actionable status (QUOTED, RECEIVED, or OFFER_MADE) is swept
+-- to EXPIRED here - a status ALREADY part of this domain's state machine (no new enum value, no
+-- CHECK constraint change needed) that already means exactly "no longer actionable, cannot be
+-- received/inspected further" (see ShopTradeInQuoteExpiryScheduler). This is the correct, final
+-- resolution of the disclosed "guest quote stuck at OFFER_MADE forever" dead end: those rows can no
+-- longer be mistaken for something a guest might still act on, because a guest never could act on
+-- them anyway (they simply had no accept/decline path) - and staff can see at a glance (status =
+-- EXPIRED) that no further action is expected. A guest row already EXPIRED (the scheduler's normal
+-- 7-day sweep may already have caught some) is left untouched (this UPDATE is idempotent - it only
+-- matches rows NOT already EXPIRED). Guest rows already in a genuinely terminal state from staff's
+-- own actions are not possible here (see above - never reachable by a guest), so no other status
+-- needs special-casing.
+UPDATE shop_trade_in_quotes
+SET status = 'EXPIRED'
+WHERE shop_customer_id IS NULL
+  AND status IN ('QUOTED', 'RECEIVED', 'OFFER_MADE');

@@ -6,7 +6,8 @@ import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
-import { api } from '../../lib/api';
+import { api, getErrorMessage } from '../../lib/api';
+import { formatMoney } from '../../lib/money';
 import { useToast } from '../../components/ui/Toast';
 
 interface PurchaseOrder {
@@ -34,7 +35,7 @@ export default function PurchaseOrderListPage() {
       setLoading(true);
       const response = await api.get('/purchase-orders');
       setPurchaseOrders(response.data.content || []);
-    } catch (error) {
+    } catch {
       showToast('error', 'Failed to fetch purchase orders');
     } finally {
       setLoading(false);
@@ -50,7 +51,7 @@ export default function PurchaseOrderListPage() {
     try {
       const response = await api.get(`/purchase-orders/search?query=${searchQuery}`);
       setPurchaseOrders(response.data.content || []);
-    } catch (error) {
+    } catch {
       showToast('error', 'Search failed');
     }
   };
@@ -62,8 +63,8 @@ export default function PurchaseOrderListPage() {
       await api.delete(`/purchase-orders/${id}`);
       showToast('success', 'Purchase order deleted successfully');
       fetchPurchaseOrders();
-    } catch (error: any) {
-      showToast('error', error.response?.data?.message || 'Failed to delete purchase order');
+    } catch (error) {
+      showToast('error', getErrorMessage(error, 'Failed to delete purchase order'));
     }
   };
 
@@ -83,7 +84,7 @@ export default function PurchaseOrderListPage() {
     { key: 'orderDate', header: 'Order Date', render: (row: PurchaseOrder) => new Date(row.orderDate).toLocaleDateString() },
     { key: 'expectedDate', header: 'Expected Date', render: (row: PurchaseOrder) => row.expectedDate ? new Date(row.expectedDate).toLocaleDateString() : '-' },
     { key: 'status', header: 'Status', render: (row: PurchaseOrder) => getStatusBadge(row.status) },
-    { key: 'total', header: 'Total', render: (row: PurchaseOrder) => `$${row.total.toFixed(2)}` },
+    { key: 'total', header: 'Total', render: (row: PurchaseOrder) => formatMoney(row.total) },
     {
       key: 'actions',
       header: 'Actions',
@@ -115,7 +116,7 @@ export default function PurchaseOrderListPage() {
     <Layout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Purchase Orders</h1>
+          <h1 className="text-2xl font-semibold text-slate-900">Purchase Orders</h1>
           <Link to="/purchase-orders/new">
             <Button>
               <Plus className="h-4 w-4 mr-2" />

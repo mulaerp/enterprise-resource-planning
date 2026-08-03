@@ -189,3 +189,23 @@ npx playwright test --project=webkit
 The test infrastructure is solid and ready for use. The current test failures are entirely due to backend API issues, not problems with Playwright or the test setup. Once the backend login endpoint is fixed, the full test suite should be operational.
 
 **Confidence Level:** High - The testing framework is production-ready.
+
+---
+
+## Update — 2026-07-30
+
+- Pinned `@playwright/test` to the exact installed version, `1.56.1` (dropped the
+  `^` range in `frontend/package.json`), so the host devDependency matches the
+  `mcr.microsoft.com/playwright:v1.56.1-jammy` image used by the Docker runner below.
+- Added a Docker-based e2e runner so tests run against a Linux/Chromium container
+  instead of the host browser: `docker-compose.e2e.yml` (root, `playwright` service,
+  `profiles: [e2e]`) plus `scripts/run-e2e-docker.sh` (brings up the stack, waits for
+  backend/frontend, then runs
+  `docker compose -f compose.yaml -f docker-compose.e2e.yml run --rm playwright`).
+- `frontend/playwright.config.ts` now honours `PLAYWRIGHT_BASE_URL` (skips spawning
+  `npm run dev` when set, e.g. inside Docker) and defaults to chromium-only when
+  targeting a remote base URL, unless `PLAYWRIGHT_ALL_BROWSERS=1`.
+- Un-skipped the three backend-dependent tests in `auth.spec.ts` (invalid credentials,
+  successful login, redirect when already logged in) — the backend login endpoint is
+  being fixed concurrently by another workstream. Selectors were checked against
+  `frontend/src/pages/auth/LoginPage.tsx` and left unchanged.

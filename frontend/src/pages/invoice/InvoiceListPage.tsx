@@ -6,7 +6,8 @@ import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
-import { api } from '../../lib/api';
+import { api, getErrorMessage } from '../../lib/api';
+import { formatMoney } from '../../lib/money';
 import { useToast } from '../../components/ui/Toast';
 
 interface Invoice {
@@ -33,9 +34,17 @@ export default function InvoiceListPage() {
   const fetchInvoices = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/invoices');
+      // BUG FIX: this page has no pagination control at all (no "next page" affordance, no
+      // page-size selector) - it just renders whatever one page of GET /invoices comes back with.
+      // With no size/sort params, Spring's Pageable defaults to a 20-row page in an unspecified
+      // order, so once a shop's invoice count exceeds that, every invoice past the first page (or
+      // simply not sorted to the front) silently disappears from this list with no way to reach
+      // it except the separate search box. Requesting a larger, explicitly newest-first page is a
+      // stopgap that at least surfaces the invoices someone would actually look for here; the
+      // right fix is real pagination, out of scope for this change.
+      const response = await api.get('/invoices?size=200&sort=invoiceDate,desc');
       setInvoices(response.data.content || []);
-    } catch (error) {
+    } catch {
       showToast('error', 'Failed to fetch invoices');
     } finally {
       setLoading(false);
@@ -51,7 +60,7 @@ export default function InvoiceListPage() {
     try {
       const response = await api.get(`/invoices/search?query=${searchQuery}`);
       setInvoices(response.data.content || []);
-    } catch (error) {
+    } catch {
       showToast('error', 'Search failed');
     }
   };
@@ -63,8 +72,8 @@ export default function InvoiceListPage() {
       await api.delete(`/invoices/${id}`);
       showToast('success', 'Invoice deleted successfully');
       fetchInvoices();
-    } catch (error: any) {
-      showToast('error', error.response?.data?.message || 'Failed to delete invoice');
+    } catch (error) {
+      showToast('error', getErrorMessage(error, 'Failed to delete invoice'));
     }
   };
 
@@ -85,8 +94,8 @@ export default function InvoiceListPage() {
     { key: 'invoiceDate', header: 'Invoice Date', render: (row: Invoice) => new Date(row.invoiceDate).toLocaleDateString() },
     { key: 'dueDate', header: 'Due Date', render: (row: Invoice) => new Date(row.dueDate).toLocaleDateString() },
     { key: 'status', header: 'Status', render: (row: Invoice) => getStatusBadge(row.status) },
-    { key: 'total', header: 'Total', render: (row: Invoice) => `$${row.total.toFixed(2)}` },
-    { key: 'balanceDue', header: 'Balance', render: (row: Invoice) => `$${row.balanceDue.toFixed(2)}` },
+    { key: 'total', header: 'Total', render: (row: Invoice) => formatMoney(row.total) },
+    { key: 'balanceDue', header: 'Balance', render: (row: Invoice) => formatMoney(row.balanceDue) },
     {
       key: 'actions',
       header: 'Actions',
@@ -117,20 +126,18 @@ export default function InvoiceListPage() {
   return (
     <Layout>
     <div className="space-y-6">
-      {/* Gradient Banner Header */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl shadow-lg p-8">
-        <div className="flex items-center justify-between">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Invoices</h1>
-            <p className="text-indigo-100">Create and manage customer invoices</p>
+            <h1 className="text-2xl font-semibold text-slate-900">Invoices</h1>
+            <p className="text-sm text-slate-500 mt-1">Create and manage customer invoices</p>
           </div>
           <Link to="/invoices/new">
-            <Button className="bg-white/20 hover:bg-white/30 text-white border-white/30">
+            <Button>
               <Plus className="h-4 w-4 mr-2" />
               New Invoice
             </Button>
           </Link>
-        </div>
       </div>
 
       <div className="flex gap-4">

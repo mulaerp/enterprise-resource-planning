@@ -5,7 +5,7 @@ import Layout from '../../components/Layout';
 import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
 
 interface ProductSerial {
   id: string;
@@ -32,7 +32,7 @@ export default function SerialListPage() {
     try {
       const response = await api.get('/serials');
       setSerials(response.data);
-    } catch (err) {
+    } catch {
       showError('Failed to fetch serial numbers');
     } finally {
       setLoading(false);
@@ -46,8 +46,8 @@ export default function SerialListPage() {
       await api.delete(`/serials/${id}`);
       success('Serial number deleted successfully');
       fetchSerials();
-    } catch (err: any) {
-      showError(err.response?.data?.message || 'Failed to delete serial number');
+    } catch (err) {
+      showError(getErrorMessage(err, 'Failed to delete serial number'));
     }
   };
 
@@ -55,9 +55,9 @@ export default function SerialListPage() {
     const colors = {
       IN_STOCK: 'bg-green-100 text-green-800',
       SOLD: 'bg-blue-100 text-blue-800',
-      RETURNED: 'bg-yellow-100 text-yellow-800',
+      RETURNED: 'bg-amber-100 text-amber-800',
       DEFECTIVE: 'bg-red-100 text-red-800',
-      WARRANTY_CLAIM: 'bg-purple-100 text-purple-800',
+      WARRANTY_CLAIM: 'bg-teal-100 text-teal-800',
     };
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[status as keyof typeof colors]}`}>
@@ -91,7 +91,7 @@ export default function SerialListPage() {
         <div className="flex items-center gap-2">
           {serial.warrantyExpiryDate ? new Date(serial.warrantyExpiryDate).toLocaleDateString() : '-'}
           {isWarrantyExpiringSoon(serial.warrantyExpiryDate) && (
-            <AlertTriangle className="w-4 h-4 text-yellow-500" />
+            <AlertTriangle className="w-4 h-4 text-amber-500" />
           )}
         </div>
       ),
@@ -113,7 +113,7 @@ export default function SerialListPage() {
         <div className="flex gap-2">
           <button
             onClick={() => navigate(`/inventory/serials/${serial.id}/edit`)}
-            className="text-blue-600 hover:text-blue-800"
+            className="text-brand-600 hover:text-brand-800"
           >
             <Edit className="w-4 h-4" />
           </button>
@@ -139,21 +139,18 @@ export default function SerialListPage() {
   return (
     <Layout>
       <div className="p-6">
-        {/* Gradient Banner Header */}
-        <div className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 rounded-xl shadow-lg p-8 mb-6">
-          <div className="flex items-center justify-between">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">Serial Number Tracking</h1>
-              <p className="text-sky-100">Track individual product serial numbers and warranties</p>
+              <h1 className="text-2xl font-semibold text-slate-900">Serial Number Tracking</h1>
+              <p className="text-sm text-slate-500 mt-1">Track individual product serial numbers and warranties</p>
             </div>
-            <Button 
+            <Button
               onClick={() => navigate('/inventory/serials/new')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
             >
               <Plus className="w-4 h-4 mr-2" />
               New Serial Number
             </Button>
-          </div>
         </div>
 
         <DataTable columns={columns} data={serials}

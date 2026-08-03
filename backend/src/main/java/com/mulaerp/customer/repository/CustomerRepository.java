@@ -16,7 +16,10 @@ public interface CustomerRepository extends JpaRepository<Customer, UUID> {
     Page<Customer> findByDeletedFalse(Pageable pageable);
     
     Optional<Customer> findByIdAndDeletedFalse(UUID id);
-    
+
+    // WP10: used by the CSV customer importer to dedupe rows on email.
+    Optional<Customer> findByEmailIgnoreCaseAndDeletedFalse(String email);
+
     @Query("SELECT c FROM Customer c WHERE c.deleted = false AND " +
            "(LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%')) OR " +

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -29,7 +30,12 @@ public class UpdateProductRequest {
     @DecimalMin(value = "0.0", inclusive = true, message = "Cost price must be positive")
     private BigDecimal costPrice;
     
-    @NotNull(message = "Stock quantity is required")
+    /**
+     * Ignored by ProductService.updateProduct: stock can only move through the adjustment/
+     * transfer paths so every change writes a StockMovement row. Kept on the request (and
+     * optional, not @NotNull) so existing clients that still send it don't get a 400 for a
+     * field the server deliberately discards.
+     */
     @Min(value = 0, message = "Stock quantity must be positive")
     private Integer stockQuantity;
     
@@ -39,4 +45,31 @@ public class UpdateProductRequest {
     
     @NotBlank(message = "Status is required")
     private String status;
+
+    // --- Thrift-store fields (WP: PoS flagship feature) - all optional -------------------
+    private String condition;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Acquisition cost must be positive")
+    private BigDecimal acquisitionCost;
+
+    private List<String> tags;
+
+    private String accessories;
+
+    private Boolean hasBox;
+
+    // --- REPAIR/WARRANTY + public storefront fields - both optional --------------------
+    @Min(value = 0, message = "Warranty months must be positive")
+    private Integer warrantyMonths;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Buy price must be positive")
+    private BigDecimal buyPrice;
+
+    /**
+     * WP12: optimistic locking. Optional so existing callers that don't round-trip it (e.g. the
+     * e2e suite) keep working unchanged; when present, ProductService#updateProduct compares it
+     * against the freshly loaded entity's version and rejects a stale write with 409 before any
+     * field is applied.
+     */
+    private Long version;
 }

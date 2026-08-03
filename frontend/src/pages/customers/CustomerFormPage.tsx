@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
 import Layout from '../../components/Layout';
+import { useToast } from '../../components/ui/Toast';
 
 interface CustomerForm {
   name: string;
@@ -14,9 +15,12 @@ interface CustomerForm {
   status: string;
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function CustomerFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const isEdit = !!id;
 
   const [loading, setLoading] = useState(false);
@@ -29,6 +33,7 @@ export default function CustomerFormPage() {
     creditLimit: '0',
     status: 'ACTIVE',
   });
+  const [errors, setErrors] = useState<Partial<Record<keyof CustomerForm, string>>>({});
 
   useEffect(() => {
     if (isEdit) {
@@ -51,12 +56,32 @@ export default function CustomerFormPage() {
       });
     } catch (error) {
       console.error('Failed to fetch customer:', error);
-      alert('Failed to load customer');
+      showError('Failed to load customer');
     }
+  };
+
+  const validate = (): boolean => {
+    const nextErrors: Partial<Record<keyof CustomerForm, string>> = {};
+    if (!formData.name.trim()) {
+      nextErrors.name = 'Name is required';
+    }
+    if (formData.email.trim() && !EMAIL_RE.test(formData.email.trim())) {
+      nextErrors.email = 'Invalid email format';
+    }
+    if (formData.creditLimit.trim() === '' || Number.isNaN(parseFloat(formData.creditLimit))) {
+      nextErrors.creditLimit = 'Credit limit is required';
+    }
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validate()) {
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -67,14 +92,16 @@ export default function CustomerFormPage() {
 
       if (isEdit) {
         await api.put(`/customers/${id}`, payload);
+        success('Customer updated successfully');
       } else {
         await api.post('/customers', payload);
+        success('Customer created successfully');
       }
 
       navigate('/customers');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to save customer:', error);
-      alert(error.response?.data?.message || 'Failed to save customer');
+      showError(getErrorMessage(error, 'Failed to save customer'));
     } finally {
       setLoading(false);
     }
@@ -90,114 +117,122 @@ export default function CustomerFormPage() {
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        {/* Header Banner */}
-        <div className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 rounded-2xl shadow-xl p-8 text-white">
+        {/* Page Header */}
+        <div>
           <button
             onClick={() => navigate('/customers')}
-            className="flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors"
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 mb-4 transition-colors"
           >
             <ArrowLeft size={20} />
             Back to Customers
           </button>
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-2xl font-semibold text-slate-900">
             {isEdit ? 'Edit Customer' : 'Add New Customer'}
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 max-w-2xl">
+        <form onSubmit={handleSubmit} noValidate className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 max-w-2xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Customer Name <span className="text-red-500">*</span>
+              <label htmlFor="customer-name" className="block text-sm font-medium text-slate-700 mb-2">
+                Name <span className="text-red-500">*</span>
               </label>
               <input
+                id="customer-name"
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
+              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="customer-email" className="block text-sm font-medium text-slate-700 mb-2">
                 Email
               </label>
               <input
+                id="customer-email"
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="customer-phone" className="block text-sm font-medium text-slate-700 mb-2">
                 Phone
               </label>
               <input
+                id="customer-phone"
                 type="text"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="customer-address" className="block text-sm font-medium text-slate-700 mb-2">
                 Address
               </label>
               <textarea
+                id="customer-address"
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
                 rows={3}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="customer-tax-id" className="block text-sm font-medium text-slate-700 mb-2">
                 Tax ID
               </label>
               <input
+                id="customer-tax-id"
                 type="text"
                 name="taxId"
                 value={formData.taxId}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="customer-credit-limit" className="block text-sm font-medium text-slate-700 mb-2">
                 Credit Limit <span className="text-red-500">*</span>
               </label>
               <input
+                id="customer-credit-limit"
                 type="number"
                 name="creditLimit"
                 value={formData.creditLimit}
                 onChange={handleChange}
                 step="0.01"
                 min="0"
-                required
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
+              {errors.creditLimit && <p className="text-red-500 text-sm mt-1">{errors.creditLimit}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="customer-status" className="block text-sm font-medium text-slate-700 mb-2">
                 Status <span className="text-red-500">*</span>
               </label>
               <select
+                id="customer-status"
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               >
                 <option value="ACTIVE">Active</option>
                 <option value="INACTIVE">Inactive</option>
@@ -209,14 +244,14 @@ export default function CustomerFormPage() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="bg-brand-600 text-white px-6 py-2 rounded-lg hover:bg-brand-700 disabled:opacity-50"
             >
               {loading ? 'Saving...' : isEdit ? 'Update Customer' : 'Create Customer'}
             </button>
             <button
               type="button"
               onClick={() => navigate('/customers')}
-              className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300"
+              className="bg-slate-200 text-slate-700 px-6 py-2 rounded-lg hover:bg-slate-300"
             >
               Cancel
             </button>

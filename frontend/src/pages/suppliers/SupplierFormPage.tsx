@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
 import Layout from '../../components/Layout';
+import { useToast } from '../../components/ui/Toast';
 
 interface SupplierForm {
   name: string;
@@ -17,6 +18,7 @@ interface SupplierForm {
 export default function SupplierFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const isEdit = !!id;
 
   const [loading, setLoading] = useState(false);
@@ -51,7 +53,7 @@ export default function SupplierFormPage() {
       });
     } catch (error) {
       console.error('Failed to fetch supplier:', error);
-      alert('Failed to load supplier');
+      showError('Failed to load supplier');
     }
   };
 
@@ -62,14 +64,16 @@ export default function SupplierFormPage() {
     try {
       if (isEdit) {
         await api.put(`/suppliers/${id}`, formData);
+        success('Supplier updated successfully');
       } else {
         await api.post('/suppliers', formData);
+        success('Supplier created successfully');
       }
 
       navigate('/suppliers');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to save supplier:', error);
-      alert(error.response?.data?.message || 'Failed to save supplier');
+      showError(getErrorMessage(error, 'Failed to save supplier'));
     } finally {
       setLoading(false);
     }
@@ -85,112 +89,119 @@ export default function SupplierFormPage() {
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        {/* Header Banner */}
-        <div className="bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 rounded-2xl shadow-xl p-8 text-white">
+        {/* Page Header */}
+        <div>
           <button
             onClick={() => navigate('/suppliers')}
-            className="flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors"
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 mb-4 transition-colors"
           >
             <ArrowLeft size={20} />
             Back to Suppliers
           </button>
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-2xl font-semibold text-slate-900">
             {isEdit ? 'Edit Supplier' : 'Add New Supplier'}
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 max-w-2xl">
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 max-w-2xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Supplier Name <span className="text-red-500">*</span>
+              <label htmlFor="supplier-name" className="block text-sm font-medium text-slate-700 mb-2">
+                Name <span className="text-red-500">*</span>
               </label>
               <input
+                id="supplier-name"
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="supplier-email" className="block text-sm font-medium text-slate-700 mb-2">
                 Email
               </label>
               <input
+                id="supplier-email"
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="supplier-phone" className="block text-sm font-medium text-slate-700 mb-2">
                 Phone
               </label>
               <input
+                id="supplier-phone"
                 type="text"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="supplier-address" className="block text-sm font-medium text-slate-700 mb-2">
                 Address
               </label>
               <textarea
+                id="supplier-address"
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
                 rows={3}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="supplier-tax-id" className="block text-sm font-medium text-slate-700 mb-2">
                 Tax ID
               </label>
               <input
+                id="supplier-tax-id"
                 type="text"
                 name="taxId"
                 value={formData.taxId}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="supplier-payment-terms" className="block text-sm font-medium text-slate-700 mb-2">
                 Payment Terms
               </label>
               <input
+                id="supplier-payment-terms"
                 type="text"
                 name="paymentTerms"
                 value={formData.paymentTerms}
                 onChange={handleChange}
                 placeholder="e.g., Net 30"
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="supplier-status" className="block text-sm font-medium text-slate-700 mb-2">
                 Status <span className="text-red-500">*</span>
               </label>
               <select
+                id="supplier-status"
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
               >
                 <option value="ACTIVE">Active</option>
                 <option value="INACTIVE">Inactive</option>
@@ -202,14 +213,14 @@ export default function SupplierFormPage() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="bg-brand-600 text-white px-6 py-2 rounded-lg hover:bg-brand-700 disabled:opacity-50"
             >
               {loading ? 'Saving...' : isEdit ? 'Update Supplier' : 'Create Supplier'}
             </button>
             <button
               type="button"
               onClick={() => navigate('/suppliers')}
-              className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300"
+              className="bg-slate-200 text-slate-700 px-6 py-2 rounded-lg hover:bg-slate-300"
             >
               Cancel
             </button>

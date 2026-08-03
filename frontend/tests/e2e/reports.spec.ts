@@ -12,7 +12,9 @@ test.describe('Reports', () => {
   test('should navigate to reports page', async ({ page }) => {
     await page.getByRole('link', { name: /reports/i }).first().click();
     await expect(page).toHaveURL(/\/reports/);
-    await expect(page.getByRole('heading', { name: /reports/i })).toBeVisible();
+    // level: 1 - the page's own <h1> ("Reports & Analytics"), not the "Custom Reports"
+    // hub card (an <h3>), which also matches /reports/i.
+    await expect(page.getByRole('heading', { name: /reports/i, level: 1 })).toBeVisible();
   });
 
   test('should display available report types', async ({ page }) => {

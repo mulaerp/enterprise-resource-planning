@@ -30,4 +30,12 @@ public class UpdateCustomerRequest {
     
     @NotBlank(message = "Status is required")
     private String status;
+
+    /**
+     * WP12: optimistic locking. Optional so existing callers that don't round-trip it (e.g. the
+     * e2e suite) keep working unchanged; when present, CustomerService#updateCustomer compares it
+     * against the freshly loaded entity's version and rejects a stale write with 409 before any
+     * field is applied.
+     */
+    private Long version;
 }

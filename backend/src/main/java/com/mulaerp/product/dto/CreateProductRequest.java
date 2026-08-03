@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -43,4 +44,23 @@ public class CreateProductRequest {
     
     @NotBlank(message = "Status is required")
     private String status;
+
+    // --- Thrift-store fields (WP: PoS flagship feature) - all optional -------------------
+    private String condition;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Acquisition cost must be positive")
+    private BigDecimal acquisitionCost;
+
+    private List<String> tags;
+
+    private String accessories;
+
+    private Boolean hasBox;
+
+    // --- REPAIR/WARRANTY + public storefront fields - both optional --------------------
+    @Min(value = 0, message = "Warranty months must be positive")
+    private Integer warrantyMonths;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Buy price must be positive")
+    private BigDecimal buyPrice;
 }

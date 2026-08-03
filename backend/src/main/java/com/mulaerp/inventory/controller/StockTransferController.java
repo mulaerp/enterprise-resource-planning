@@ -1,5 +1,6 @@
 package com.mulaerp.inventory.controller;
 
+import com.mulaerp.auth.security.RoleRules;
 import com.mulaerp.inventory.dto.CreateStockTransferRequest;
 import com.mulaerp.inventory.dto.StockTransferDTO;
 import com.mulaerp.inventory.entity.StockTransfer;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,13 +56,18 @@ public class StockTransferController {
     }
 
     @PostMapping
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Create new stock transfer")
     public ResponseEntity<StockTransferDTO> createTransfer(@Valid @RequestBody CreateStockTransferRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(stockTransferService.createTransfer(request));
     }
 
+    // WP12 spec calls out "stock transfers create" explicitly; the remaining mutations below
+    // (update/status/complete/cancel/delete) are gated the same way for consistency - leaving them
+    // open while only create was locked down would be an inconsistent gap in the same workflow.
     @PutMapping("/{id}")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Update stock transfer")
     public ResponseEntity<StockTransferDTO> updateTransfer(
             @PathVariable UUID id,
@@ -69,6 +76,7 @@ public class StockTransferController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Update stock transfer status")
     public ResponseEntity<Void> updateTransferStatus(
             @PathVariable UUID id,
@@ -78,6 +86,7 @@ public class StockTransferController {
     }
 
     @PostMapping("/{id}/complete")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Complete stock transfer")
     public ResponseEntity<Void> completeTransfer(@PathVariable UUID id) {
         stockTransferService.completeTransfer(id);
@@ -85,6 +94,7 @@ public class StockTransferController {
     }
 
     @PostMapping("/{id}/cancel")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Cancel stock transfer")
     public ResponseEntity<Void> cancelTransfer(@PathVariable UUID id) {
         stockTransferService.cancelTransfer(id);
@@ -92,6 +102,7 @@ public class StockTransferController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize(RoleRules.STOCK_WRITERS)
     @Operation(summary = "Delete stock transfer")
     public ResponseEntity<Void> deleteTransfer(@PathVariable UUID id) {
         stockTransferService.deleteTransfer(id);

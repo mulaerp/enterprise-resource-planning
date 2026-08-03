@@ -9,9 +9,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface SalesOrderRepository extends JpaRepository<SalesOrder, String> {
+public interface SalesOrderRepository extends JpaRepository<SalesOrder, UUID> {
 
     Optional<SalesOrder> findByOrderNumber(String orderNumber);
 
@@ -26,11 +27,16 @@ public interface SalesOrderRepository extends JpaRepository<SalesOrder, String> 
            "LEFT JOIN FETCH so.customer " +
            "LEFT JOIN FETCH so.items " +
            "WHERE so.id = :id AND so.deletedAt IS NULL")
-    Optional<SalesOrder> findByIdWithDetails(@Param("id") String id);
+    Optional<SalesOrder> findByIdWithDetails(@Param("id") UUID id);
 
     @Query("SELECT COUNT(so) FROM SalesOrder so WHERE so.deletedAt IS NULL")
     long countActive();
 
+    // so.status is a SalesOrder.OrderStatus enum column, so the bind parameter must be too -
+    // passing a raw String here throws QueryArgumentException ("Argument [DRAFT] of type
+    // [java.lang.String] did not match parameter type [SalesOrder$OrderStatus]") on every call,
+    // which is exactly what was happening via AnalyticsService.getDashboardStats() (silently
+    // logged and swallowed there, but still a 500-on-first-call bug for any other caller).
     @Query("SELECT COUNT(so) FROM SalesOrder so WHERE so.status = :status AND so.deletedAt IS NULL")
-    Long countByStatus(@Param("status") String status);
+    Long countByStatus(@Param("status") SalesOrder.OrderStatus status);
 }

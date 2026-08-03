@@ -1,0 +1,50 @@
+# WP8+9: Spring profile activated by the backend integration test suite
+# (backend/src/test/java/com/mulaerp/it/**, driven by scripts/run-backend-tests.sh).
+#
+# Deliberately does NOT set spring.datasource.*/spring.data.redis.* here - application.yml's
+# ${DATABASE_HOST:localhost} etc. / ${REDIS_HOST:localhost} etc. placeholders already read those
+# from the environment, and run-backend-tests.sh passes DATABASE_HOST/DATABASE_PORT/DATABASE_NAME/
+# DATABASE_USER/DATABASE_PASSWORD and REDIS_HOST/REDIS_PORT/REDIS_PASSWORD pointing at the
+# throwaway mulaerp-test-postgres / mulaerp-test-valkey containers it starts. This file only
+# overrides what genuinely differs for a fast, quiet, from-scratch test run.
+#
+# Known limitation, not fixed here (out of scope - src/main/java is off-limits for this test
+# work): EmailNotificationScheduler's three @Scheduled jobs are wired via @EnableScheduling on
+# the main application class with no property gate, so this profile cannot disable them outright.
+# In practice this is a non-issue: each job's cron ("0 0 9 * * *") only fires at exactly 09:00:00
+# server time, so the odds of it firing mid-suite are negligible, and even if it did, every mail
+# send it could trigger is wrapped in try/catch further down the call chain (EmailTemplateService),
+# so a transient SMTP failure in a sandboxed test run would be logged, not thrown.
+spring:
+  jpa:
+    show-sql: false
+  flyway:
+    enabled: true
+
+logging:
+  level:
+    root: WARN
+    com.mulaerp: INFO
+    org.hibernate.SQL: WARN
+    org.springframework.web: WARN
+  pattern:
+    console: "%d{HH:mm:ss} %-5level %logger{35} - %msg%n"
+
+management:
+  health:
+    mail:
+      enabled: false
+
+mulaerp:
+  seed:
+    demo-data: false
+  fx:
+    # V31: disable the automatic FX rate refresh scheduler entirely for the integration suite
+    # (FxRateRefreshScheduler is @ConditionalOnProperty on this) - a real network call to an
+    # external FX provider must never happen mid-test-run.
+    enabled: false
+  tradein:
+    ai-match:
+      # Explicit (application.yml already defaults this to false) - the integration suite must
+      # never attempt an outbound call to a local Ollama instance that won't exist in CI.
+      enabled: false

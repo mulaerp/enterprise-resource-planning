@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -20,4 +21,8 @@ public class PurchaseOrderItemDTO {
     private BigDecimal taxRate;
     private BigDecimal total;
     private Integer receivedQuantity;
+
+    // WP3: optional batch/serial tracking, populated when supplied on receipt.
+    private UUID batchId;
+    private List<UUID> serialIds;
 }

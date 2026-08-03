@@ -1,4 +1,4 @@
-import { type TextareaHTMLAttributes, forwardRef } from 'react';
+import { type TextareaHTMLAttributes, forwardRef, useId } from 'react';
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -7,25 +7,28 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ label, error, helperText, className = '', ...props }, ref) => {
+  ({ label, error, helperText, className = '', id, ...props }, ref) => {
+    const generatedId = useId();
+    const textareaId = id ?? generatedId;
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor={textareaId} className="block text-sm font-medium text-slate-700 mb-1">
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && <span className="text-red-600 ml-1">*</span>}
           </label>
         )}
         <textarea
           ref={ref}
-          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 resize-none ${
-            error ? 'border-red-500' : 'border-gray-300'
+          id={textareaId}
+          className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus:border-transparent disabled:bg-slate-50 disabled:text-slate-500 resize-none ${
+            error ? 'border-red-600' : 'border-slate-300'
           } ${className}`}
           {...props}
         />
         {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
         {helperText && !error && (
-          <p className="mt-1 text-sm text-gray-500">{helperText}</p>
+          <p className="mt-1 text-sm text-slate-500">{helperText}</p>
         )}
       </div>
     );

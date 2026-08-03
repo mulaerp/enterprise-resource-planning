@@ -5,7 +5,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import Layout from '../../components/Layout';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
 
 interface TransferForm {
   fromWarehouseId: string;
@@ -19,16 +19,30 @@ interface TransferForm {
   }[];
 }
 
+interface ProductOption {
+  id: string;
+  name: string;
+  sku: string;
+}
+
+interface WarehouseOption {
+  id: string;
+  name: string;
+}
+
+interface TransferItemResponse {
+  productId: string;
+  batchId?: string;
+  quantity: number;
+}
+
 export default function StockTransferFormPage() {
   const navigate = useNavigate();
   const { success, error: showError } = useToast();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-  const [products, setProducts] = useState<any[]>([]);
-  const [warehouses] = useState([
-    { id: '00000000-0000-0000-0000-000000000001', name: 'Main Warehouse' },
-    { id: '00000000-0000-0000-0000-000000000002', name: 'Secondary Warehouse' },
-  ]);
+  const [products, setProducts] = useState<ProductOption[]>([]);
+  const [warehouses, setWarehouses] = useState<WarehouseOption[]>([]);
   const isEdit = !!id;
 
   const { register, control, handleSubmit, formState: { errors }, reset } = useForm<TransferForm>({
@@ -45,6 +59,7 @@ export default function StockTransferFormPage() {
 
   useEffect(() => {
     fetchProducts();
+    fetchWarehouses();
     if (isEdit) {
       fetchTransfer();
     }
@@ -52,10 +67,26 @@ export default function StockTransferFormPage() {
 
   const fetchProducts = async () => {
     try {
-      const response = await api.get('/products');
+      // BUG FIX: see StockAdjustmentFormPage's fetchProducts for the same root cause - GET
+      // /products with no size param defaults to the backend's page size, hiding every product
+      // past page 0 in a catalogue this large (800+ products).
+      const response = await api.get('/products?size=1000&sortBy=name&sortDir=ASC');
       setProducts(response.data.content || response.data);
-    } catch (err) {
+    } catch {
       showError('Failed to fetch products');
+    }
+  };
+
+  const fetchWarehouses = async () => {
+    try {
+      // BUG FIX: this used to hardcode two fixed placeholder warehouses ('Main Warehouse' /
+      // 'Secondary Warehouse' at well-known-but-nonexistent ids) - neither actually exists in a
+      // normal deployment (see StockAdjustmentFormPage's fetchWarehouses for the same root cause),
+      // so every transfer submission 404'd with "Warehouse not found". Fetch the real list instead.
+      const response = await api.get('/warehouses', { params: { size: 1000 } });
+      setWarehouses(response.data.content ?? []);
+    } catch {
+      showError('Failed to fetch warehouses');
     }
   };
 
@@ -67,13 +98,13 @@ export default function StockTransferFormPage() {
         toWarehouseId: response.data.toWarehouseId,
         transferDate: response.data.transferDate,
         notes: response.data.notes || '',
-        items: response.data.items.map((item: any) => ({
+        items: response.data.items.map((item: TransferItemResponse) => ({
           productId: item.productId,
           batchId: item.batchId || '',
           quantity: item.quantity,
         })),
       });
-    } catch (err) {
+    } catch {
       showError('Failed to fetch transfer');
     }
   };
@@ -89,8 +120,8 @@ export default function StockTransferFormPage() {
         success('Transfer created successfully');
       }
       navigate('/inventory/transfers');
-    } catch (err: any) {
-      showError(err.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} transfer`);
+    } catch (err) {
+      showError(getErrorMessage(err, `Failed to ${isEdit ? 'update' : 'create'} transfer`));
     } finally {
       setLoading(false);
     }
@@ -104,8 +135,9 @@ export default function StockTransferFormPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">From Warehouse *</label>
+              <label htmlFor="transfer-from-warehouse" className="block text-sm font-medium mb-1">From Warehouse *</label>
               <select
+                id="transfer-from-warehouse"
                 {...register('fromWarehouseId', { required: 'From warehouse is required' })}
                 className="w-full px-3 py-2 border rounded-lg"
               >
@@ -122,8 +154,9 @@ export default function StockTransferFormPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">To Warehouse *</label>
+              <label htmlFor="transfer-to-warehouse" className="block text-sm font-medium mb-1">To Warehouse *</label>
               <select
+                id="transfer-to-warehouse"
                 {...register('toWarehouseId', { required: 'To warehouse is required' })}
                 className="w-full px-3 py-2 border rounded-lg"
               >
@@ -141,8 +174,9 @@ export default function StockTransferFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Transfer Date *</label>
+            <label htmlFor="transfer-date" className="block text-sm font-medium mb-1">Transfer Date *</label>
             <input
+              id="transfer-date"
               type="date"
               {...register('transferDate', { required: 'Transfer date is required' })}
               className="w-full px-3 py-2 border rounded-lg"
@@ -215,8 +249,9 @@ export default function StockTransferFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Notes</label>
+            <label htmlFor="transfer-notes" className="block text-sm font-medium mb-1">Notes</label>
             <textarea
+              id="transfer-notes"
               {...register('notes')}
               className="w-full px-3 py-2 border rounded-lg"
               rows={3}

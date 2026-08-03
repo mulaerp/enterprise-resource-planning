@@ -4,7 +4,9 @@ import { Plus, Edit, Trash2 } from 'lucide-react';
 import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
+import { formatMoney } from '../../lib/money';
+import Layout from '../../components/Layout';
 
 interface Account {
   id: string;
@@ -29,7 +31,7 @@ export default function AccountListPage() {
     try {
       const response = await api.get('/accounting/accounts');
       setAccounts(response.data);
-    } catch (err) {
+    } catch {
       showError('Failed to fetch accounts');
     } finally {
       setLoading(false);
@@ -43,8 +45,8 @@ export default function AccountListPage() {
       await api.delete(`/accounting/accounts/${id}`);
       success('Account deleted successfully');
       fetchAccounts();
-    } catch (error: any) {
-      showError(error.response?.data?.message || 'Failed to delete account');
+    } catch (error) {
+      showError(getErrorMessage(error, 'Failed to delete account'));
     }
   };
 
@@ -55,14 +57,14 @@ export default function AccountListPage() {
     {
       key: 'balance',
       header: 'Balance',
-      render: (account: Account) => `$${account.balance.toFixed(2)}`,
+      render: (account: Account) => formatMoney(account.balance),
     },
     {
       key: 'isActive',
       header: 'Status',
       render: (account: Account) => (
         <span className={`px-2 py-1 rounded text-xs ${
-          account.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          account.isActive ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-800'
         }`}>
           {account.isActive ? 'Active' : 'Inactive'}
         </span>
@@ -75,7 +77,7 @@ export default function AccountListPage() {
         <div className="flex gap-2">
           <button
             onClick={() => navigate(`/accounting/accounts/${account.id}/edit`)}
-            className="text-blue-600 hover:text-blue-800"
+            className="text-brand-600 hover:text-brand-800"
           >
             <Edit className="w-4 h-4" />
           </button>
@@ -91,30 +93,33 @@ export default function AccountListPage() {
   ];
 
   if (loading) {
-    return <div className="p-6">Loading...</div>;
+    return (
+      <Layout>
+        <div className="p-6">Loading...</div>
+      </Layout>
+    );
   }
 
   return (
-    <div className="p-6">
-      {/* Gradient Banner Header */}
-      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-xl shadow-lg p-8 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Chart of Accounts</h1>
-            <p className="text-emerald-100">Manage your accounting structure and account hierarchy</p>
-          </div>
-          <Button 
-            onClick={() => navigate('/accounting/accounts/new')}
-            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            New Account
-          </Button>
+    <Layout>
+      <div className="p-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl font-semibold text-slate-900">Chart of Accounts</h1>
+              <p className="text-sm text-slate-500 mt-1">Manage your accounting structure and account hierarchy</p>
+            </div>
+            <Button
+              onClick={() => navigate('/accounting/accounts/new')}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Account
+            </Button>
         </div>
-      </div>
 
-      <DataTable columns={columns} data={accounts}
-        keyExtractor={(account) => account.id} />
-    </div>
+        <DataTable columns={columns} data={accounts}
+          keyExtractor={(account) => account.id} />
+      </div>
+    </Layout>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Select from '../ui/Select';
 import api from '../../lib/api';
+import { formatMoney } from '../../lib/money';
 
 interface Product {
   id: string;
@@ -70,7 +71,7 @@ export default function ProductSelector({
       <option value="">Select a product</option>
       {products.map((product) => (
         <option key={product.id} value={product.id}>
-          {product.sku} - {product.name} (${product.unitPrice.toFixed(2)})
+          {product.sku} - {product.name} ({formatMoney(product.unitPrice)})
         </option>
       ))}
     </Select>

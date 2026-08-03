@@ -7,6 +7,9 @@ import com.mulaerp.product.entity.Product;
 import com.mulaerp.product.entity.ProductCategory;
 import com.mulaerp.product.repository.ProductCategoryRepository;
 import com.mulaerp.product.repository.ProductRepository;
+import com.mulaerp.inventory.service.StockMovementService;
+import com.mulaerp.warehouse.service.WarehouseService;
+import com.mulaerp.warehouse.service.WarehouseStockService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +37,18 @@ class ProductServiceTest {
 
     @Mock
     private ProductCategoryRepository categoryRepository;
+
+    @Mock
+    private WarehouseService warehouseService;
+
+    @Mock
+    private WarehouseStockService warehouseStockService;
+
+    // PROBLEM 2 fix: ProductService#createProduct now records an opening-stock StockMovement -
+    // needed so @InjectMocks has something other than null to wire in, avoiding an NPE in
+    // testCreateProduct_Success (stockQuantity=20 triggers the movement-recording branch).
+    @Mock
+    private StockMovementService stockMovementService;
 
     @InjectMocks
     private ProductService productService;
@@ -109,6 +124,7 @@ class ProductServiceTest {
         when(productRepository.findBySkuAndDeletedFalse("NEW-001")).thenReturn(Optional.empty());
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(testCategory));
         when(productRepository.save(any(Product.class))).thenReturn(testProduct);
+        when(warehouseService.getDefaultWarehouseId()).thenReturn(UUID.randomUUID());
 
         // Act
         ProductDto result = productService.createProduct(request);
@@ -150,7 +166,12 @@ class ProductServiceTest {
 
         when(productRepository.findByIdAndDeletedFalse(productId)).thenReturn(Optional.of(testProduct));
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(testCategory));
-        when(productRepository.save(any(Product.class))).thenReturn(testProduct);
+        // WP12: ProductService#updateProduct calls saveAndFlush (not save) so the version bump is
+        // visible before convertToDto reads it - see that method's Javadoc. This stub was still
+        // targeting save(), so saveAndFlush() fell through to Mockito's default null return,
+        // producing a NullPointerException in convertToDto - fixed by stubbing the method the
+        // production code actually calls.
+        when(productRepository.saveAndFlush(any(Product.class))).thenReturn(testProduct);
 
         // Act
         ProductDto result = productService.updateProduct(productId, request);
@@ -159,7 +180,7 @@ class ProductServiceTest {
         assertNotNull(result);
         verify(productRepository, times(1)).findByIdAndDeletedFalse(productId);
         verify(categoryRepository, times(1)).findById(categoryId);
-        verify(productRepository, times(1)).save(any(Product.class));
+        verify(productRepository, times(1)).saveAndFlush(any(Product.class));
     }
 
     @Test

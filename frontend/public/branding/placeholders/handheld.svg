@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="No product photo - handheld device">
+  <rect width="400" height="300" fill="#f1f5f9"/>
+  <!-- Abstract handheld-device silhouette (rounded body + screen + control dots) - a plain
+       geometric shape drawn from scratch, not a copy of any real handheld's design. -->
+  <g transform="translate(200 150)">
+    <rect x="-55" y="-75" width="110" height="150" rx="20" fill="none" stroke="#94a3b8" stroke-width="4"/>
+    <rect x="-35" y="-58" width="70" height="55" rx="4" fill="none" stroke="#2563eb" stroke-width="4"/>
+    <circle cx="-24" cy="30" r="7" fill="#93c5fd"/>
+    <circle cx="0" cy="30" r="7" fill="#93c5fd"/>
+    <circle cx="24" cy="30" r="7" fill="#93c5fd"/>
+    <circle cx="0" cy="52" r="7" fill="#94a3b8"/>
+  </g>
+</svg>

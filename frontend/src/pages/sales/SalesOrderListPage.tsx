@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import api from '../../lib/api';
+import { formatMoney } from '../../lib/money';
 import Layout from '../../components/Layout';
 import {
   DataTable,
@@ -116,7 +117,7 @@ export default function SalesOrderListPage() {
       key: 'orderNumber',
       header: 'Order Number',
       sortable: true,
-      render: (order) => <span className="font-medium text-gray-900">{order.orderNumber}</span>,
+      render: (order) => <span className="font-medium text-slate-900">{order.orderNumber}</span>,
     },
     {
       key: 'customerName',
@@ -146,7 +147,7 @@ export default function SalesOrderListPage() {
       key: 'total',
       header: 'Total',
       sortable: true,
-      render: (order) => `$${order.total.toFixed(2)}`,
+      render: (order) => formatMoney(order.total),
     },
     {
       key: 'actions',
@@ -159,7 +160,7 @@ export default function SalesOrderListPage() {
               e.stopPropagation();
               navigate(`/sales-orders/${order.id}`);
             }}
-            className="text-blue-600 hover:text-blue-900 p-1"
+            className="text-brand-600 hover:text-brand-900 p-1"
             title="View"
           >
             <Eye className="w-5 h-5" />
@@ -171,7 +172,7 @@ export default function SalesOrderListPage() {
                   e.stopPropagation();
                   navigate(`/sales-orders/${order.id}/edit`);
                 }}
-                className="text-indigo-600 hover:text-indigo-900 p-1"
+                className="text-brand-600 hover:text-brand-900 p-1"
                 title="Edit"
               >
                 <Edit className="w-5 h-5" />
@@ -196,17 +197,15 @@ export default function SalesOrderListPage() {
   return (
     <Layout>
       <div className="p-6 space-y-6">
-        {/* Page Header with Gradient */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-xl p-8 text-white">
-          <div className="flex justify-between items-center">
+        {/* Page Header */}
+        <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Sales Orders</h1>
-              <p className="text-purple-100">Track and manage your sales orders</p>
+              <h1 className="text-2xl font-semibold text-slate-900">Sales Orders</h1>
+              <p className="text-sm text-slate-500 mt-1">Track and manage your sales orders</p>
             </div>
             <Button onClick={() => navigate('/sales-orders/new')} icon={<Plus className="w-5 h-5" />}>
               New Sales Order
             </Button>
-          </div>
         </div>
 
         <div className="space-y-4">
@@ -248,7 +247,7 @@ export default function SalesOrderListPage() {
           title="Delete Sales Order"
           size="sm"
         >
-          <p className="text-gray-600">
+          <p className="text-slate-600">
             Are you sure you want to delete order <strong>{deleteModal.orderNumber}</strong>? This
             action cannot be undone.
           </p>

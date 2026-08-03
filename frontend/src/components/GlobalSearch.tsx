@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, Package, Users, ShoppingCart, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
+import { formatMoney } from '../lib/money';
 
 interface SearchResult {
   type: 'product' | 'customer' | 'supplier' | 'order';
@@ -9,6 +10,26 @@ interface SearchResult {
   title: string;
   subtitle: string;
   path: string;
+}
+
+interface ProductSearchItem {
+  id: string;
+  name: string;
+  sku: string;
+  unitPrice: number;
+}
+
+interface CustomerOrSupplierSearchItem {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface OrderSearchItem {
+  id: string;
+  orderNumber: string;
+  customer: { name: string };
+  total: number;
 }
 
 export function GlobalSearch() {
@@ -57,32 +78,32 @@ export function GlobalSearch() {
         ]);
 
         const searchResults: SearchResult[] = [
-          ...products.data.content.map((p: any) => ({
+          ...products.data.content.map((p: ProductSearchItem) => ({
             type: 'product' as const,
             id: p.id,
             title: p.name,
-            subtitle: `SKU: ${p.sku} - $${p.unitPrice}`,
+            subtitle: `SKU: ${p.sku} - ${formatMoney(p.unitPrice)}`,
             path: `/products/${p.id}/edit`,
           })),
-          ...customers.data.content.map((c: any) => ({
+          ...customers.data.content.map((c: CustomerOrSupplierSearchItem) => ({
             type: 'customer' as const,
             id: c.id,
             title: c.name,
             subtitle: c.email,
             path: `/customers/${c.id}/edit`,
           })),
-          ...suppliers.data.content.map((s: any) => ({
+          ...suppliers.data.content.map((s: CustomerOrSupplierSearchItem) => ({
             type: 'supplier' as const,
             id: s.id,
             title: s.name,
             subtitle: s.email,
             path: `/suppliers/${s.id}/edit`,
           })),
-          ...orders.data.content.map((o: any) => ({
+          ...orders.data.content.map((o: OrderSearchItem) => ({
             type: 'order' as const,
             id: o.id,
             title: o.orderNumber,
-            subtitle: `${o.customer.name} - $${o.total}`,
+            subtitle: `${o.customer.name} - ${formatMoney(o.total)}`,
             path: `/sales-orders/${o.id}`,
           })),
         ];
@@ -112,9 +133,9 @@ export function GlobalSearch() {
       case 'customer':
         return <Users size={16} className="text-green-600" />;
       case 'supplier':
-        return <Users size={16} className="text-purple-600" />;
+        return <Users size={16} className="text-amber-600" />;
       case 'order':
-        return <ShoppingCart size={16} className="text-pink-600" />;
+        return <ShoppingCart size={16} className="text-teal-600" />;
       default:
         return <Search size={16} />;
     }
@@ -124,11 +145,11 @@ export function GlobalSearch() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors text-white/70 hover:text-white"
+        className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors text-slate-300 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
       >
         <Search size={16} />
         <span className="text-sm">Search...</span>
-        <kbd className="px-2 py-0.5 text-xs bg-white/10 rounded">⌘K</kbd>
+        <kbd className="px-2 py-0.5 text-xs bg-slate-700 rounded">⌘K</kbd>
       </button>
     );
   }
@@ -143,17 +164,17 @@ export function GlobalSearch() {
 
       {/* Search Modal */}
       <div className="fixed top-20 left-1/2 -translate-x-1/2 w-full max-w-2xl z-50">
-        <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+        <div className="bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden">
           {/* Search Input */}
-          <div className="flex items-center gap-3 p-4 border-b">
-            <Search size={20} className="text-gray-400" />
+          <div className="flex items-center gap-3 p-4 border-b border-slate-200">
+            <Search size={20} className="text-slate-400" />
             <input
               ref={inputRef}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search products, customers, orders..."
-              className="flex-1 outline-none text-lg"
+              className="flex-1 outline-none text-lg text-slate-900"
             />
             {query && (
               <button
@@ -161,7 +182,7 @@ export function GlobalSearch() {
                   setQuery('');
                   setResults([]);
                 }}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-slate-400 hover:text-slate-600"
               >
                 <X size={20} />
               </button>
@@ -171,11 +192,11 @@ export function GlobalSearch() {
           {/* Results */}
           <div className="max-h-96 overflow-y-auto">
             {loading && (
-              <div className="p-8 text-center text-gray-500">Searching...</div>
+              <div className="p-8 text-center text-slate-500">Searching...</div>
             )}
 
             {!loading && query.length >= 2 && results.length === 0 && (
-              <div className="p-8 text-center text-gray-500">No results found</div>
+              <div className="p-8 text-center text-slate-500">No results found</div>
             )}
 
             {!loading && results.length > 0 && (
@@ -184,18 +205,18 @@ export function GlobalSearch() {
                   <button
                     key={`${result.type}-${result.id}`}
                     onClick={() => handleSelect(result)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left"
                   >
                     <div className="flex-shrink-0">{getIcon(result.type)}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-900 truncate">
+                      <div className="font-medium text-slate-900 truncate">
                         {result.title}
                       </div>
-                      <div className="text-sm text-gray-500 truncate">
+                      <div className="text-sm text-slate-500 truncate">
                         {result.subtitle}
                       </div>
                     </div>
-                    <div className="text-xs text-gray-400 capitalize">
+                    <div className="text-xs text-slate-400 capitalize">
                       {result.type}
                     </div>
                   </button>
@@ -204,14 +225,14 @@ export function GlobalSearch() {
             )}
 
             {query.length < 2 && (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-slate-500">
                 Type at least 2 characters to search
               </div>
             )}
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-3 bg-gray-50 border-t text-xs text-gray-500 flex items-center justify-between">
+          <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 flex items-center justify-between">
             <div>Press ESC to close</div>
             <div>⌘K to open</div>
           </div>

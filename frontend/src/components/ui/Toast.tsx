@@ -70,6 +70,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- context+provider+hook colocated by design
 export function useToast() {
   const context = useContext(ToastContext);
   if (!context) {
@@ -106,12 +107,19 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
     success: 'bg-green-50 text-green-800 border-green-200',
     error: 'bg-red-50 text-red-800 border-red-200',
     info: 'bg-blue-50 text-blue-800 border-blue-200',
-    warning: 'bg-yellow-50 text-yellow-800 border-yellow-200',
+    warning: 'bg-amber-50 text-amber-800 border-amber-200',
   };
 
+  // error/warning are urgent enough to interrupt a screen reader (role="alert");
+  // success/info are lower-priority updates (role="status"). Neither role existed
+  // before, so toasts were invisible to assistive tech despite being the app's only
+  // feedback mechanism for most create/update/delete actions. The literal "toast"
+  // class token is additive (no matching Tailwind utility, no visual effect) and
+  // gives every toast, regardless of severity, a stable non-role hook too.
   return (
     <div
-      className={`flex items-start gap-3 p-4 rounded-lg border shadow-lg animate-slide-in ${styles[toast.type]}`}
+      role={toast.type === 'error' || toast.type === 'warning' ? 'alert' : 'status'}
+      className={`toast flex items-start gap-3 p-4 rounded-lg border shadow-sm animate-slide-in ${styles[toast.type]}`}
     >
       <div className="flex-shrink-0">{icons[toast.type]}</div>
       <p className="flex-1 text-sm font-medium">{toast.message}</p>

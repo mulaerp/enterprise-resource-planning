@@ -27,7 +27,11 @@ public class AuditLog {
     
     @Column(name = "user_id")
     private UUID userId;
-    
+
+    /** Username resolved from SecurityContextHolder at write time (falls back to "system"). */
+    @Column(length = 150)
+    private String username;
+
     @Column(nullable = false, length = 100)
     private String action;
     
@@ -42,7 +46,11 @@ public class AuditLog {
     
     @Column(name = "new_value", columnDefinition = "TEXT")
     private String newValue;
-    
+
+    /** Compact "field: old -> new" summary of changed fields, populated for automatic UPDATE entries. */
+    @Column(name = "change_summary", columnDefinition = "TEXT")
+    private String changeSummary;
+
     @Column(name = "ip_address", length = 45)
     private String ipAddress;
     

@@ -6,7 +6,9 @@ import com.mulaerp.auth.dto.UserDTO;
 import com.mulaerp.auth.entity.User;
 import com.mulaerp.auth.repository.UserRepository;
 import com.mulaerp.common.exception.ResourceNotFoundException;
+import com.mulaerp.email.service.EmailTemplateService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -19,13 +21,18 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailTemplateService emailTemplateService;
 
+    // NOTE: intentionally not @Cacheable - RedisCacheManager's Jackson serializer (see
+    // CacheConfig) cannot deserialize org.springframework.data.domain.PageImpl (no default
+    // constructor/Creator), so caching a Page<> here 500s on every read. See getUserById
+    // below for the same pattern applied safely to a single-entity (non-Page) DTO.
     @Transactional(readOnly = true)
-    @Cacheable(value = "users", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     public Page<UserDTO> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable).map(this::convertToDTO);
     }
@@ -49,11 +56,28 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setFullName(request.getFullName());
-        user.setRole(request.getRole() != null ? request.getRole() : User.UserRole.USER);
+        user.setRole(request.getRole() != null ? request.getRole() : User.UserRole.CASHIER);
         user.setStatus(User.UserStatus.ACTIVE);
 
         User saved = userRepository.save(user);
+
+        // Send welcome/registration email with the temporary password (WP2)
+        sendUserRegistrationEmail(saved, request.getPassword());
+
         return convertToDTO(saved);
+    }
+
+    private void sendUserRegistrationEmail(User user, String tempPassword) {
+        try {
+            emailTemplateService.sendUserRegistration(
+                    user.getEmail(),
+                    user.getFullName(),
+                    user.getRole().name(),
+                    tempPassword
+            );
+        } catch (Exception e) {
+            log.warn("Failed to send registration email to {}: {}", user.getEmail(), e.getMessage());
+        }
     }
 
     @Transactional

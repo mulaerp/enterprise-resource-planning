@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit, Trash2, CheckCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, CheckCircle, ListChecks } from 'lucide-react';
 import DataTable from '../../components/ui/DataTable';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
+import Layout from '../../components/Layout';
 
 interface JournalEntry {
   id: string;
@@ -29,7 +30,7 @@ export default function JournalEntryListPage() {
     try {
       const response = await api.get('/accounting/journal-entries');
       setEntries(response.data);
-    } catch (err) {
+    } catch {
       showError('Failed to fetch journal entries');
     } finally {
       setLoading(false);
@@ -43,8 +44,8 @@ export default function JournalEntryListPage() {
       await api.post(`/accounting/journal-entries/${id}/post`);
       success('Journal entry posted successfully');
       fetchEntries();
-    } catch (error: any) {
-      showError(error.response?.data?.message || 'Failed to post journal entry');
+    } catch (error) {
+      showError(getErrorMessage(error, 'Failed to post journal entry'));
     }
   };
 
@@ -55,8 +56,8 @@ export default function JournalEntryListPage() {
       await api.delete(`/accounting/journal-entries/${id}`);
       success('Journal entry deleted successfully');
       fetchEntries();
-    } catch (error: any) {
-      showError(error.response?.data?.message || 'Failed to delete journal entry');
+    } catch (error) {
+      showError(getErrorMessage(error, 'Failed to delete journal entry'));
     }
   };
 
@@ -76,7 +77,7 @@ export default function JournalEntryListPage() {
         <span className={`px-2 py-1 rounded text-xs ${
           entry.status === 'POSTED' ? 'bg-green-100 text-green-800' :
           entry.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
-          'bg-yellow-100 text-yellow-800'
+          'bg-amber-100 text-amber-800'
         }`}>
           {entry.status}
         </span>
@@ -91,7 +92,7 @@ export default function JournalEntryListPage() {
             <>
               <button
                 onClick={() => navigate(`/accounting/journal-entries/${entry.id}/edit`)}
-                className="text-blue-600 hover:text-blue-800"
+                className="text-brand-600 hover:text-brand-800"
                 title="Edit"
               >
                 <Edit className="w-4 h-4" />
@@ -115,7 +116,7 @@ export default function JournalEntryListPage() {
           {entry.status === 'POSTED' && (
             <button
               onClick={() => navigate(`/accounting/journal-entries/${entry.id}`)}
-              className="text-blue-600 hover:text-blue-800"
+              className="text-brand-600 hover:text-brand-800"
             >
               View
             </button>
@@ -126,30 +127,42 @@ export default function JournalEntryListPage() {
   ];
 
   if (loading) {
-    return <div className="p-6">Loading...</div>;
+    return (
+      <Layout>
+        <div className="p-6">Loading...</div>
+      </Layout>
+    );
   }
 
   return (
-    <div className="p-6">
-      {/* Gradient Banner Header */}
-      <div className="bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 rounded-xl shadow-lg p-8 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Journal Entries</h1>
-            <p className="text-teal-100">Record and manage double-entry accounting transactions</p>
-          </div>
-          <Button 
-            onClick={() => navigate('/accounting/journal-entries/new')}
-            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            New Entry
-          </Button>
+    <Layout>
+      <div className="p-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl font-semibold text-slate-900">Journal Entries</h1>
+              <p className="text-sm text-slate-500 mt-1">Record and manage double-entry accounting transactions</p>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                onClick={() => navigate('/accounting/journal-entries/post-drafts')}
+              >
+                <ListChecks className="w-4 h-4 mr-2" />
+                Post Drafts
+              </Button>
+              <Button
+                onClick={() => navigate('/accounting/journal-entries/new')}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                New Entry
+              </Button>
+            </div>
         </div>
-      </div>
 
-      <DataTable columns={columns} data={entries}
-        keyExtractor={(entry) => entry.id} />
-    </div>
+        <DataTable columns={columns} data={entries}
+          keyExtractor={(entry) => entry.id} />
+      </div>
+    </Layout>
   );
 }

@@ -33,8 +33,8 @@ public class AnalyticsService {
         Long totalSuppliers = supplierRepository.count();
         Long totalSalesOrders = salesOrderRepository.count();
         
-        Long pendingSalesOrders = salesOrderRepository.countByStatus("DRAFT");
-        Long confirmedSalesOrders = salesOrderRepository.countByStatus("CONFIRMED");
+        Long pendingSalesOrders = salesOrderRepository.countByStatus(SalesOrder.OrderStatus.DRAFT);
+        Long confirmedSalesOrders = salesOrderRepository.countByStatus(SalesOrder.OrderStatus.CONFIRMED);
         
         BigDecimal totalRevenue = salesOrderRepository.findAll().stream()
             .filter(order -> "CONFIRMED".equals(order.getStatus()) || "DELIVERED".equals(order.getStatus()))

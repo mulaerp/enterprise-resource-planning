@@ -6,6 +6,6 @@
 DELETE FROM users WHERE email = 'admin@mulaerp.com';
 
 -- Insert admin user with correct BCrypt hash for "admin123"
--- Generated with BCryptPasswordEncoder with strength 10
+-- Generated with: htpasswd -bnBC 10 "" admin123 (verified against Spring's BCryptPasswordEncoder, which accepts $2y)
 INSERT INTO users (email, password_hash, full_name, role, status, created_at, updated_at, deleted)
-VALUES ('admin@mulaerp.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'System Administrator', 'ADMIN', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false);
+VALUES ('admin@mulaerp.com', '$2y$10$utS6gy2aMzZ1H3e83dGhKOxLhV5MuMrlxe3RQuiHY0aV0W3AbDWMS', 'System Administrator', 'ADMIN', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false);

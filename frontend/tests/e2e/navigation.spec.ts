@@ -91,10 +91,11 @@ test.describe('Navigation', () => {
 
   test('should handle 404 routes', async ({ page }) => {
     await page.goto('/non-existent-route');
-    
-    // Should either redirect to dashboard or show 404 page
-    const url = page.url();
-    expect(url).toMatch(/\/(dashboard|login|404)/);
+
+    // The redirect is client-side (React Router's <Navigate>, gated behind
+    // AuthContext's async /auth/me check on mount), so it lands a beat after
+    // page.goto() resolves - poll for the URL instead of reading it immediately.
+    await expect(page).toHaveURL(/\/(dashboard|login|404)/, { timeout: 10000 });
   });
 
   test('should maintain navigation state on page refresh', async ({ page }) => {

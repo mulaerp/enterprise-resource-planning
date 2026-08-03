@@ -46,6 +46,16 @@ public abstract class BaseEntity {
     @lombok.Builder.Default
     @Column(nullable = false)
     private Boolean deleted = false;
-    
+
     private LocalDateTime deletedAt;
+
+    // WP12: optimistic locking. Hibernate manages this column automatically on every
+    // INSERT/UPDATE (initializes to 0, increments on each successful UPDATE) and uses it as the
+    // WHERE-clause guard so a stale in-memory entity can't silently overwrite a newer row.
+    // Service-layer code additionally compares a client-submitted version against the freshly
+    // loaded entity's version (see ProductService/CustomerService#update*) so a stale write from a
+    // find-modify-save flow surfaces as 409 even though each request re-fetches the entity fresh.
+    @Version
+    @Column(nullable = false)
+    private Long version;
 }

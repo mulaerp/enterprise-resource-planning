@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import Layout from '../../components/Layout';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
 
 interface AdjustmentForm {
   productId: string;
@@ -16,12 +16,23 @@ interface AdjustmentForm {
   adjustmentDate: string;
 }
 
+interface ProductOption {
+  id: string;
+  name: string;
+  stockQuantity: number;
+}
+
+interface WarehouseOption {
+  id: string;
+  name: string;
+}
+
 export default function StockAdjustmentFormPage() {
   const navigate = useNavigate();
   const { success, error: showError } = useToast();
   const [loading, setLoading] = useState(false);
-  const [products, setProducts] = useState<any[]>([]);
-  const [warehouses, setWarehouses] = useState<any[]>([]);
+  const [products, setProducts] = useState<ProductOption[]>([]);
+  const [warehouses, setWarehouses] = useState<WarehouseOption[]>([]);
 
   const { register, handleSubmit, formState: { errors } } = useForm<AdjustmentForm>({
     defaultValues: {
@@ -36,19 +47,33 @@ export default function StockAdjustmentFormPage() {
 
   const fetchProducts = async () => {
     try {
-      const response = await api.get('/products');
+      // BUG FIX: this used to call GET /products with no params, defaulting to the backend's
+      // page size - any environment with more than one page of products (this catalogue alone
+      // has 800+) silently hid every product past page 0 from this dropdown, same root cause as
+      // the ProductSelector/CustomerSelector components already work around with size=1000.
+      const response = await api.get('/products?size=1000&sortBy=name&sortDir=ASC');
       setProducts(response.data.content || response.data);
-    } catch (err) {
+    } catch {
       showError('Failed to fetch products');
     }
   };
 
   const fetchWarehouses = async () => {
     try {
-      // For now, use a default warehouse
-      setWarehouses([{ id: '00000000-0000-0000-0000-000000000001', name: 'Main Warehouse' }]);
-    } catch (err) {
+      // BUG FIX: this used to hardcode a fixed placeholder warehouse id
+      // ('00000000-0000-0000-0000-000000000001'), which only matches a real row when the V16
+      // migration's id-less "safety net" INSERT actually fires - it never does in a normal
+      // deployment, because V2's earlier `INSERT INTO warehouses (name, location) VALUES
+      // ('Main Warehouse', ...)` (no explicit id) always creates that row first with a
+      // random UUID, and V16 only backfills its `code` column rather than replacing the id.
+      // Submitting that hardcoded id therefore 404'd on every real environment ("Warehouse not
+      // found with id: 00000000-0000-0000-0000-000000000001") - fetch the real list instead,
+      // same pattern as fetchProducts above.
+      const response = await api.get('/warehouses', { params: { size: 1000 } });
+      setWarehouses(response.data.content ?? []);
+    } catch {
       console.error('Failed to fetch warehouses');
+      showError('Failed to fetch warehouses');
     }
   };
 
@@ -58,8 +83,8 @@ export default function StockAdjustmentFormPage() {
       await api.post('/inventory/adjustments', data);
       success('Stock adjustment created successfully');
       navigate('/inventory/adjustments');
-    } catch (err: any) {
-      showError(err.response?.data?.message || 'Failed to create adjustment');
+    } catch (err) {
+      showError(getErrorMessage(err, 'Failed to create adjustment'));
     } finally {
       setLoading(false);
     }
@@ -68,14 +93,13 @@ export default function StockAdjustmentFormPage() {
   return (
     <Layout>
       <div className="p-6 max-w-2xl">
-        {/* Gradient Banner Header */}
-        <div className="bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 rounded-xl shadow-lg p-8 mb-6">
-          <div className="flex items-center justify-between">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">
+              <h1 className="text-2xl font-semibold text-slate-900">
                 New Stock Adjustment
               </h1>
-              <p className="text-orange-100">
+              <p className="text-sm text-slate-500 mt-1">
                 Adjust inventory quantities for products
               </p>
             </div>
@@ -83,17 +107,16 @@ export default function StockAdjustmentFormPage() {
               type="button"
               variant="secondary"
               onClick={() => navigate('/inventory/adjustments')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
             >
               Back to Adjustments
             </Button>
-          </div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Product *</label>
+            <label htmlFor="adjustment-product" className="block text-sm font-medium mb-1">Product *</label>
             <select
+              id="adjustment-product"
               {...register('productId', { required: 'Product is required' })}
               className="w-full px-3 py-2 border rounded-lg"
             >
@@ -110,8 +133,9 @@ export default function StockAdjustmentFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Warehouse *</label>
+            <label htmlFor="adjustment-warehouse" className="block text-sm font-medium mb-1">Warehouse *</label>
             <select
+              id="adjustment-warehouse"
               {...register('warehouseId', { required: 'Warehouse is required' })}
               className="w-full px-3 py-2 border rounded-lg"
             >
@@ -128,8 +152,9 @@ export default function StockAdjustmentFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Adjustment Type *</label>
+            <label htmlFor="adjustment-type" className="block text-sm font-medium mb-1">Adjustment Type *</label>
             <select
+              id="adjustment-type"
               {...register('adjustmentType', { required: 'Type is required' })}
               className="w-full px-3 py-2 border rounded-lg"
             >
@@ -144,10 +169,11 @@ export default function StockAdjustmentFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Quantity *</label>
+            <label htmlFor="adjustment-quantity" className="block text-sm font-medium mb-1">Quantity *</label>
             <input
+              id="adjustment-quantity"
               type="number"
-              {...register('quantityAdjusted', { 
+              {...register('quantityAdjusted', {
                 required: 'Quantity is required',
                 min: { value: 1, message: 'Quantity must be at least 1' }
               })}
@@ -160,8 +186,9 @@ export default function StockAdjustmentFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Reason *</label>
+            <label htmlFor="adjustment-reason" className="block text-sm font-medium mb-1">Reason *</label>
             <input
+              id="adjustment-reason"
               {...register('reason', { required: 'Reason is required' })}
               className="w-full px-3 py-2 border rounded-lg"
               placeholder="Reason for adjustment"
@@ -172,8 +199,9 @@ export default function StockAdjustmentFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Date *</label>
+            <label htmlFor="adjustment-date" className="block text-sm font-medium mb-1">Date *</label>
             <input
+              id="adjustment-date"
               type="date"
               {...register('adjustmentDate', { required: 'Date is required' })}
               className="w-full px-3 py-2 border rounded-lg"
@@ -184,8 +212,9 @@ export default function StockAdjustmentFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Notes</label>
+            <label htmlFor="adjustment-notes" className="block text-sm font-medium mb-1">Notes</label>
             <textarea
+              id="adjustment-notes"
               {...register('notes')}
               className="w-full px-3 py-2 border rounded-lg"
               rows={3}

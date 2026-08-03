@@ -2,6 +2,7 @@ package com.mulaerp.notifications.controller;
 
 import com.mulaerp.notifications.dto.NotificationDTO;
 import com.mulaerp.notifications.service.NotificationService;
+import com.mulaerp.util.PageSizeCap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +23,7 @@ public class NotificationController {
         @RequestParam(defaultValue = "20") int size
     ) {
         return ResponseEntity.ok(
-            notificationService.getUserNotifications(userId, PageRequest.of(page, size))
+            notificationService.getUserNotifications(userId, PageRequest.of(page, PageSizeCap.cap(size)))
         );
     }
 
@@ -33,7 +34,7 @@ public class NotificationController {
         @RequestParam(defaultValue = "20") int size
     ) {
         return ResponseEntity.ok(
-            notificationService.getUnreadNotifications(userId, PageRequest.of(page, size))
+            notificationService.getUnreadNotifications(userId, PageRequest.of(page, PageSizeCap.cap(size)))
         );
     }
 

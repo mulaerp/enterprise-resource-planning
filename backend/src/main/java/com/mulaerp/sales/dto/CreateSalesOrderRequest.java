@@ -48,5 +48,14 @@ public class CreateSalesOrderRequest {
 
         private BigDecimal discount;
         private BigDecimal taxRate;
+
+        // --- WP3: optional batch/serial tracking -----------------------------------------
+        // Both optional; omitting them keeps the line exactly as it worked before WP3.
+
+        /** Batch to fulfil this line from - validated against the product, decremented on delivery. */
+        private UUID batchId;
+
+        /** Specific serial numbers to sell on this line - validated as IN_STOCK for the product. */
+        private List<UUID> serialIds;
     }
 }

@@ -10,7 +10,21 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_BASE_URL=http://localhost:8080
+      # Relative base: the browser calls the Vite origin and the dev server
+      # proxies /api + /ws to the backend (works from host and containers alike)
+      - VITE_API_BASE_URL=/api/v1
+      - BACKEND_PROXY_TARGET=http://backend:8080
+      # White-label overrides (see frontend/src/branding.ts). Empty-by-default
+      # passthrough: unset/blank on the host means the container sees an empty
+      # string, and branding.ts's `|| 'default'` falls back to today's Mula ERP
+      # strings - so an unconfigured stack renders unchanged.
+      - VITE_BRAND_APP_NAME=${VITE_BRAND_APP_NAME:-}
+      - VITE_BRAND_TAGLINE=${VITE_BRAND_TAGLINE:-}
+      - VITE_BRAND_LOGO_INITIAL=${VITE_BRAND_LOGO_INITIAL:-}
+      - VITE_BRAND_STORE_NAME=${VITE_BRAND_STORE_NAME:-}
+      - VITE_BRAND_COPYRIGHT=${VITE_BRAND_COPYRIGHT:-}
+      - VITE_BRAND_LOGO_URL=${VITE_BRAND_LOGO_URL:-}
+      - VITE_BRAND_FAVICON_URL=${VITE_BRAND_FAVICON_URL:-}
     networks:
       - mulaerp-network
     restart: unless-stopped
@@ -26,14 +40,42 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=production
-      - DATABASE_URL=jdbc:postgresql://postgres:5432/mulaerp
-      - DATABASE_USERNAME=mulaerp
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-mulaerp123}
-      - DATABASE_DRIVER=org.postgresql.Driver
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=mulaerp
+      - DATABASE_USER=mulaerp
+      # DATABASE_PASSWORD / REDIS_PASSWORD / JWT_SECRET: no fallback on purpose (deployment
+      # hardening) - a careless deploy with no .env used to silently ship the known example
+      # creds below in plain sight of this file. ${VAR:?msg} fails `docker compose` fast with a
+      # clear message instead. Local dev stays frictionless: copy .env.example to .env (compose
+      # auto-loads .env next to this file) - see README "Deploying beyond localhost".
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:?Set DATABASE_PASSWORD (see .env.example) - no default is supplied}
       - REDIS_HOST=valkey
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
-      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production-min-32-chars}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:?Set REDIS_PASSWORD (see .env.example) - no default is supplied}
+      - JWT_SECRET=${JWT_SECRET:?Set JWT_SECRET, min 32 random chars (see .env.example) - no default is supplied}
+      - SEED_DEMO_DATA=${SEED_DEMO_DATA:-false}
+      # Dev-only: migrations in this repo are authored in parallel and can land out of sequence
+      # on this long-lived dev database. Production leaves this unset so Flyway fails loudly on
+      # an out-of-sequence migration (application.yml defaults it to false).
+      - FLYWAY_OUT_OF_ORDER=${FLYWAY_OUT_OF_ORDER:-true}
+      # White-label product name for outbound emails (mulaerp.brand.name in
+      # application.yml). Unlike the frontend's VITE_BRAND_* vars, this can't
+      # use an empty-string default: an explicit empty env var would win over
+      # the YAML default in Spring's placeholder resolution, so default to
+      # the literal current brand name here instead.
+      - BRAND_NAME=${BRAND_NAME:-Mula ERP}
+      # OPTIONAL local LLM reranker for trade-in product matching (com.mulaerp.ai.
+      # OllamaTradeInMatcher / mulaerp.tradein.ai-match.* in application.yml) - defaults keep the
+      # feature OFF even when the `ollama` service below is running, so it's always an explicit
+      # opt-in. Bring the model up with `docker compose --profile ai up -d ollama`, pull a model
+      # (see that service's comment), THEN set TRADEIN_AI_MATCH_ENABLED=true (e.g. in .env) and
+      # restart the backend. OLLAMA_BASE_URL points at the ollama service by its compose DNS name -
+      # unaffected by whether that service is even running when the flag is false.
+      - TRADEIN_AI_MATCH_ENABLED=${TRADEIN_AI_MATCH_ENABLED:-false}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
+      - TRADEIN_AI_MATCH_MODEL=${TRADEIN_AI_MATCH_MODEL:-qwen2.5:0.5b}
+      - TRADEIN_AI_MATCH_TIMEOUT_MS=${TRADEIN_AI_MATCH_TIMEOUT_MS:-2000}
     depends_on:
       postgres:
         condition: service_healthy
@@ -44,16 +86,23 @@ services:
     restart: unless-stopped
     volumes:
       - ./logs/backend:/app/logs
+      # WP: product images - persists uploaded product photos (ProductImageService, default dir
+      # ./uploads/product-images resolved against WORKDIR=/app) across container restarts/rebuilds.
+      - ./uploads:/app/uploads
 
   # PostgreSQL Database (RDS Compatible)
   postgres:
     image: postgres:16-alpine
-    ports:
-      - "5432:5432"
+    # No host port binding (deployment hardening): only the backend/db-backup services need to
+    # reach postgres, and they do so over the mulaerp-network by service name (postgres:5432) -
+    # a docker-internal DNS name/port, unaffected by whether it's also published to the host.
+    # scripts/run-backend-tests.sh is unaffected too: it spins up its own throwaway
+    # mulaerp-test-postgres container on its own dedicated network with no host bindings either.
+    # If you need host access for a one-off `psql`, use `docker compose exec postgres psql ...`.
     environment:
       - POSTGRES_DB=mulaerp
       - POSTGRES_USER=mulaerp
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:-mulaerp123}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:?Set DATABASE_PASSWORD (see .env.example) - no default is supplied}
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     networks:
       - mulaerp-network
@@ -70,12 +119,12 @@ services:
   # Valkey (Redis Fork) for Caching and Performance
   valkey:
     image: valkey/valkey:7.2-alpine
-    ports:
-      - "6379:6379"
+    # No host port binding - same rationale as postgres above: only the backend reaches valkey,
+    # over mulaerp-network by service name (valkey:6379).
     command: >
-      valkey-server 
-      --appendonly yes 
-      --requirepass ${REDIS_PASSWORD:-mulaerp-redis-password}
+      valkey-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD:?Set REDIS_PASSWORD (see .env.example) - no default is supplied}
       --maxmemory 512mb
       --maxmemory-policy allkeys-lru
       --save 900 1
@@ -87,7 +136,7 @@ services:
     volumes:
       - valkey-data:/data
     environment:
-      - VALKEY_PASSWORD=${REDIS_PASSWORD:-mulaerp-redis-password}
+      - VALKEY_PASSWORD=${REDIS_PASSWORD:?Set REDIS_PASSWORD (see .env.example) - no default is supplied}
     healthcheck:
       test: ["CMD", "valkey-cli", "--raw", "incr", "ping"]
       interval: 10s
@@ -95,7 +144,48 @@ services:
       retries: 5
       start_period: 10s
 
-  # Nginx Reverse Proxy (disabled for development, using Vite dev server)
+  # Ollama - OPTIONAL local LLM runtime backing the trade-in AI product-matching reranker
+  # (com.mulaerp.ai.OllamaTradeInMatcher, mulaerp.tradein.ai-match.* in application.yml). Behind the
+  # "ai" profile so the default stack (and CI) never starts or depends on this service.
+  #
+  # Bring it up + pull a model (one-off, persists in the ollama-models volume across restarts):
+  #   docker compose --profile ai up -d ollama
+  #   docker compose exec ollama ollama pull qwen2.5:0.5b
+  # Then set TRADEIN_AI_MATCH_ENABLED=true (e.g. in .env) and restart the backend:
+  #   docker compose build backend && docker compose up -d backend
+  # A one-off warmup call avoids paying the model's cold-load latency on the cashier's first real
+  # query (see the run-stack skill for the exact curl):
+  #   docker compose exec ollama ollama run qwen2.5:0.5b "warmup" --keepalive 30m
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ai"]
+    environment:
+      # Keeps the model resident in memory between requests instead of unloading it after each
+      # call's default ~5min idle window - the whole point of "super fast" on a shop counter box is
+      # not re-paying model load time on every trade-in lookup.
+      - OLLAMA_KEEP_ALIVE=30m
+    networks:
+      - mulaerp-network
+    restart: unless-stopped
+    volumes:
+      - ollama-models:/root/.ollama
+    healthcheck:
+      # No curl/wget in the ollama/ollama image - the API root itself answers "Ollama is running"
+      # on any GET, which is enough to prove the server is up (a pulled model is a separate,
+      # one-off manual step above, not something a healthcheck should gate on).
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # Nginx Reverse Proxy - disabled for local/e2e dev (the Vite dev server above already proxies
+  # /api and /ws itself). Intended for a deployed test-prod instance instead, as the single public
+  # origin - see docker/nginx/nginx.conf's header comment for the full topology and the /api
+  # prefix-stripping bug it fixes. REQUIRES `frontend/dist` to exist first (`cd frontend &&
+  # npm run build`) - this serves a static build, it does not run the Vite dev server - and the
+  # `frontend` service above would need to be stopped/removed for that environment (the two are
+  # alternative front doors, not both at once). See README "Deploying beyond localhost".
   # nginx:
   #   image: nginx:alpine
   #   ports:
@@ -112,13 +202,15 @@ services:
   #   restart: unless-stopped
 
   # Database Backup Service
+  # Not started by default; activate with: docker compose --profile backup up -d
   db-backup:
     image: postgres:16-alpine
+    profiles: ["backup"]
     environment:
       - POSTGRES_DB=mulaerp
       - POSTGRES_USER=mulaerp
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:-mulaerp123}
-      - PGPASSWORD=${DATABASE_PASSWORD:-mulaerp123}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:?Set DATABASE_PASSWORD (see .env.example) - no default is supplied}
+      - PGPASSWORD=${DATABASE_PASSWORD:?Set DATABASE_PASSWORD (see .env.example) - no default is supplied}
     volumes:
       - ./postgres_backups:/backups
       - ./backup-scripts:/scripts
@@ -168,4 +260,5 @@ networks:
 volumes:
   postgres-data:
   valkey-data:
+  ollama-models:
 

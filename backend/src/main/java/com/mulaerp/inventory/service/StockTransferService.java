@@ -5,6 +5,7 @@ import com.mulaerp.inventory.dto.CreateStockTransferRequest;
 import com.mulaerp.inventory.dto.StockTransferDTO;
 import com.mulaerp.inventory.dto.StockTransferItemDTO;
 import com.mulaerp.inventory.entity.ProductBatch;
+import com.mulaerp.inventory.entity.StockMovement;
 import com.mulaerp.inventory.entity.StockTransfer;
 import com.mulaerp.inventory.entity.StockTransferItem;
 import com.mulaerp.inventory.repository.ProductBatchRepository;
@@ -12,6 +13,7 @@ import com.mulaerp.inventory.repository.StockTransferItemRepository;
 import com.mulaerp.inventory.repository.StockTransferRepository;
 import com.mulaerp.product.entity.Product;
 import com.mulaerp.product.repository.ProductRepository;
+import com.mulaerp.warehouse.service.WarehouseStockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +34,8 @@ public class StockTransferService {
     private final StockTransferItemRepository transferItemRepository;
     private final ProductRepository productRepository;
     private final ProductBatchRepository batchRepository;
+    private final WarehouseStockService warehouseStockService;
+    private final StockMovementService stockMovementService;
 
     @Transactional(readOnly = true)
     public List<StockTransferDTO> getAllTransfers() {
@@ -177,6 +182,33 @@ public class StockTransferService {
             throw new IllegalStateException("Can only complete transfers that are in transit");
         }
 
+        // decrementValidated() throws IllegalArgumentException the moment any item's source
+        // warehouse lacks sufficient stock; since this whole method is @Transactional, that
+        // exception rolls back everything already applied in this loop, so a multi-item
+        // transfer either moves stock for every item or for none of them.
+        //
+        // Stock model: Product.stockQuantity is the TOTAL quantity across every warehouse; a
+        // transfer only moves stock between warehouses, so the total is unchanged and
+        // Product.stockQuantity is intentionally left untouched here. Only the per-warehouse
+        // warehouse_stock rows move (decrement source, increment/upsert destination). This
+        // mirrors how StockAdjustmentService treats Product.stockQuantity as the authoritative
+        // total while warehouse_stock tracks the breakdown.
+        for (StockTransferItem item : transfer.getItems()) {
+            Product product = item.getProduct();
+            warehouseStockService.decrementValidated(transfer.getFromWarehouseId(), product, item.getQuantity());
+            warehouseStockService.applyDelta(transfer.getToWarehouseId(), product, item.getQuantity());
+
+            // WP7: one TRANSFER_OUT + one TRANSFER_IN ledger row per item, same transaction as
+            // the warehouse_stock moves above. Product.stockQuantity (the total) is unaffected by
+            // a transfer, so quantityAfter on both rows is simply the current, unchanged total.
+            stockMovementService.recordMovement(product, transfer.getFromWarehouseId(),
+                    StockMovement.MovementType.TRANSFER_OUT, -item.getQuantity(),
+                    transfer.getTransferNumber(), transfer.getNotes());
+            stockMovementService.recordMovement(product, transfer.getToWarehouseId(),
+                    StockMovement.MovementType.TRANSFER_IN, item.getQuantity(),
+                    transfer.getTransferNumber(), transfer.getNotes());
+        }
+
         transfer.setStatus(StockTransfer.TransferStatus.COMPLETED);
         transferRepository.save(transfer);
         log.info("Completed stock transfer: {}", transfer.getTransferNumber());
@@ -219,10 +251,15 @@ public class StockTransferService {
         }
     }
 
+    // Millisecond timestamp narrows the collision window vs. second-precision generators
+    // elsewhere, but concurrent callers can still land on the same millisecond - append a random
+    // hex suffix so the number is unique by construction (same fix as
+    // InventoryService#generateAdjustmentNumber / SalesOrderService#generateOrderNumber).
     private String generateTransferNumber() {
         String prefix = "TRF";
         String timestamp = String.valueOf(System.currentTimeMillis());
-        return prefix + "-" + timestamp.substring(timestamp.length() - 10);
+        String suffix = String.format("%04x", ThreadLocalRandom.current().nextInt(0x10000));
+        return prefix + "-" + timestamp.substring(timestamp.length() - 10) + "-" + suffix;
     }
 
     private StockTransferDTO convertToDTO(StockTransfer transfer) {

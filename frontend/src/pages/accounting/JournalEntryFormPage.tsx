@@ -4,7 +4,9 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
+import { formatMoney } from '../../lib/money';
+import Layout from '../../components/Layout';
 
 interface JournalEntryLine {
   accountId: string;
@@ -20,12 +22,19 @@ interface JournalEntryForm {
   lines: JournalEntryLine[];
 }
 
+interface AccountOption {
+  id: string;
+  code: string;
+  name: string;
+  isActive: boolean;
+}
+
 export default function JournalEntryFormPage() {
   const navigate = useNavigate();
   const { success, error: showError } = useToast();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-  const [accounts, setAccounts] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<AccountOption[]>([]);
 
   const { register, control, handleSubmit, formState: { errors }, reset, watch } = useForm<JournalEntryForm>({
     defaultValues: {
@@ -54,8 +63,8 @@ export default function JournalEntryFormPage() {
   const fetchAccounts = async () => {
     try {
       const response = await api.get('/accounting/accounts');
-      setAccounts(response.data.filter((a: any) => a.isActive));
-    } catch (err) {
+      setAccounts(response.data.filter((a: AccountOption) => a.isActive));
+    } catch {
       showError('Failed to fetch accounts');
     }
   };
@@ -64,7 +73,7 @@ export default function JournalEntryFormPage() {
     try {
       const response = await api.get(`/accounting/journal-entries/${id}`);
       reset(response.data);
-    } catch (err) {
+    } catch {
       showError('Failed to fetch journal entry');
     }
   };
@@ -93,8 +102,8 @@ export default function JournalEntryFormPage() {
         success('Journal entry created successfully');
       }
       navigate('/accounting/journal-entries');
-    } catch (error: any) {
-      error(error.response?.data?.message || 'Failed to save journal entry');
+    } catch (err) {
+      showError(getErrorMessage(err, 'Failed to save journal entry'));
     } finally {
       setLoading(false);
     }
@@ -103,15 +112,15 @@ export default function JournalEntryFormPage() {
   const { totalDebits, totalCredits, difference } = calculateTotals();
 
   return (
+    <Layout>
     <div className="p-6 max-w-6xl">
-      {/* Gradient Banner Header */}
-      <div className="bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 rounded-xl shadow-lg p-8 mb-6">
-        <div className="flex items-center justify-between">
+      {/* Page Header */}
+      <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">
+            <h1 className="text-2xl font-semibold text-slate-900">
               {id ? 'Edit Journal Entry' : 'New Journal Entry'}
             </h1>
-            <p className="text-teal-100">
+            <p className="text-sm text-slate-500 mt-1">
               {id ? 'Update journal entry details' : 'Create a new double-entry journal entry'}
             </p>
           </div>
@@ -119,18 +128,17 @@ export default function JournalEntryFormPage() {
             type="button"
             variant="secondary"
             onClick={() => navigate('/accounting/journal-entries')}
-            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
           >
             Back to Journal Entries
           </Button>
-        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Date *</label>
+            <label htmlFor="entry-date" className="block text-sm font-medium mb-1">Date *</label>
             <input
+              id="entry-date"
               type="date"
               {...register('entryDate', { required: 'Date is required' })}
               className="w-full px-3 py-2 border rounded-lg"
@@ -141,8 +149,9 @@ export default function JournalEntryFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Reference</label>
+            <label htmlFor="entry-reference" className="block text-sm font-medium mb-1">Reference</label>
             <input
+              id="entry-reference"
               {...register('reference')}
               className="w-full px-3 py-2 border rounded-lg"
               placeholder="Reference number"
@@ -151,8 +160,9 @@ export default function JournalEntryFormPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Description *</label>
+          <label htmlFor="entry-description" className="block text-sm font-medium mb-1">Description *</label>
           <textarea
+            id="entry-description"
             {...register('description', { required: 'Description is required' })}
             className="w-full px-3 py-2 border rounded-lg"
             rows={2}
@@ -179,7 +189,7 @@ export default function JournalEntryFormPage() {
 
           <div className="border rounded-lg overflow-hidden">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-slate-50">
                 <tr>
                   <th className="px-4 py-2 text-left text-sm font-medium">Account</th>
                   <th className="px-4 py-2 text-left text-sm font-medium">Description</th>
@@ -192,8 +202,14 @@ export default function JournalEntryFormPage() {
                 {fields.map((field, index) => (
                   <tr key={field.id} className="border-t">
                     <td className="px-4 py-2">
+                      {/* Not required client-side: the balance check in onSubmit below
+                          must run (and show its own error) even when a line's account
+                          hasn't been picked yet - an rhf `required` gate here would
+                          silently block handleSubmit before that check, or before
+                          submission, with the user seeing nothing. The backend still
+                          validates the account exists for whatever is actually posted. */}
                       <select
-                        {...register(`lines.${index}.accountId`, { required: true })}
+                        {...register(`lines.${index}.accountId`)}
                         className="w-full px-2 py-1 border rounded text-sm"
                       >
                         <option value="">Select account</option>
@@ -243,23 +259,23 @@ export default function JournalEntryFormPage() {
                   </tr>
                 ))}
               </tbody>
-              <tfoot className="bg-gray-50 border-t-2">
+              <tfoot className="bg-slate-50 border-t-2">
                 <tr>
                   <td colSpan={2} className="px-4 py-2 text-right font-semibold">
                     Totals:
                   </td>
                   <td className="px-4 py-2 text-right font-semibold">
-                    ${totalDebits.toFixed(2)}
+                    {formatMoney(totalDebits)}
                   </td>
                   <td className="px-4 py-2 text-right font-semibold">
-                    ${totalCredits.toFixed(2)}
+                    {formatMoney(totalCredits)}
                   </td>
                   <td></td>
                 </tr>
                 {Math.abs(difference) > 0.01 && (
                   <tr>
                     <td colSpan={5} className="px-4 py-2 text-center text-red-600 text-sm">
-                      Out of balance by ${Math.abs(difference).toFixed(2)}
+                      Out of balance by {formatMoney(Math.abs(difference))}
                     </td>
                   </tr>
                 )}
@@ -282,5 +298,6 @@ export default function JournalEntryFormPage() {
         </div>
       </form>
     </div>
+    </Layout>
   );
 }

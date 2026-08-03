@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import Layout from '../../components/Layout';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
-import api from '../../lib/api';
+import api, { getErrorMessage } from '../../lib/api';
 
 interface SerialForm {
   productId: string;
@@ -15,12 +15,18 @@ interface SerialForm {
   notes?: string;
 }
 
+interface ProductOption {
+  id: string;
+  name: string;
+  sku: string;
+}
+
 export default function SerialFormPage() {
   const navigate = useNavigate();
   const { success, error: showError } = useToast();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<ProductOption[]>([]);
   const isEdit = !!id;
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<SerialForm>();
@@ -36,7 +42,7 @@ export default function SerialFormPage() {
     try {
       const response = await api.get('/products');
       setProducts(response.data.content || response.data);
-    } catch (err) {
+    } catch {
       showError('Failed to fetch products');
     }
   };
@@ -52,7 +58,7 @@ export default function SerialFormPage() {
         warehouseId: response.data.warehouseId || '',
         notes: response.data.notes || '',
       });
-    } catch (err) {
+    } catch {
       showError('Failed to fetch serial number');
     }
   };
@@ -68,8 +74,8 @@ export default function SerialFormPage() {
         success('Serial number created successfully');
       }
       navigate('/inventory/serials');
-    } catch (err: any) {
-      showError(err.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} serial number`);
+    } catch (err) {
+      showError(getErrorMessage(err, `Failed to ${isEdit ? 'update' : 'create'} serial number`));
     } finally {
       setLoading(false);
     }
@@ -78,14 +84,13 @@ export default function SerialFormPage() {
   return (
     <Layout>
       <div className="p-6 max-w-2xl">
-        {/* Gradient Banner Header */}
-        <div className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 rounded-xl shadow-lg p-8 mb-6">
-          <div className="flex items-center justify-between">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">
+              <h1 className="text-2xl font-semibold text-slate-900">
                 {isEdit ? 'Edit Serial Number' : 'New Serial Number'}
               </h1>
-              <p className="text-sky-100">
+              <p className="text-sm text-slate-500 mt-1">
                 {isEdit ? 'Update serial number tracking information' : 'Register a new product serial number'}
               </p>
             </div>
@@ -93,17 +98,16 @@ export default function SerialFormPage() {
               type="button"
               variant="secondary"
               onClick={() => navigate('/inventory/serials')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
             >
               Back to Serial Numbers
             </Button>
-          </div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Product *</label>
+            <label htmlFor="serial-product" className="block text-sm font-medium mb-1">Product *</label>
             <select
+              id="serial-product"
               {...register('productId', { required: 'Product is required' })}
               className="w-full px-3 py-2 border rounded-lg"
               disabled={isEdit}
@@ -121,8 +125,9 @@ export default function SerialFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Serial Number *</label>
+            <label htmlFor="serial-number" className="block text-sm font-medium mb-1">Serial Number *</label>
             <input
+              id="serial-number"
               {...register('serialNumber', { required: 'Serial number is required' })}
               className="w-full px-3 py-2 border rounded-lg"
               placeholder="e.g., SN-2025-001"
@@ -133,8 +138,9 @@ export default function SerialFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Purchase Date</label>
+            <label htmlFor="serial-purchase-date" className="block text-sm font-medium mb-1">Purchase Date</label>
             <input
+              id="serial-purchase-date"
               type="date"
               {...register('purchaseDate')}
               className="w-full px-3 py-2 border rounded-lg"
@@ -142,8 +148,9 @@ export default function SerialFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Warranty Expiry Date</label>
+            <label htmlFor="serial-warranty-expiry-date" className="block text-sm font-medium mb-1">Warranty Expiry Date</label>
             <input
+              id="serial-warranty-expiry-date"
               type="date"
               {...register('warrantyExpiryDate')}
               className="w-full px-3 py-2 border rounded-lg"
@@ -151,8 +158,9 @@ export default function SerialFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Notes</label>
+            <label htmlFor="serial-notes" className="block text-sm font-medium mb-1">Notes</label>
             <textarea
+              id="serial-notes"
               {...register('notes')}
               className="w-full px-3 py-2 border rounded-lg"
               rows={3}
